@@ -30,7 +30,8 @@ public:
 	int ConvertAngleToSetpoint(Rotation2D targetAngle);
 	int ConvertAngleToEncoderTicks(Rotation2D angle);
 	void SetEncoderRaw(int ticks);
-
+	bool IsConnected();
+	bool IsCalibrated();
 
 };
 

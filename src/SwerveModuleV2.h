@@ -53,7 +53,10 @@ public:
 
 	void SetMagicAccel(double accel);
 
-	CTREMagEncoder* GetEncoder();
+	CTREMagEncoder* GetSteerEncoder();
+	GreyhillEncoder* GetDriveEncoder();
+	double GetSteerCurrent() const;
+	double GetDriveCurrent() const;
 };
 
 #endif /* SRC_SWERVEMODULEV2_H_ */

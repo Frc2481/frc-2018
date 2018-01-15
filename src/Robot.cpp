@@ -7,12 +7,14 @@
 #include <SmartDashboard/SendableChooser.h>
 #include <SmartDashboard/SmartDashboard.h>
 #include "CommandBase.h"
+#include "Commands/Diag/DriveTrainTestCommandGroup.h"
 
 class Robot: public frc::IterativeRobot {
 public:
 	void RobotInit() override {
 		CommandBase::init();
 		frc::SmartDashboard::PutData("Auto Modes", &chooser);
+		frc::SmartDashboard::PutData("Drive Train Test", new DriveTrainTestCommandGroup());
 	}
 
 	/**
