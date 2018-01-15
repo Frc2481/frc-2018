@@ -7,6 +7,7 @@
 
 #include <Subsystems/DriveTrain2017.h>
 #include <Commands/DriveWithJoystickCommand.h>
+#include <Commands/CalibrateDriveTrainCommand.h>
 #include <Kinematics.h>
 #include "../RobotMap.h"
 
@@ -17,6 +18,7 @@
 #include "AHRS.h"
 #include "SwerveModuleV2.h"
 #include "Components/SwerveModuleV2Constants.h"
+#include "../InverseKinematicsV2.h"
 
 
 DriveTrain2017::DriveTrain2017() : Subsystem("DriveTrain2017"),
@@ -37,6 +39,8 @@ DriveTrain2017::DriveTrain2017() : Subsystem("DriveTrain2017"),
 	m_pHeadingCorrection = Preferences::GetInstance()->GetDouble("P_HEADING_CORRECTION",0);
 	m_originX = 0.0f;
 	m_originY = 0.0f;
+
+	SmartDashboard::PutData(new CalibrateDriveTrainCommand());
 
 
 }
@@ -82,7 +86,7 @@ void DriveTrain2017::Drive(double xPos, double yPos, double twist) {
 
 
 
-	if (m_isForward) { //used for gare-e
+	if (!m_isForward) { //used for gare-e
 		translation.setY(-translation.getY());
 		translation.setX(-translation.getX());
 	}
@@ -180,8 +184,8 @@ Rotation2D DriveTrain2017::GetHeading() const{
 	return Rotation2D::fromDegrees(m_imu->GetAngle());
 }
 
-//Rotation2D DriveTrain2017::GetGyroZ() const{
-//	return Rotation2D::fromDegrees(m_imu->GetRawGyroZ());
+//Rotation2D DriveTrain2017::GetHeading() const{
+//	return Rotation2D::fromDegrees(m_imu->GetAngle()); // corrected version
 //}
 //
 //Rotation2D DriveTrain2017::GetIMUTimestamp() const{
@@ -264,8 +268,20 @@ bool DriveTrain2017::IsDriveOnTarget() const {
 }
 
 void DriveTrain2017::Periodic() {
-	RigidTransform2D robotCenterVel = ForwardKinematicsDriveTrain(flWheelAngle, flWheelSpeed, frWheelAngle, frWheelSpeed,
-			blWheelAngle, blWheelSpeed, brWheelAngle, brWheelSpeed);
+	//RigidTransform2D robotCenterVel = ForwardKinematicsDriveTrain(flWheelAngle, flWheelSpeed, frWheelAngle, frWheelSpeed,
+	//		blWheelAngle, blWheelSpeed, brWheelAngle, brWheelSpeed);
 
-	m_observer.AddDriveTrainObservation(robotCenterVel, 0.0); //To-do: timestamp
+	//m_observer.AddDriveTrainObservation(robotCenterVel, 0.0); //To-do: timestamp
+
+	SmartDashboard::PutNumber("BR Raw Angle", m_brWheel->GetEncoder()->GetRawAngle().getDegrees());
+	SmartDashboard::PutNumber("BR Angle", m_brWheel->GetEncoder()->GetAngle().getDegrees());
+
+	SmartDashboard::PutNumber("BL Raw Angle", m_blWheel->GetEncoder()->GetRawAngle().getDegrees());
+	SmartDashboard::PutNumber("BL Angle", m_blWheel->GetEncoder()->GetAngle().getDegrees());
+
+	SmartDashboard::PutNumber("FR Raw Angle", m_frWheel->GetEncoder()->GetRawAngle().getDegrees());
+	SmartDashboard::PutNumber("FR Angle", m_frWheel->GetEncoder()->GetAngle().getDegrees());
+
+	SmartDashboard::PutNumber("FL Raw Angle", m_flWheel->GetEncoder()->GetRawAngle().getDegrees());
+	SmartDashboard::PutNumber("FL Angle", m_flWheel->GetEncoder()->GetAngle().getDegrees());
 }
