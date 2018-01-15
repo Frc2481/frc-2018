@@ -9,7 +9,7 @@
 #define KINEMATICS_H_
 
 #include "utils/Translation2D.h"
-#include "RigidTransform2D.h"
+#include "utils/RigidTransform2D.h"
 
 class Kinematics {
 public:
