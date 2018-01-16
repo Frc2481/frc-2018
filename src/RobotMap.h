@@ -12,6 +12,9 @@
 		#define BACK_RIGHT_DRIVE 14//7
 		#define BACK_RIGHT_STEER 10//8
 
+		#define INTAKE_MOTOR 30
+
 		#define SHIFTER 0
+		#define INTAKE_CLAMP 1
 
 #endif
