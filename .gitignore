@@ -13,7 +13,6 @@ out/
 tmp/
 .settings/
 .loadpath
-.project
 /.idea
 .classpath
 
