@@ -83,3 +83,11 @@ int CTREMagEncoder::ConvertAngleToEncoderTicks(Rotation2D angle) {
 void CTREMagEncoder::SetEncoderRaw(int ticks) {
 	m_talon->SetSelectedSensorPosition(ticks, 0, 0);
 }
+
+bool CTREMagEncoder::IsConnected() {
+	return false;
+}
+
+bool CTREMagEncoder::IsCalibrated() {
+	return fabs(m_offset.getDegrees()) > 0;
+}

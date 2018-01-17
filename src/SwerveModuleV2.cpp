@@ -164,6 +164,18 @@ void SwerveModuleV2::SetMagicAccel(double accel) {
 	m_driveMotor->ConfigMotionAcceleration(accel, 0);
 }
 
-CTREMagEncoder* SwerveModuleV2::GetEncoder() {
+CTREMagEncoder* SwerveModuleV2::GetSteerEncoder() {
 	return m_steerEncoder;
+}
+
+GreyhillEncoder* SwerveModuleV2::GetDriveEncoder() {
+	return m_driveEncoder;
+}
+
+double SwerveModuleV2::GetSteerCurrent() const {
+	return m_steerMotor->GetOutputCurrent();
+}
+
+double SwerveModuleV2::GetDriveCurrent() const {
+	return m_driveMotor->GetOutputCurrent();
 }
