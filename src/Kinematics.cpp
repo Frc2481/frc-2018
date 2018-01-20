@@ -46,48 +46,60 @@ void Kinematics::SwerveInverseKinematics(Translation2D &translation,
 	}
 }
 
-RigidTransform2D Kinematics::ForwardKinematicsDriveTrain(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
-										  Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity,
-										  Rotation2D brAngle, Translation2D brVelocity) {
+RigidTransform2D Kinematics::SwerveForwardKinematics(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
+		Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity, Rotation2D brAngle, Translation2D brVelocity) {
 	double length = SwerveModuleV2Constants::k_robotLength;
 	double width = SwerveModuleV2Constants::k_robotWidth;
 	double originY, originX;
-	originY = 0;
-	originX = 0;
+//	originY = 0.0;
+//	originX = 0.0;
 
-	double FR_B = frAngle.getSin() * frVelocity;
-	double FR_D = frAngle.getCos() * frVelocity;
+	double rx1 = width / 2.0;
+	double ry1 = length / 2.0;
 
-	double FL_B = flAngle.getSin() * flVelocity;
-	double FL_C = flAngle.getCos() * flVelocity;
+	double rx3 = -width / 2.0;
+	double ry3 = -length / 2.0;
 
-	double BR_A = brAngle.getSin() * brVelocity;
-	double BR_D = brAngle.getCos() * brVelocity;
+	double Vxw1 = frVelocity.getX() * frAngle.getCos();
+	double Vyw1 = frVelocity.getX() * frAngle.getSin();
 
-	double BL_A = blAngle.getSin() * blVelocity;
-	double BL_C = blAngle.getCos() * blVelocity;
+	double Vxw2 = brVelocity.getX() * brAngle.getCos();
+	double Vyw2 = brVelocity.getX() * brAngle.getSin();
 
-	double A = (BR_A + BL_A) / 2;
-	double B = (FR_B + FL_B) / 2;
-	double C = (FL_C + BL_C) / 2;
-	double D = (FR_D + BR_D) / 2;
+	double Vxw3 = blVelocity.getX() * blAngle.getCos();
+	double Vyw3 = blVelocity.getX() * blAngle.getSin();
 
-	double omega1, omega2, omega;
-	omega1 = (B - A) / length;
-	omega2 = (C - D) / width;
-	omega = (omega1 + omega2) / 2;
+	double Vxw4 = flVelocity.getX() * flAngle.getCos();
+	double Vyw4 = flVelocity.getX() * flAngle.getSin();
 
-	double Vyc, Vxc, Vyc1, Vyc2, Vxc1, Vxc2;
-	double rx = width / 2.0;
-	double ry = length / 2.0;
-	Vyc1 = omega * (ry + originY) + A;
-	Vyc2 = -omega * (ry - originY) + B;
-	Vxc1 = omega * (rx + originX) + C;
-	Vxc2 = -omega * (rx - originX) + D;
+	double A = (Vyw2 + Vyw3) / 2.0; // average back y vel
+	double B = (Vyw1 + Vyw4) / 2.0; // average front y vel
+	double C = (Vxw4 + Vxw3) / 2.0; // average left x vel
+	double D = (Vxw1 + Vxw2) / 2.0; // average right x vel
 
-	Vyc = (Vyc1 + Vyc2) / 2;
-	Vxc = (Vxc1 + Vxc2) / 2;
+	double omega1 = (B - A) / length; // this is length
+	double omega2 = (C - D) / width; // this is also length
+	double omega = (omega1 + omega2) / 2.0;
 
-	return RigidTransform2D(Vxc, Vyc, omega);
+	SmartDashboard::PutNumber("omega 1", omega1);
+	SmartDashboard::PutNumber("omega 2", omega2);
+
+	double Vxc1 = Vxw1 + omega * ry1;
+	double Vxc2 = Vxw3 + omega * ry3;
+
+	double Vyc1 = Vyw1 - omega * rx1;
+	double Vyc2 = Vyw3 - omega * rx3;
+
+	double Vxc = (Vxc1 + Vxc2) / 2.0;
+	double Vyc = (Vyc1 + Vyc2) / 2.0;
+
+	Translation2D translate(Vxc, Vyc);
+	Rotation2D rotate = Rotation2D::fromRadians(omega);
+	RigidTransform2D transform(translate, rotate);
+
+	return transform;
 }
 
+RigidTransform2D Kinematics::IntegrateForwardKinematics(RigidTransform2D currentPose, RigidTransform2D::Delta forwardKinematics) {
+	return currentPose.transformBy(RigidTransform2D::fromVelocity(forwardKinematics));
+}

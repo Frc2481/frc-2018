@@ -9,8 +9,8 @@
 #include <sstream>
 #include <WPILib.h>
 
-GreyhillEncoder::GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerRev, int inchesPerRev)
-	: m_talon(talon), m_name(name), m_ticksPerRev(ticksPerRev), m_inchesPerRev(inchesPerRev) {
+GreyhillEncoder::GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerRev, double encoderRevPerWheelRev,  double inchesPerWheelRev)
+	: m_talon(talon), m_name(name), m_ticksPerRev(ticksPerRev), m_inchesPerWheelRev(inchesPerWheelRev), m_encoderRevPerWheelRev(encoderRevPerWheelRev) {
 
 	m_talon->GetSelectedSensorPosition(QuadEncoder);
 	m_talon->SetStatusFramePeriod(Status_2_Feedback0, 10, 0);
@@ -21,45 +21,59 @@ GreyhillEncoder::~GreyhillEncoder() {
 }
 
 Translation2D GreyhillEncoder::GetRawDistance() const {
-	return Translation2D(ConvertRotationsToInches(GetPosition()), 0);
+	// convert ticks to encoder rotations
+	double encoderRotations = ConvertEncoderTicksToEncoderRotations(GetEncoderTicks());
+
+	// convert encoder rotations to wheel rotations
+	double wheelRotations = ConvertEncoderRotationsToWheelRotations(encoderRotations);
+
+	// convert wheel rotations to distance
+	std::stringstream tt;
+	tt << "get inches" << m_name;
+	SmartDashboard::PutNumber(tt.str(), ConvertWheelRotationsToDistance(wheelRotations));
+	return Translation2D(ConvertWheelRotationsToDistance(wheelRotations), 0);
 }
 
 Translation2D GreyhillEncoder::GetDistance() const {
 	return GetRawDistance().translateBy(m_offset.inverse());
 }
 
-int GreyhillEncoder::GetPosition() const {
+int GreyhillEncoder::GetEncoderTicks() const {
 	return m_talon->GetSelectedSensorPosition(0);
 }
 
-void GreyhillEncoder::SetEncoderRaw(int ticks, int timeOut) {
+void GreyhillEncoder::SetEncoderTicks(int ticks, int timeOut) {
 	m_talon->SetSelectedSensorPosition(ticks, 0, timeOut);
 }
 
-double GreyhillEncoder::GetSpeed() const {
+double GreyhillEncoder::GetEncoderSpeed() const {
 	return m_talon->GetSelectedSensorVelocity(0);
 }
 
-int GreyhillEncoder::GetRotations() const {
-	return ConvertTicksToRotations(GetPosition());
+double GreyhillEncoder::ConvertEncoderRotationsToWheelRotations(double rotations) const {
+	return rotations / m_encoderRevPerWheelRev;
 }
 
-double GreyhillEncoder::ConvertRotationsToInches(double rotations) const {
-	return rotations * m_inchesPerRev;
+double GreyhillEncoder::ConvertWheelRotationsToEncoderRotations(double rotations) const {
+	return rotations * m_encoderRevPerWheelRev;
 }
 
-double GreyhillEncoder::ConvertInchesToRotations(double inches) const {
-	return inches / m_inchesPerRev;
+double GreyhillEncoder::ConvertWheelRotationsToDistance(double rotations) const {
+	return rotations * m_inchesPerWheelRev;
 }
 
-int GreyhillEncoder::ConvertRotationsToTicks(double rotations) const {
-	return rotations * m_ticksPerRev * 4; 								// four is to convert ticks to talon native units
+double GreyhillEncoder::ConvertDistanceToWheelRotations(double distance) const {
+	return distance / m_inchesPerWheelRev;
 }
 
-double GreyhillEncoder::ConvertTicksToRotations(int ticks) const {
-	return ticks / (m_ticksPerRev * 4); 								// four is to convert ticks to talon native units
+int GreyhillEncoder::ConvertEncoderRotationsToEncoderTicks(double rotations) const {
+	return rotations * m_ticksPerRev;	// 8 is to convert ticks to talon native units
 }
 
-void GreyhillEncoder::Reset() {
+double GreyhillEncoder::ConvertEncoderTicksToEncoderRotations(int ticks) const {
+	return ticks / ((double) m_ticksPerRev);	// 8 is to convert ticks to talon native units
+}
+
+void GreyhillEncoder::ResetDistance() {
 	m_offset = GetRawDistance();
 }

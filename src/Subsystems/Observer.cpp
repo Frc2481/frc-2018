@@ -6,9 +6,10 @@
  */
 
 #include <Subsystems/Observer.h>
-#include "SwerveModuleV2Constants.h"
+#include "Components/SwerveModuleV2Constants.h"
 #include <cmath>
 #include <algorithm>
+#include "WPILib.h"
 
 Observer::Observer() {
 
@@ -18,60 +19,53 @@ Observer::~Observer() {
 	// TODO Auto-generated destructor stub
 }
 
-RigidTransform2D Observer::ForwardKinematicsDriveTrain(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
-										  Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity,
-										  Rotation2D brAngle, Translation2D brVelocity) {
-	double length = SwerveModuleV2Constants::k_robotLength;
-	double width = SwerveModuleV2Constants::k_robotWidth;
-	double originY, originX;
-	originY = 0;
-	originX = 0;
+void Observer::AddDriveTrainObservation(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
+		Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity,
+		Rotation2D brAngle, Translation2D brVelocity, double timestamp) {
+	RigidTransform2D deltaRobotPos = Kinematics::SwerveForwardKinematics(flAngle, flVelocity, frAngle, frVelocity, blAngle, blVelocity, brAngle, brVelocity);
 
-	double FR_B = frAngle.getSin() * frVelocity;
-	double FR_D = frAngle.getCos() * frVelocity;
+	RigidTransform2D oldRobotPos = GetRobotPos(timestamp - 20000);//m_robotPos.cbegin()->second;
+	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(deltaRobotPos.getRotation());
 
-	double FL_B = flAngle.getSin() * flVelocity;
-	double FL_C = flAngle.getCos() * flVelocity;
+	SmartDashboard::PutNumber("delta robot angle", deltaRobotPos.getRotation().getDegrees());
+	SmartDashboard::PutNumber("delta robot x", deltaRobotPos.getTranslation().getX());
+	SmartDashboard::PutNumber("delta robot y", deltaRobotPos.getTranslation().getY());
 
-	double BR_A = brAngle.getSin() * brVelocity;
-	double BR_D = brAngle.getCos() * brVelocity;
+	SmartDashboard::PutNumber("fabs fl delta robot x", fabs(deltaRobotPos.getTranslation().getX()) - fabs(flVelocity.getX()));
+	SmartDashboard::PutNumber("fabs fr delta robot x", fabs(deltaRobotPos.getTranslation().getX()) - fabs(frVelocity.getX()));
+	SmartDashboard::PutNumber("fabs bl delta robot x", fabs(deltaRobotPos.getTranslation().getX()) - fabs(blVelocity.getX()));
+	SmartDashboard::PutNumber("fabs br delta robot x", fabs(deltaRobotPos.getTranslation().getX()) - fabs(brVelocity.getX()));
 
-	double BL_A = blAngle.getSin() * blVelocity;
-	double BL_C = blAngle.getCos() * blVelocity;
+	SmartDashboard::PutNumber("avg delta robot x", (fabs(deltaRobotPos.getTranslation().getX()) - fabs(flVelocity.getX()) +
+													fabs(deltaRobotPos.getTranslation().getX()) - fabs(frVelocity.getX()) +
+													fabs(deltaRobotPos.getTranslation().getX()) - fabs(blVelocity.getX()) +
+													fabs(deltaRobotPos.getTranslation().getX()) - fabs(brVelocity.getX())) / 4.0);
 
-	double A = (BR_A + BL_A) / 2;
-	double B = (FR_B + FL_B) / 2;
-	double C = (FL_C + BL_C) / 2;
-	double D = (FR_D + BR_D) / 2;
+	SmartDashboard::PutNumber("fabs fl delta robot y", fabs(deltaRobotPos.getTranslation().getY()) - fabs(flVelocity.getX()));
+	SmartDashboard::PutNumber("fabs fr delta robot y", fabs(deltaRobotPos.getTranslation().getY()) - fabs(frVelocity.getX()));
+	SmartDashboard::PutNumber("fabs bl delta robot y", fabs(deltaRobotPos.getTranslation().getY()) - fabs(blVelocity.getX()));
+	SmartDashboard::PutNumber("fabs br delta robot y", fabs(deltaRobotPos.getTranslation().getY()) - fabs(brVelocity.getX()));
 
-	double omega1, omega2, omega;
-	omega1 = (B - A) / length;
-	omega2 = (C - D) / width;
-	omega = (omega1 + omega2) / 2;
+	SmartDashboard::PutNumber("avg delta robot y", (fabs(deltaRobotPos.getTranslation().getY()) - fabs(flVelocity.getX()) +
+													fabs(deltaRobotPos.getTranslation().getY()) - fabs(frVelocity.getX()) +
+													fabs(deltaRobotPos.getTranslation().getY()) - fabs(blVelocity.getX()) +
+													fabs(deltaRobotPos.getTranslation().getY()) - fabs(brVelocity.getX())) / 4.0);
 
-	double Vyc, Vxc, Vyc1, Vyc2, Vxc1, Vxc2;
-	double rx = width / 2.0;
-	double ry = length / 2.0;
-	Vyc1 = omega * (ry + originY) + A;
-	Vyc2 = -omega * (ry - originY) + B;
-	Vxc1 = omega * (rx + originX) + C;
-	Vxc2 = -omega * (rx - originX) + D;
+	Translation2D newRobotTranslation = oldRobotPos.getTranslation().translateBy(deltaRobotPos.getTranslation().rotateBy(newRobotAngle));
 
-	Vyc = (Vyc1 + Vyc2) / 2;
-	Vxc = (Vxc1 + Vxc2) / 2;
+	RigidTransform2D robotPos(newRobotTranslation, newRobotAngle);
 
-	return RigidTransform2D(Vxc, Vyc, omega);
+	SetRobotPos(robotPos, timestamp);
 }
 
-void Observer::AddGyroObservation(Rotation2D gyroAngleVel, double timeStamp) {
-	m_gyroAngleVel.put(InterpolatingDouble(timeStamp), gyroAngleVel);
+void Observer::AddGyroObservation(Rotation2D gyroAngleVelZ, double timeStamp) {
+	//SetRobotPos(robotPos, timestamp);
 }
 
-void Observer::AddDriveTrainObservation(RigidTransform2D robotCenterVel,
-		double timeStamp) {
-	m_driveTrainVel.put(InterpolatingDouble(timeStamp), centerVel);
+RigidTransform2D Observer::GetRobotPos(double timestamp) {
+	return m_robotPos.getInterpolated(timestamp);
 }
 
-void Observer::TimeUpdateRobotState(timestamp) {
-	center
+void Observer::SetRobotPos(RigidTransform2D robotPos, double timestamp) {
+	m_robotPos.put(InterpolatingDouble(timestamp), robotPos);
 }

@@ -9,24 +9,24 @@
 #define SRC_SUBSYSTEMS_OBSERVER_H_
 
 #include "ctre/Phoenix.h"
-#include "utils/Rotation2D.h"
-#include "Translation2D.h"
-#include "RobotChains.h"
-#include "InterpolatingDouble.h"
-#include "InterpolatingMap.h"
-#include "RigidTransform2D.h"
+#include "utils/RobotChains.h"
+#include "utils/InterpolatingDouble.h"
+#include "utils/InterpolatingMap.h"
+#include "utils/RigidTransform2D.h"
+#include "Kinematics.h"
 
 class Observer {
 public:
 	Observer();
 	virtual ~Observer();
-	void AddDriveTrainObservation(RigidTransform2D robotCenterVel, double timeStamp);
+	void AddDriveTrainObservation(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
+			Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity,
+			Rotation2D brAngle, Translation2D brVelocity, double timeStamp);
 	void AddGyroObservation(Rotation2D gyroAngle, double timeStamp);
-	void TimeUpdateRobotState(double timestamp);
+	RigidTransform2D GetRobotPos(double timestamp);
+	void SetRobotPos(RigidTransform2D robotPos, double timestamp);
 
 private:
-	InterpolatingMap<InterpolatingDouble, Rotation2D> m_gyroAngleVelZ;
-	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_driveTrainVel;
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_robotPos;
 
 

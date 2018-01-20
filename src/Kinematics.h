@@ -10,6 +10,7 @@
 
 #include "utils/Translation2D.h"
 #include "utils/RigidTransform2D.h"
+#include "WPILib.h"
 
 class Kinematics {
 public:
@@ -20,9 +21,9 @@ public:
 			double rotation, double &wheelSpeedFR, double &wheelSpeedFL, double &wheelSpeedBR, double &wheelSpeedBL,
 			Rotation2D &wheelAngleFL, Rotation2D &wheelAngleFR, Rotation2D &wheelAngleBL, Rotation2D &wheelAngleBR);
 
-	RigidTransform2D ForwardKinematicsDriveTrain(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
-											  Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity,
-											  Rotation2D brAngle, Translation2D brVelocity);
+	static RigidTransform2D SwerveForwardKinematics(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
+			Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity, Rotation2D brAngle, Translation2D brVelocity);
+	RigidTransform2D IntegrateForwardKinematics(RigidTransform2D currentPose, RigidTransform2D::Delta forwardKinematics);
 };
 
 #endif /* KINEMATICS_H_ */

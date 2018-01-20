@@ -10,6 +10,7 @@
 
 #include "ctre/Phoenix.h"
 #include "utils/Translation2D.h"
+#include "Subsystems/DriveTrain2017.h"
 
 class GreyhillEncoder {
 	private:
@@ -18,22 +19,24 @@ class GreyhillEncoder {
 	std::string m_calibrationKey;
 	Translation2D m_offset;
 	int m_ticksPerRev;
-	int m_inchesPerRev;
+	double m_inchesPerWheelRev;
+	double m_encoderRevPerWheelRev;
 
 public:
-	GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerRev, int inchesPerRev);
+	GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerEncoderRev, double inchesPerWheelRev, double encoderRevPerWheelRev);
 	virtual ~GreyhillEncoder();
 	Translation2D GetRawDistance() const;
 	Translation2D GetDistance() const;
-	double GetSpeed() const;
-	int GetRotations() const;
-	int GetPosition() const;
-	double ConvertRotationsToInches(double rotations) const;
-	double ConvertInchesToRotations(double inches) const;
-	int ConvertRotationsToTicks(double rotations) const;
-	double ConvertTicksToRotations(int ticks) const;
-	void SetEncoderRaw(int ticks, int timeOut = 0);
-	void Reset();
+	double GetEncoderSpeed() const;
+	int GetEncoderTicks() const;
+	double ConvertEncoderRotationsToWheelRotations(double rotations) const;
+	double ConvertWheelRotationsToEncoderRotations(double rotations) const;
+	double ConvertWheelRotationsToDistance(double rotations) const;
+	double ConvertDistanceToWheelRotations(double distance) const;
+	int ConvertEncoderRotationsToEncoderTicks(double rotations) const;
+	double ConvertEncoderTicksToEncoderRotations(int ticks) const;
+	void SetEncoderTicks(int ticks, int timeOut = 0);
+	void ResetDistance();
 };
 
 #endif /* SRC_GREYHILLENCODER_H_ */

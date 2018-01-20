@@ -12,7 +12,7 @@
 #include "Solenoid.h"
 #include "utils/Rotation2D.h"
 #include "utils/Translation2D.h"
-#include "Observer.h"
+#include "Subsystems/Observer.h"
 #include "Kinematics.h"
 #include "SwerveModuleV2.h"
 
@@ -44,6 +44,15 @@ private:
 	float m_roll;
 	float m_pitch;
 
+	Rotation2D m_oldFlAngle;
+	Rotation2D m_oldFrAngle;
+	Rotation2D m_oldBlAngle;
+	Rotation2D m_oldBrAngle;
+
+	Translation2D m_oldFlDistance;
+	Translation2D m_oldFrDistance;
+	Translation2D m_oldBlDistance;
+	Translation2D m_oldBrDistance;
 
 	Translation2D m_motionSetpoint;
 
@@ -92,9 +101,33 @@ public:
 	bool IsSteerOnTarget() const;
 	bool IsDriveOnTarget() const;
 
+	Rotation2D GetOldFlAngle();
+	Rotation2D GetOldFrAngle();
+	Rotation2D GetOldBlAngle();
+	Rotation2D GetOldBrAngle();
+
+	void SetOldFlAngle(Rotation2D angle);
+	void SetOldFrAngle(Rotation2D angle);
+	void SetOldBlAngle(Rotation2D angle);
+	void SetOldBrAngle(Rotation2D angle);
+
+	Translation2D GetOldFlDistance();
+	Translation2D GetOldFrDistance();
+	Translation2D GetOldBlDistance();
+	Translation2D GetOldBrDistance();
+
+	void SetOldFlDistance(Translation2D distance);
+	void SetOldFrDistance(Translation2D distance);
+	void SetOldBlDistance(Translation2D distance);
+	void SetOldBrDistance(Translation2D distance);
+
 	virtual void Periodic();
 
+
 	void CheckDiagnostics();
+
+
+	double m_timestamp;
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN2017_H_ */

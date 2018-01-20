@@ -8,6 +8,7 @@
 #include <SmartDashboard/SmartDashboard.h>
 #include "CommandBase.h"
 #include "Commands/Diag/DriveTrainTestCommandGroup.h"
+#include "Subsystems/DriveTrain2017.h"
 
 class Robot: public frc::IterativeRobot {
 public:

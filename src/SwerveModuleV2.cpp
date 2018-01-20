@@ -24,8 +24,9 @@ SwerveModuleV2::SwerveModuleV2(uint32_t driveID, uint32_t steerID,
 	ss << name << "_DRIVE_ENCODER";
 	m_driveMotor = new TalonSRX(driveID);
 	m_driveEncoder = new GreyhillEncoder(m_driveMotor, ss.str(),
-			SwerveModuleV2Constants::k_ticksPerRev,
-			SwerveModuleV2Constants::k_inchesPerRev);
+			SwerveModuleV2Constants::k_ticksPerEncoderRev,
+			SwerveModuleV2Constants::k_encoderRevPerWheelRev,
+			SwerveModuleV2Constants::k_inchesPerWheelRev);
 
 	m_isCloseLoopControl = false;
 	m_angleOptimized = false;
@@ -85,15 +86,15 @@ void SwerveModuleV2::SetAngle(Rotation2D angle, bool force) {
 	if(m_isMoving || force) {
 		Rotation2D currentAngle = m_steerEncoder->GetAngle();
 		Rotation2D deltaAngle = currentAngle.rotateBy(angle.inverse());
-		if(m_optimizationEnabled &&
-		   fabs(deltaAngle.getRadians()) > M_PI_2 &&
-		   fabs(deltaAngle.getRadians()) < 3 * M_PI_2) {
-			angle = angle.rotateBy(Rotation2D::fromRadians(M_PI));
-			m_angleOptimized = true;
-		}
-		else {
-			m_angleOptimized = false;
-		}
+//		if(m_optimizationEnabled &&
+//		   fabs(deltaAngle.getRadians()) > M_PI_2 &&
+//		   fabs(deltaAngle.getRadians()) < 3 * M_PI_2) {
+//			angle = angle.rotateBy(Rotation2D::fromRadians(M_PI));
+//			m_angleOptimized = true;
+//		}
+//		else {
+//			m_angleOptimized = false;
+//		}
 		int setpoint = m_steerEncoder->ConvertAngleToSetpoint(angle);
 		m_steerMotor->Set(ControlMode::Position, setpoint);
 	}
@@ -113,7 +114,7 @@ void SwerveModuleV2::SetOpenLoopSpeed(double speed) {
 }
 
 double SwerveModuleV2::GetSpeed()const {
-	return m_driveEncoder->GetSpeed();
+	return m_driveEncoder->GetEncoderSpeed();
 }
 
 void SwerveModuleV2::SetCloseLoopDriveDistance(Translation2D distance) {
@@ -135,7 +136,7 @@ Translation2D SwerveModuleV2::GetDistance() const {
 }
 
 void SwerveModuleV2::ZeroDriveDistance() {
-	m_driveEncoder->Reset();
+	m_driveEncoder->ResetDistance();
 }
 
 double SwerveModuleV2::GetDistanceError() const {
@@ -162,6 +163,10 @@ void SwerveModuleV2::SetBrake(bool brake) {
 
 void SwerveModuleV2::SetMagicAccel(double accel) {
 	m_driveMotor->ConfigMotionAcceleration(accel, 0);
+}
+
+bool SwerveModuleV2::GetOptimized() {
+	return m_angleOptimized;
 }
 
 CTREMagEncoder* SwerveModuleV2::GetSteerEncoder() {

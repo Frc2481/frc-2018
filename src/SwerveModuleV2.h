@@ -35,6 +35,7 @@ public:
 
 	Rotation2D GetAngle() const;
 	void SetOptimized(bool isOptimized);
+	bool GetOptimized();
 	void SetAngle(Rotation2D angle, bool force = false);
 	bool IsSteerOnTarget() const;
 
