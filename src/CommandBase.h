@@ -1,11 +1,11 @@
 #ifndef COMMAND_BASE_H
 #define COMMAND_BASE_H
 
+#include <Subsystems/DriveTrain.h>
 #include <string>
 #include "Commands/Command.h"
 #include "OI.h"
 #include "WPILib.h"
-#include "Subsystems/DriveTrain2017.h"
 #include "Subsystems/Intake.h"
 
 /**

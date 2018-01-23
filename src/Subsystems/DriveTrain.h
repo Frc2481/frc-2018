@@ -5,8 +5,8 @@
  *      Author: Team2481
  */
 
-#ifndef SRC_SUBSYSTEMS_DRIVETRAIN2017_H_
-#define SRC_SUBSYSTEMS_DRIVETRAIN2017_H_
+#ifndef SRC_SUBSYSTEMS_DRIVETRAIN_H_
+#define SRC_SUBSYSTEMS_DRIVETRAIN_H_
 
 #include "Commands/Subsystem.h"
 #include "Solenoid.h"
@@ -14,7 +14,7 @@
 #include "utils/Translation2D.h"
 #include "Subsystems/Observer.h"
 #include "Kinematics.h"
-#include "SwerveModuleV2.h"
+#include "SwerveModule.h"
 
 
 class AHRS;
@@ -90,6 +90,8 @@ public:
 	Rotation2D GetHeading() const;
 	void DriveCloseLoopDistance(Translation2D setpoint);
 
+	void ResetRobotPose();
+
 	Translation2D GetMotionMagicSetpoint() const;
 
 	double ComputeDriveDistanceInchestoEncoderRotations(double inches);
@@ -101,26 +103,6 @@ public:
 	bool IsSteerOnTarget() const;
 	bool IsDriveOnTarget() const;
 
-	Rotation2D GetOldFlAngle();
-	Rotation2D GetOldFrAngle();
-	Rotation2D GetOldBlAngle();
-	Rotation2D GetOldBrAngle();
-
-	void SetOldFlAngle(Rotation2D angle);
-	void SetOldFrAngle(Rotation2D angle);
-	void SetOldBlAngle(Rotation2D angle);
-	void SetOldBrAngle(Rotation2D angle);
-
-	Translation2D GetOldFlDistance();
-	Translation2D GetOldFrDistance();
-	Translation2D GetOldBlDistance();
-	Translation2D GetOldBrDistance();
-
-	void SetOldFlDistance(Translation2D distance);
-	void SetOldFrDistance(Translation2D distance);
-	void SetOldBlDistance(Translation2D distance);
-	void SetOldBrDistance(Translation2D distance);
-
 	virtual void Periodic();
 
 
@@ -130,4 +112,4 @@ public:
 	double m_timestamp;
 };
 
-#endif /* SRC_SUBSYSTEMS_DRIVETRAIN2017_H_ */
+#endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

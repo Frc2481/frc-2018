@@ -1,8 +1,8 @@
 #include <utils/RigidTransform2D.h>
 #include <cmath>
 
-RigidTransform2D::Delta::Delta(double dx, double dy, double dtheta) 
-	: m_dx(dx), m_dy(dy), m_dtheta(dtheta) 
+RigidTransform2D::Delta::Delta()
+	: m_dx(0), m_dy(0), m_dtheta(0), m_dt(0)
 {
 
 }
@@ -40,18 +40,18 @@ RigidTransform2D RigidTransform2D::fromRotation(const Rotation2D &rotation)
 }
 
 RigidTransform2D RigidTransform2D::fromVelocity(Delta delta) {
-	double sinTheta = sin(delta.m_dtheta);
-	double cosTheta = cos(delta.m_dtheta);
+	double sinTheta = sin(delta.GetTheta());
+	double cosTheta = cos(delta.GetTheta());
 	double s, c;
-	if (fabs(delta.m_dtheta) < 1e-9) {
-		s = 1.0 - 1.0 / 6.0 * delta.m_dtheta * delta.m_dtheta;
-		c = .5 * delta.m_dtheta;
+	if (fabs(delta.GetTheta()) < 1e-9) {
+		s = 1.0 - 1.0 / 6.0 * delta.GetTheta() * delta.GetTheta();
+		c = .5 * delta.GetTheta();
 	}
 	else {
-		s = sinTheta / delta.m_dtheta;
-		c = (1.0 - cosTheta) / delta.m_dtheta;
+		s = sinTheta / delta.GetTheta();
+		c = (1.0 - cosTheta) / delta.GetTheta();
 	}
-	return RigidTransform2D(Translation2D(delta.m_dx * s - delta.m_dy * c, delta.m_dx * c + delta.m_dy * s),
+	return RigidTransform2D(Translation2D(delta.GetX() * s - delta.GetY() * c, delta.GetX() * c + delta.GetY() * s),
 		 Rotation2D(cosTheta, sinTheta, false));
 }
 
@@ -92,4 +92,45 @@ RigidTransform2D RigidTransform2D::interpolate(const RigidTransform2D &other, do
 		return RigidTransform2D(other);
 	}
 	return RigidTransform2D(m_translation.interpolate(other.getTranslation(), x), m_rotation.interpolate(other.getRotation(), x));
+}
+
+double RigidTransform2D::Delta::GetX() {
+	return m_dx * m_dt;
+}
+
+double RigidTransform2D::Delta::GetY() {
+	return m_dy * m_dt;
+}
+
+double RigidTransform2D::Delta::GetTheta() {
+	return m_dtheta * m_dt;
+}
+
+double RigidTransform2D::Delta::GetDx() {
+	return m_dx;
+}
+
+double RigidTransform2D::Delta::GetDy() {
+	return m_dy;
+}
+
+double RigidTransform2D::Delta::GetDTheta() {
+	return m_dtheta;
+}
+
+RigidTransform2D::Delta RigidTransform2D::Delta::fromDelta(double x, double y, double theta,
+		double dt) {
+	return Delta(x / dt, y / dt, theta / dt, dt);
+}
+
+RigidTransform2D::Delta RigidTransform2D::Delta::fromVelocity(double dx, double dy, double dtheta,
+		double dt) {
+	return Delta(dx, dy, dtheta, dt);
+}
+
+RigidTransform2D::Delta::Delta(double dx, double dy, double dtheta, double dt) :
+		m_dx(dx), m_dy(dy), m_dtheta(dtheta), m_dt(dt) {}
+
+double RigidTransform2D::Delta::GetDt() {
+	return m_dt;
 }

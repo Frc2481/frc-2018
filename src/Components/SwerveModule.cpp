@@ -5,12 +5,12 @@
  *      Author: Team2481
  */
 
-#include <SwerveModuleV2.h>
-#include <Components\SwerveModuleV2Constants.h>
+#include <RobotParameters.h>
 #include <math.h>
 #include <sstream>
-#include <CTREMagEncoder.h>
-#include <GreyhillEncoder.h>
+#include <Components/CTREMagEncoder.h>
+#include <Components/GreyhillEncoder.h>
+#include <Components/SwerveModule.h>
 //#include <RoboUtils.h>
 
 SwerveModuleV2::SwerveModuleV2(uint32_t driveID, uint32_t steerID,
@@ -24,9 +24,9 @@ SwerveModuleV2::SwerveModuleV2(uint32_t driveID, uint32_t steerID,
 	ss << name << "_DRIVE_ENCODER";
 	m_driveMotor = new TalonSRX(driveID);
 	m_driveEncoder = new GreyhillEncoder(m_driveMotor, ss.str(),
-			SwerveModuleV2Constants::k_ticksPerEncoderRev,
-			SwerveModuleV2Constants::k_encoderRevPerWheelRev,
-			SwerveModuleV2Constants::k_inchesPerWheelRev);
+			RobotParameters::k_ticksPerEncoderRev,
+			RobotParameters::k_encoderRevPerWheelRev,
+			RobotParameters::k_inchesPerWheelRev);
 
 	m_isCloseLoopControl = false;
 	m_angleOptimized = false;
@@ -36,9 +36,9 @@ SwerveModuleV2::SwerveModuleV2(uint32_t driveID, uint32_t steerID,
 
 	m_driveMotor->SelectProfileSlot(0, 0);
 	m_driveMotor->Set(ControlMode::PercentOutput, 0);
-	m_driveMotor->Config_kP(0, SwerveModuleV2Constants::k_speedP, 0);
-	m_driveMotor->Config_kI(0, SwerveModuleV2Constants::k_speedI, 0);
-	m_driveMotor->Config_kD(0, SwerveModuleV2Constants::k_speedD, 0);
+	m_driveMotor->Config_kP(0, RobotParameters::k_speedP, 0);
+	m_driveMotor->Config_kI(0, RobotParameters::k_speedI, 0);
+	m_driveMotor->Config_kD(0, RobotParameters::k_speedD, 0);
 	m_driveMotor->Config_kF(0, 0.1722, 0);
 	m_driveMotor->Config_IntegralZone(0, 200, 0);
 	m_driveMotor->SetSensorPhase(true);
@@ -59,9 +59,9 @@ SwerveModuleV2::SwerveModuleV2(uint32_t driveID, uint32_t steerID,
 	m_steerMotor->ConfigPeakOutputForward(1.0, 0.0);
 	m_steerMotor->ConfigPeakOutputReverse(-1.0, 0.0);
 	m_steerMotor->SetNeutralMode(Brake);
-	m_steerMotor->Config_kP(0, SwerveModuleV2Constants::k_steerP, 0);
-	m_steerMotor->Config_kI(0, SwerveModuleV2Constants::k_steerI, 0);
-	m_steerMotor->Config_kD(0, SwerveModuleV2Constants::k_steerD, 0);
+	m_steerMotor->Config_kP(0, RobotParameters::k_steerP, 0);
+	m_steerMotor->Config_kI(0, RobotParameters::k_steerI, 0);
+	m_steerMotor->Config_kD(0, RobotParameters::k_steerD, 0);
 	m_steerMotor->SetSensorPhase(true);
 	m_steerMotor->SetInverted(false);
 //	m_steerMotor->SetSelectedSensorPosition(m_steerMotor->GetSelectedSensorPosition(0) & 0xFFF, 0, 0);

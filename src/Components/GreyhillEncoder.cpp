@@ -5,7 +5,7 @@
  *      Author: Team2481
  */
 
-#include <GreyhillEncoder.h>
+#include <Components/GreyhillEncoder.h>
 #include <sstream>
 #include <WPILib.h>
 
@@ -67,11 +67,11 @@ double GreyhillEncoder::ConvertDistanceToWheelRotations(double distance) const {
 }
 
 int GreyhillEncoder::ConvertEncoderRotationsToEncoderTicks(double rotations) const {
-	return rotations * m_ticksPerRev;	// 8 is to convert ticks to talon native units
+	return rotations * m_ticksPerRev;
 }
 
 double GreyhillEncoder::ConvertEncoderTicksToEncoderRotations(int ticks) const {
-	return ticks / ((double) m_ticksPerRev);	// 8 is to convert ticks to talon native units
+	return ticks / ((double) m_ticksPerRev);
 }
 
 void GreyhillEncoder::ResetDistance() {

@@ -5,8 +5,8 @@
  *      Author: Team2481
  */
 
-#ifndef SRC_SWERVEMODULEV2_H_
-#define SRC_SWERVEMODULEV2_H_
+#ifndef SRC_SWERVEMODULE_H_
+#define SRC_SWERVEMODULE_H_
 
 #include <WPILib.h>
 #include "ctre/Phoenix.h"
@@ -60,4 +60,4 @@ public:
 	double GetDriveCurrent() const;
 };
 
-#endif /* SRC_SWERVEMODULEV2_H_ */
+#endif /* SRC_SWERVEMODULE_H_ */

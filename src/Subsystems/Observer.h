@@ -19,9 +19,12 @@ class Observer {
 public:
 	Observer();
 	virtual ~Observer();
-	void AddDriveTrainObservation(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
-			Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity,
-			Rotation2D brAngle, Translation2D brVelocity, double timeStamp);
+
+	void ResetPose();
+
+	void AddDriveTrainObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
+			RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity,
+			Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timeStamp);
 	void AddGyroObservation(Rotation2D gyroAngle, double timeStamp);
 	RigidTransform2D GetRobotPos(double timestamp);
 	void SetRobotPos(RigidTransform2D robotPos, double timestamp);

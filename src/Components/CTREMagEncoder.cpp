@@ -6,7 +6,7 @@
  */
 
 #include <sstream>
-#include <CTREMagEncoder.h>
+#include <Components/CTREMagEncoder.h>
 #include <WPILib.h>
 
 CTREMagEncoder::CTREMagEncoder(TalonSRX* talon, const std::string& name)

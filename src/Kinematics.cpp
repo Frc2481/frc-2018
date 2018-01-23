@@ -6,7 +6,7 @@
  */
 
 #include "Kinematics.h"
-#include <Components/SwerveModuleV2Constants.h>
+#include <RobotParameters.h>
 #include <algorithm>
 #include <cmath>
 
@@ -24,18 +24,18 @@ void Kinematics::SwerveInverseKinematics(Translation2D &translation,
 		double rotation, double &wheelSpeedFR, double &wheelSpeedFL, double &wheelSpeedBR, double &wheelSpeedBL,
 		Rotation2D &wheelAngleFL, Rotation2D &wheelAngleFR, Rotation2D &wheelAngleBL, Rotation2D &wheelAngleBR) {
 
-	double A = translation.getX() - rotation * (SwerveModuleV2Constants::k_robotLength / 2.0);
-	double B = translation.getX() + rotation * (SwerveModuleV2Constants::k_robotLength / 2.0);
-	double C = translation.getY() - rotation * (SwerveModuleV2Constants::k_robotWidth / 2.0);
-	double D = translation.getY() + rotation * (SwerveModuleV2Constants::k_robotWidth / 2.0);
+	double A = translation.getX() - rotation * (RobotParameters::k_robotLength / 2.0);
+	double B = translation.getX() + rotation * (RobotParameters::k_robotLength / 2.0);
+	double C = translation.getY() - rotation * (RobotParameters::k_robotWidth / 2.0);
+	double D = translation.getY() + rotation * (RobotParameters::k_robotWidth / 2.0);
 	wheelSpeedFL = sqrt(pow(B, 2) + pow(D, 2));
 	wheelSpeedFR = sqrt(pow(B, 2) + pow(C, 2));
-	wheelSpeedBR = sqrt(pow(A, 2) + pow(D, 2));
-	wheelSpeedBL = sqrt(pow(A, 2) + pow(C, 2));
-	wheelAngleFL = Rotation2D(B,D,true);
-	wheelAngleFR = Rotation2D(B,C,true);
-	wheelAngleBL = Rotation2D(A,D,true);
-	wheelAngleBR = Rotation2D(A,C,true);
+	wheelSpeedBR = sqrt(pow(A, 2) + pow(C, 2));
+	wheelSpeedBL = sqrt(pow(A, 2) + pow(D, 2));
+	wheelAngleFL = Rotation2D(D, B, true);
+	wheelAngleFR = Rotation2D(C, B, true);
+	wheelAngleBL = Rotation2D(D, A, true);
+	wheelAngleBR = Rotation2D(C, A, true);
 
 	double maxWheelSpeed = std::max(wheelSpeedFL,std::max(wheelSpeedFR,std::max(wheelSpeedBL,wheelSpeedBR)));
 	if (maxWheelSpeed > 1) {
@@ -46,58 +46,44 @@ void Kinematics::SwerveInverseKinematics(Translation2D &translation,
 	}
 }
 
-RigidTransform2D Kinematics::SwerveForwardKinematics(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
-		Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity, Rotation2D brAngle, Translation2D brVelocity) {
-	double length = SwerveModuleV2Constants::k_robotLength;
-	double width = SwerveModuleV2Constants::k_robotWidth;
-	double originY, originX;
-//	originY = 0.0;
-//	originX = 0.0;
+RigidTransform2D::Delta Kinematics::SwerveForwardKinematics(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
+		RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity, Rotation2D brAngle, RigidTransform2D::Delta brVelocity) {
+	double length = RobotParameters::k_robotLength;
+	double width = RobotParameters::k_robotWidth;
 
-	double rx1 = width / 2.0;
-	double ry1 = length / 2.0;
+	double rx = width / 2.0;
+	double ry = length / 2.0;
 
-	double rx3 = -width / 2.0;
-	double ry3 = -length / 2.0;
+	double Vxw1 = frVelocity.GetX() * frAngle.getCos();
+	double Vyw1 = frVelocity.GetX() * frAngle.getSin();
 
-	double Vxw1 = frVelocity.getX() * frAngle.getCos();
-	double Vyw1 = frVelocity.getX() * frAngle.getSin();
+	double Vxw2 = brVelocity.GetX() * brAngle.getCos();
+	double Vyw2 = brVelocity.GetX() * brAngle.getSin();
 
-	double Vxw2 = brVelocity.getX() * brAngle.getCos();
-	double Vyw2 = brVelocity.getX() * brAngle.getSin();
+	double Vxw3 = blVelocity.GetX() * blAngle.getCos();
+	double Vyw3 = blVelocity.GetX() * blAngle.getSin();
 
-	double Vxw3 = blVelocity.getX() * blAngle.getCos();
-	double Vyw3 = blVelocity.getX() * blAngle.getSin();
-
-	double Vxw4 = flVelocity.getX() * flAngle.getCos();
-	double Vyw4 = flVelocity.getX() * flAngle.getSin();
+	double Vxw4 = flVelocity.GetX() * flAngle.getCos();
+	double Vyw4 = flVelocity.GetX() * flAngle.getSin();
 
 	double A = (Vyw2 + Vyw3) / 2.0; // average back y vel
 	double B = (Vyw1 + Vyw4) / 2.0; // average front y vel
-	double C = (Vxw4 + Vxw3) / 2.0; // average left x vel
-	double D = (Vxw1 + Vxw2) / 2.0; // average right x vel
+	double C = (Vxw1 + Vxw2) / 2.0; // average right x vel
+	double D = (Vxw4 + Vxw3) / 2.0; // average left x vel
 
-	double omega1 = (B - A) / length; // this is length
-	double omega2 = (C - D) / width; // this is also length
+	double omega1 = (B - A) / length;
+	double omega2 = (D - C) / width;
 	double omega = (omega1 + omega2) / 2.0;
 
-	SmartDashboard::PutNumber("omega 1", omega1);
-	SmartDashboard::PutNumber("omega 2", omega2);
-
-	double Vxc1 = Vxw1 + omega * ry1;
-	double Vxc2 = Vxw3 + omega * ry3;
-
-	double Vyc1 = Vyw1 - omega * rx1;
-	double Vyc2 = Vyw3 - omega * rx3;
+	double Vxc1 = omega * ry + A;
+	double Vxc2 = -omega * ry + B;
+	double Vyc1 = omega * rx + C;
+	double Vyc2 = -omega * rx + D;
 
 	double Vxc = (Vxc1 + Vxc2) / 2.0;
 	double Vyc = (Vyc1 + Vyc2) / 2.0;
 
-	Translation2D translate(Vxc, Vyc);
-	Rotation2D rotate = Rotation2D::fromRadians(omega);
-	RigidTransform2D transform(translate, rotate);
-
-	return transform;
+	return RigidTransform2D::Delta::fromDelta(Vxc, Vyc, omega, flVelocity.GetDt());
 }
 
 RigidTransform2D Kinematics::IntegrateForwardKinematics(RigidTransform2D currentPose, RigidTransform2D::Delta forwardKinematics) {

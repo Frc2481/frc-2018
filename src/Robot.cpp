@@ -6,9 +6,9 @@
 #include <LiveWindow/LiveWindow.h>
 #include <SmartDashboard/SendableChooser.h>
 #include <SmartDashboard/SmartDashboard.h>
+#include <Subsystems/DriveTrain.h>
 #include "CommandBase.h"
 #include "Commands/Diag/DriveTrainTestCommandGroup.h"
-#include "Subsystems/DriveTrain2017.h"
 
 class Robot: public frc::IterativeRobot {
 public:

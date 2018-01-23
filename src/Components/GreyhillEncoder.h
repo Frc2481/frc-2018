@@ -8,9 +8,9 @@
 #ifndef SRC_GREYHILLENCODER_H_
 #define SRC_GREYHILLENCODER_H_
 
+#include <Subsystems/DriveTrain.h>
 #include "ctre/Phoenix.h"
 #include "utils/Translation2D.h"
-#include "Subsystems/DriveTrain2017.h"
 
 class GreyhillEncoder {
 	private:

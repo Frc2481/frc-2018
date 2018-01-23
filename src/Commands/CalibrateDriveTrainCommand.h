@@ -8,10 +8,10 @@
 #ifndef SRC_COMMANDS_CALIBRATEDRIVETRAINCOMMAND_H_
 #define SRC_COMMANDS_CALIBRATEDRIVETRAINCOMMAND_H_
 
+#include <Subsystems/DriveTrain.h>
+#include <Components/SwerveModule.h>
 #include "../CommandBase.h"
-#include "../Subsystems/DriveTrain2017.h"
-#include "../SwerveModuleV2.h"
-#include "../CTREMagEncoder.h"
+#include <Components/CTREMagEncoder.h>
 
 class CalibrateDriveTrainCommand : public InstantCommand{
 public:

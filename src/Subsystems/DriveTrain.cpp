@@ -5,23 +5,20 @@
  *      Author: Team2481
  */
 
-#include <Subsystems/DriveTrain2017.h>
 #include <Commands/DriveWithJoystickCommand.h>
 #include <Commands/CalibrateDriveTrainCommand.h>
 #include <Kinematics.h>
+#include <Subsystems/DriveTrain.h>
+#include <Components/SwerveModule.h>
 #include "../RobotMap.h"
 
 #include <cmath>
 #include <algorithm>
-//#include "Components/PersistedSettings.h"
-//#include "RoboUtils.h"
 #include "AHRS.h"
-#include "SwerveModuleV2.h"
-#include "Components/SwerveModuleV2Constants.h"
 #include "Components/CTREMagEncoder.h"
-#include "../Kinematics.h"
 #include "Components/GreyhillEncoder.h"
-
+#include "RobotParameters.h"
+#include "../Commands/ObserverResetPosCommand.h"
 
 
 DriveTrain2017::DriveTrain2017() : Subsystem("DriveTrain2017"),
@@ -54,6 +51,7 @@ DriveTrain2017::DriveTrain2017() : Subsystem("DriveTrain2017"),
 	m_oldBrDistance = Translation2D(0, 0);
 
 	SmartDashboard::PutData(new CalibrateDriveTrainCommand());
+	SmartDashboard::PutData(new ObserverResetPosCommand());
 
 	m_observer.SetRobotPos(RigidTransform2D(Translation2D(0, 0), Rotation2D(1, 0, true)), 0.0);
 
@@ -212,8 +210,8 @@ Translation2D DriveTrain2017::GetMotionMagicSetpoint() const{
 
 double DriveTrain2017::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
 	double revolutions;
-	revolutions = inches / SwerveModuleV2Constants::k_inchesPerWheelRev;
-	revolutions *= SwerveModuleV2Constants::k_encoderRevPerWheelRev;
+	revolutions = inches / RobotParameters::k_inchesPerWheelRev;
+	revolutions *= RobotParameters::k_encoderRevPerWheelRev;
 	return revolutions;
 }
 
@@ -273,86 +271,103 @@ bool DriveTrain2017::IsDriveOnTarget() const {
 			&& m_blWheel->IsDriveOnTarget() && m_brWheel->IsDriveOnTarget(); //make robust against encoder failure
 }
 
-Rotation2D DriveTrain2017::GetOldFlAngle() {
-	return m_oldFlAngle;
-}
-
-Rotation2D DriveTrain2017::GetOldFrAngle() {
-	return m_oldFrAngle;
-}
-
-Rotation2D DriveTrain2017::GetOldBlAngle() {
-	return m_oldBlAngle;
-}
-
-Rotation2D DriveTrain2017::GetOldBrAngle() {
-	return m_oldBrAngle;
-}
-
-void DriveTrain2017::SetOldFlAngle(Rotation2D angle) {
-	m_oldFlAngle = angle;
-}
-
-void DriveTrain2017::SetOldFrAngle(Rotation2D angle) {
-	m_oldFrAngle = angle;
-}
-
-void DriveTrain2017::SetOldBlAngle(Rotation2D angle) {
-	m_oldBlAngle = angle;
-}
-
-void DriveTrain2017::SetOldBrAngle(Rotation2D angle) {
-	m_oldBrAngle = angle;
-}
-
-Translation2D DriveTrain2017::GetOldFlDistance() {
-	return m_oldFlDistance;
-}
-
-Translation2D DriveTrain2017::GetOldFrDistance() {
-	return m_oldFrDistance;
-}
-
-Translation2D DriveTrain2017::GetOldBlDistance() {
-	return m_oldBlDistance;
-}
-
-Translation2D DriveTrain2017::GetOldBrDistance() {
-	return m_oldBrDistance;
-}
-
-void DriveTrain2017::SetOldFlDistance(Translation2D distance) {
-	m_oldFlDistance = distance;
-}
-
-void DriveTrain2017::SetOldFrDistance(Translation2D distance) {
-	m_oldFrDistance = distance;
-}
-
-void DriveTrain2017::SetOldBlDistance(Translation2D distance) {
-	m_oldBlDistance = distance;
-}
-
-void DriveTrain2017::SetOldBrDistance(Translation2D distance) {
-	m_oldBrDistance = distance;
+void DriveTrain2017::ResetRobotPose() {
+	m_observer.ResetPose();
 }
 
 void DriveTrain2017::Periodic() {
-	m_timestamp = RobotController::GetFPGATime();
+	double timeStamp = RobotController::GetFPGATime();
+	double deltaTimestamp = timeStamp - m_timestamp;
+	m_timestamp = timeStamp;
 
 	Rotation2D newFlAngle = m_flWheel->GetAngle();
 //	if(m_flWheel->GetOptimized()) {
 //		newFlAngle = newFlAngle.inverse();
 //	}
-	newFlAngle = (newFlAngle.rotateBy(Rotation2D::fromDegrees(-90.0))).inverse();
 
-	Rotation2D deltaFlAngle = newFlAngle.rotateBy(GetOldFlAngle().inverse());
-	SetOldFlAngle(newFlAngle);
+	Rotation2D deltaFlAngle = newFlAngle.rotateBy(m_oldFlAngle.inverse());
+	m_oldFlAngle = newFlAngle;
 
 	Translation2D newFlDistance = m_flWheel->GetDistance();
 	Translation2D deltaFlDistance = newFlDistance.translateBy(GetOldFlDistance().inverse());
 	SmartDashboard::PutNumber("old FL distance", GetOldFlDistance().getX());
 	SetOldFlDistance(newFlDistance);
+
+	Translation2D newFlDistance = m_flWheel->GetDistance().inverse(); //TODO: Inverse ??
+	Translation2D deltaFlDistance = newFlDistance.translateBy(m_oldFlDistance.inverse());
+	SmartDashboard::PutNumber("old FL distance", m_oldFlDistance.getX());
+	m_oldFlDistance = newFlDistance;
+
+
+	Rotation2D newFrAngle = m_frWheel->GetAngle();
+//	if(m_frWheel->GetOptimized()) {
+//			newFrAngle = newFrAngle.inverse();
+//	}
+
+	Rotation2D deltaFrAngle = newFrAngle.rotateBy(m_oldFrAngle.inverse());
+	m_oldFrAngle = newFrAngle;
+
+	Translation2D newFrDistance = m_frWheel->GetDistance().inverse();
+	Translation2D deltaFrDistance = newFrDistance.translateBy(m_oldFrDistance.inverse());
+	m_oldFrDistance = newFrDistance;
+
+
+	Rotation2D newBlAngle = m_blWheel->GetAngle();
+//	if(m_blWheel->GetOptimized()) {
+//			newBlAngle = newBlAngle.inverse();
+//	}
+
+	Rotation2D deltaBlAngle = newBlAngle.rotateBy(m_oldBlAngle.inverse());
+	m_oldBlAngle = newBlAngle;
+
+	Translation2D newBlDistance = m_blWheel->GetDistance().inverse();
+	Translation2D deltaBlDistance = newBlDistance.translateBy(m_oldBlDistance.inverse());
+	m_oldBlDistance = newBlDistance;
+
+
+	Rotation2D newBrAngle = m_brWheel->GetAngle();
+//	if(m_brWheel->GetOptimized()) {
+//			newBrAngle = newBrAngle.inverse();
+//	}
+
+	Rotation2D deltaBrAngle = newBrAngle.rotateBy(m_oldBrAngle.inverse());
+	m_oldBrAngle = newBrAngle;
+
+	Translation2D newBrDistance = m_brWheel->GetDistance().inverse();
+	Translation2D deltaBrDistance = newBrDistance.translateBy(m_oldBrDistance.inverse());
+	m_oldBrDistance = newBrDistance;
+
+	RigidTransform2D::Delta deltaFlVelocity = RigidTransform2D::Delta::fromDelta(deltaFlDistance.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaFrVelocity = RigidTransform2D::Delta::fromDelta(deltaFrDistance.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaBlVelocity = RigidTransform2D::Delta::fromDelta(deltaBlDistance.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(deltaBrDistance.getX(), 0, 0, deltaTimestamp);
+
+	double obsAngleThresh = 30;
+	double obsDistanceThresh = 500;
+	if(fabs(deltaFlDistance.getX() < obsDistanceThresh) && fabs(deltaFrDistance.getX() < obsDistanceThresh) &&
+	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
+
+		m_observer.AddDriveTrainObservation(newFlAngle, deltaFlVelocity,
+											newFrAngle, deltaFrVelocity,
+											newBlAngle, deltaBlVelocity,
+											newBrAngle, deltaBrVelocity, m_timestamp);
+	}
+
+	RigidTransform2D observerPos =  m_observer.GetRobotPos(m_timestamp);
+
+	SmartDashboard::PutNumber("Field X", observerPos.getTranslation().getX());
+	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
+	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
+
+	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
+
+	SmartDashboard::PutNumber("FL distance", m_flWheel->GetDistance().getX());
+	SmartDashboard::PutNumber("FR distance", m_frWheel->GetDistance().getX());
+	SmartDashboard::PutNumber("BL distance", m_blWheel->GetDistance().getX());
+	SmartDashboard::PutNumber("BR distance", m_brWheel->GetDistance().getX());
 }
 
 //This Method must be called when when all 8 swerve modules are on.
@@ -378,11 +393,6 @@ void DriveTrain2017::CheckDiagnostics() {
 	bool blSteerMotorPresent = m_blWheel->GetSteerCurrent() > 0.1;
 	bool brSteerMotorPresent = m_brWheel->GetSteerCurrent() > 0.1;
 
-	bool allMotorsPresent = flDriveMotorPresent && frDriveMotorPresent && blDriveMotorPresent && brDriveMotorPresent &&
-					flSteerMotorPresent && frSteerMotorPresent && blSteerMotorPresent && brSteerMotorPresent;
-
-	SmartDashboard::PutBoolean("All Drive Train Motors Present", allMotorsPresent);
-
 	SmartDashboard::PutBoolean("Front Left Drive Motor Present", flDriveMotorPresent);
 	SmartDashboard::PutBoolean("Front Right Drive Motor Present", frDriveMotorPresent);
 	SmartDashboard::PutBoolean("Back Left Drive Motor Present", blDriveMotorPresent);
@@ -392,61 +402,9 @@ void DriveTrain2017::CheckDiagnostics() {
 	SmartDashboard::PutBoolean("Front Right Steer Motor Present", frSteerMotorPresent);
 	SmartDashboard::PutBoolean("Back Left Steer Motor Present", blSteerMotorPresent);
 	SmartDashboard::PutBoolean("Back Right Steer Motor Present", brSteerMotorPresent);
+	
+	bool allMotorsPresent = flDriveMotorPresent && frDriveMotorPresent && blDriveMotorPresent && brDriveMotorPresent &&
+					flSteerMotorPresent && frSteerMotorPresent && blSteerMotorPresent && brSteerMotorPresent;
 
-
-
-	Rotation2D newFrAngle = m_frWheel->GetAngle();
-//	if(m_frWheel->GetOptimized()) {
-//			newFrAngle = newFrAngle.inverse();
-//	}
-	newFrAngle = (newFrAngle.rotateBy(Rotation2D::fromDegrees(-90.0))).inverse();
-	Rotation2D deltaFrAngle = newFrAngle.rotateBy(GetOldFrAngle().inverse());
-	SetOldFrAngle(newFrAngle);
-
-	Translation2D newFrDistance = m_frWheel->GetDistance().inverse();
-	Translation2D deltaFrDistance = newFrDistance.translateBy(GetOldFrDistance().inverse());
-	SetOldFrDistance(newFrDistance);
-
-
-	Rotation2D newBlAngle = m_blWheel->GetAngle();
-//	if(m_blWheel->GetOptimized()) {
-//			newBlAngle = newBlAngle.inverse();
-//	}
-	newBlAngle = (newBlAngle.rotateBy(Rotation2D::fromDegrees(-90.0))).inverse();
-	Rotation2D deltaBlAngle = newBlAngle.rotateBy(GetOldBlAngle().inverse());
-	SetOldBlAngle(newBlAngle);
-
-	Translation2D newBlDistance = m_flWheel->GetDistance();
-	Translation2D deltaBlDistance = newBlDistance.translateBy(GetOldBlDistance().inverse());
-	SetOldBlDistance(newBlDistance);
-
-
-	Rotation2D newBrAngle = m_brWheel->GetAngle();
-//	if(m_brWheel->GetOptimized()) {
-//			newBrAngle = newBrAngle.inverse();
-//	}
-	newBrAngle = (newBrAngle.rotateBy(Rotation2D::fromDegrees(-90.0))).inverse();
-	Rotation2D deltaBrAngle = newBrAngle.rotateBy(GetOldBrAngle().inverse());
-	SetOldBrAngle(newBrAngle);
-
-	Translation2D newBrDistance = m_brWheel->GetDistance().inverse();
-	Translation2D deltaBrDistance = newBrDistance.translateBy(GetOldBrDistance().inverse());
-	SetOldBrDistance(newBrDistance);
-
-	double obsAngleThresh = 30;
-	double obsDistanceThresh = 500;
-	if(fabs(deltaFlDistance.getX() < obsDistanceThresh) && fabs(deltaFrDistance.getX() < obsDistanceThresh) &&
-	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
-
-		m_observer.AddDriveTrainObservation(newFlAngle, deltaFlDistance,
-											newFrAngle, deltaFrDistance,
-											newBlAngle, deltaBlDistance,
-											newBrAngle, deltaBrDistance, m_timestamp);
-	}
-
-	RigidTransform2D observerPos =  m_observer.GetRobotPos(m_timestamp);
-
-	SmartDashboard::PutNumber("Field X", observerPos.getTranslation().getX());
-	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
-	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
+	SmartDashboard::PutBoolean("All Drive Train Motors Present", allMotorsPresent);
 }
