@@ -21,16 +21,16 @@
 #include "../Commands/ObserverResetPosCommand.h"
 #include "WPILib.h"
 
-DriveTrain2017::DriveTrain2017() : Subsystem("DriveTrain2017"),
-	m_flWheel(new SwerveModuleV2(FRONT_LEFT_DRIVE, FRONT_LEFT_STEER, "FRONT_LEFT")),
-	m_frWheel(new SwerveModuleV2(FRONT_RIGHT_DRIVE, FRONT_RIGHT_STEER, "FRONT_RIGHT")),
-	m_brWheel(new SwerveModuleV2(BACK_RIGHT_DRIVE, BACK_RIGHT_STEER, "BACK_RIGHT")),
-	m_blWheel(new SwerveModuleV2(BACK_LEFT_DRIVE, BACK_LEFT_STEER, "BACK_LEFT")),
+DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
+	m_flWheel(new SwerveModule(FRONT_LEFT_DRIVE, FRONT_LEFT_STEER, "FRONT_LEFT")),
+	m_frWheel(new SwerveModule(FRONT_RIGHT_DRIVE, FRONT_RIGHT_STEER, "FRONT_RIGHT")),
+	m_brWheel(new SwerveModule(BACK_RIGHT_DRIVE, BACK_RIGHT_STEER, "BACK_RIGHT")),
+	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER, "BACK_LEFT")),
 	m_shifter(new Solenoid(SHIFTER)),
 	m_imu(new AHRS(SPI::kMXP)),
 	m_isFieldCentric(false),
 	m_isForward(true),
-	m_xPos(0), m_yPos(0), m_twist(0), m_heading(0), m_headingCorrection(0), m_roll(0), m_pitch(0), m_timestamp(1.0) {
+	m_xPos(0), m_yPos(0), m_twist(0), m_heading(0), m_headingCorrection(0), m_roll(0), m_pitch(0), m_oldTimestamp(1.0) {
 
 	m_prevAngle = 90.0;
 
@@ -55,9 +55,10 @@ DriveTrain2017::DriveTrain2017() : Subsystem("DriveTrain2017"),
 
 	m_observer.SetRobotPos(RigidTransform2D(Translation2D(0, 0), Rotation2D(1, 0, true)), 0.0);
 
+	m_oldGyroYaw = Rotation2D(1, 0, true);
 }
 
-DriveTrain2017::~DriveTrain2017() {
+DriveTrain::~DriveTrain() {
 	delete m_flWheel;
 	delete m_frWheel;
 	delete m_blWheel;
@@ -66,11 +67,11 @@ DriveTrain2017::~DriveTrain2017() {
 	delete m_imu;
 }
 
-void DriveTrain2017::InitDefaultCommand() {
+void DriveTrain::InitDefaultCommand() {
 	SetDefaultCommand(new DriveWithJoystickCommand());
 }
 
-void DriveTrain2017::Drive(double xPos, double yPos, double twist) {
+void DriveTrain::Drive(double xPos, double yPos, double twist) {
 	m_xPos = xPos;
 	m_yPos = yPos;
 	m_twist = twist;
@@ -132,51 +133,51 @@ void DriveTrain2017::Drive(double xPos, double yPos, double twist) {
 	SmartDashboard::PutNumber("yPos", translation.getY());
 }
 
-void DriveTrain2017::SetOrigin(double xPos, double yPos) {
+void DriveTrain::SetOrigin(double xPos, double yPos) {
 	m_originX = xPos;
 	m_originY = yPos;
 }
 
-double DriveTrain2017::GetXOrigin() const{
+double DriveTrain::GetXOrigin() const{
 	return m_originX;
 }
 
-double DriveTrain2017::GetYOrigin() const{
+double DriveTrain::GetYOrigin() const{
 	return m_originY;
 }
 
-float DriveTrain2017::GetRoll() const{
+float DriveTrain::GetRoll() const{
 	return m_imu->GetRoll();
 }
 
-float DriveTrain2017::GetPitch() const{
+float DriveTrain::GetPitch() const{
 	return m_imu->GetPitch();
 }
 
-void DriveTrain2017::PeriodicUpdate() {
+void DriveTrain::PeriodicUpdate() {
 	Drive(m_xPos, m_yPos, m_twist);
 }
 
-void DriveTrain2017::SetBrake(bool brake) {
+void DriveTrain::SetBrake(bool brake) {
 	m_flWheel->SetBrake(brake);
 	m_frWheel->SetBrake(brake);
 	m_blWheel->SetBrake(brake);
 	m_brWheel->SetBrake(brake);
 }
 
-const Rotation2D& DriveTrain2017::GetGyroCorrectionOffset() const{
+const Rotation2D& DriveTrain::GetGyroCorrectionOffset() const{
 	return m_headingCorrectionOffset;
 }
 
-void DriveTrain2017::SetGyroCorrectionOffset(Rotation2D &offset) {
+void DriveTrain::SetGyroCorrectionOffset(Rotation2D &offset) {
 	m_headingCorrectionOffset = offset;
 }
 
-void DriveTrain2017::Shift(bool state){
+void DriveTrain::Shift(bool state){
 	m_shifter->Set(state);
 }
 
-SwerveModuleV2* DriveTrain2017::GetModule(DriveTrain2017::SwerveModuleType module) const{
+SwerveModule* DriveTrain::GetModule(DriveTrain::SwerveModuleType module) const{
 	if(module == FRONT_RIGHT_MODULE){
 		return m_frWheel;
 	}
@@ -192,11 +193,11 @@ SwerveModuleV2* DriveTrain2017::GetModule(DriveTrain2017::SwerveModuleType modul
 	return 0;
 }
 
-Rotation2D DriveTrain2017::GetHeading() const{
+Rotation2D DriveTrain::GetHeading() const{
 	return Rotation2D::fromDegrees(m_imu->GetAngle());
 }
 
-void DriveTrain2017::DriveCloseLoopDistance(Translation2D setpoint) {
+void DriveTrain::DriveCloseLoopDistance(Translation2D setpoint) {
 	m_motionSetpoint = setpoint;
 	m_flWheel->SetCloseLoopDriveDistance(m_motionSetpoint);
 	m_frWheel->SetCloseLoopDriveDistance(m_motionSetpoint.inverse());
@@ -204,81 +205,81 @@ void DriveTrain2017::DriveCloseLoopDistance(Translation2D setpoint) {
 	m_brWheel->SetCloseLoopDriveDistance(m_motionSetpoint.inverse());
 }
 
-Translation2D DriveTrain2017::GetMotionMagicSetpoint() const{
+Translation2D DriveTrain::GetMotionMagicSetpoint() const{
 	return m_motionSetpoint;
 }
 
-double DriveTrain2017::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
+double DriveTrain::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
 	double revolutions;
 	revolutions = inches / RobotParameters::k_inchesPerWheelRev;
 	revolutions *= RobotParameters::k_encoderRevPerWheelRev;
 	return revolutions;
 }
 
-void DriveTrain2017::Stop() {
+void DriveTrain::Stop() {
 	Drive(0, 0, 0);
 }
 
-void DriveTrain2017::SetFieldCentric(bool fieldCentric) {
+void DriveTrain::SetFieldCentric(bool fieldCentric) {
 	m_isFieldCentric = fieldCentric;
 }
 
-void DriveTrain2017::SetForward(bool forward) {
+void DriveTrain::SetForward(bool forward) {
 	m_isForward = forward;
 }
 
-void DriveTrain2017::SetHeadingCorrection(bool headingCorrection) {
+void DriveTrain::SetHeadingCorrection(bool headingCorrection) {
 	m_headingCorrection = headingCorrection;
 }
 
-void DriveTrain2017::ZeroGyro() {
+void DriveTrain::ZeroGyro() {
 	m_imu->ZeroYaw();
 }
 
-bool DriveTrain2017::IsHeadingCorrection() const {
+bool DriveTrain::IsHeadingCorrection() const {
 	return m_headingCorrection;
 }
 
-bool DriveTrain2017::IsSteerOnTarget() const{
+bool DriveTrain::IsSteerOnTarget() const{
 	return m_flWheel->IsSteerOnTarget() && m_frWheel->IsSteerOnTarget()
 			&& m_blWheel->IsSteerOnTarget() && m_brWheel->IsSteerOnTarget();
 }
 
-void DriveTrain2017::SetMotionMagicAccel(double accel) {
+void DriveTrain::SetMotionMagicAccel(double accel) {
 	m_flWheel->SetMagicAccel(accel);
 	m_frWheel->SetMagicAccel(accel);
 	m_blWheel->SetMagicAccel(accel);
 	m_brWheel->SetMagicAccel(accel);
 }
 
-double DriveTrain2017::GetDriveDistance() const{
+double DriveTrain::GetDriveDistance() const{
 	return std::max(fabs(m_flWheel->GetDistance().getX()),
 			std::max(fabs(m_frWheel->GetDistance().getX()),
 			std::max(fabs(m_blWheel->GetDistance().getX()),
 					fabs(m_brWheel->GetDistance().getX()))));
 }
 
-bool DriveTrain2017::IsShifted() const{
+bool DriveTrain::IsShifted() const{
 	return m_shifter->Get();
 }
 
-double DriveTrain2017::ComputeDegreesToEncoderRotations(double degrees) {
+double DriveTrain::ComputeDegreesToEncoderRotations(double degrees) {
 	return (degrees * m_encRotationPerDegrees);
 }
 
-bool DriveTrain2017::IsDriveOnTarget() const {
+bool DriveTrain::IsDriveOnTarget() const {
 	return m_flWheel->IsDriveOnTarget() && m_frWheel->IsDriveOnTarget()
 			&& m_blWheel->IsDriveOnTarget() && m_brWheel->IsDriveOnTarget(); //make robust against encoder failure
 }
 
-void DriveTrain2017::ResetRobotPose() {
+void DriveTrain::ResetRobotPose() {
 	m_observer.ResetPose();
 }
 
-void DriveTrain2017::Periodic() {
+void DriveTrain::Periodic() {
 	double timeStamp = RobotController::GetFPGATime();
-	double deltaTimestamp = timeStamp - m_timestamp;
-	m_timestamp = timeStamp;
+	double deltaTimestamp = timeStamp - m_oldTimestamp;
+	m_oldTimestamp = timeStamp;
 
 	Rotation2D newFlAngle = m_flWheel->GetAngle();
 //	if(m_flWheel->GetOptimized()) {
@@ -343,10 +344,16 @@ void DriveTrain2017::Periodic() {
 		m_observer.AddDriveTrainObservation(newFlAngle, deltaFlVelocity,
 											newFrAngle, deltaFrVelocity,
 											newBlAngle, deltaBlVelocity,
-											newBrAngle, deltaBrVelocity, m_timestamp);
+											newBrAngle, deltaBrVelocity, timeStamp, 0.1);
 	}
 
-	RigidTransform2D observerPos =  m_observer.GetRobotPos(m_timestamp);
+	Rotation2D newGyroYaw = Rotation2D::fromDegrees(m_imu->GetFusedHeading());
+	SmartDashboard::PutNumber("fused heading", m_imu->GetFusedHeading());
+	Rotation2D deltaGyroYaw = newGyroYaw.rotateBy(m_oldGyroYaw.inverse());
+	m_oldGyroYaw = newGyroYaw;
+	m_observer.AddGyroObservation(deltaGyroYaw, timeStamp, 0.9);
+
+	RigidTransform2D observerPos =  m_observer.GetLastRobotPos();
 
 	SmartDashboard::PutNumber("Field X", observerPos.getTranslation().getX());
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
@@ -364,7 +371,7 @@ void DriveTrain2017::Periodic() {
 }
 
 //This Method must be called when when all 8 swerve modules are on.
-void DriveTrain2017::CheckDiagnostics() {
+void DriveTrain::CheckDiagnostics() {
 //	TODO:figure out how to see if sensor is present
 	SmartDashboard::PutBoolean("FL Drive Enc Present", std::abs(m_flWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
 	SmartDashboard::PutBoolean("FR Drive Enc Present", std::abs(m_frWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);

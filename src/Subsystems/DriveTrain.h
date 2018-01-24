@@ -1,5 +1,5 @@
 /*
- * DriveTrain2017.h
+ * DriveTrain.h
  *
  *  Created on: Aug 28, 2017
  *      Author: Team2481
@@ -15,15 +15,15 @@
 #include "Subsystems/Observer.h"
 #include "Kinematics.h"
 
-class SwerveModuleV2;
+class SwerveModule;
 class AHRS;
 
-class DriveTrain2017 : public Subsystem{
+class DriveTrain : public Subsystem{
 private:
-	SwerveModuleV2 *m_flWheel;
-	SwerveModuleV2 *m_frWheel;
-	SwerveModuleV2 *m_brWheel;
-	SwerveModuleV2 *m_blWheel;
+	SwerveModule *m_flWheel;
+	SwerveModule *m_frWheel;
+	SwerveModule *m_brWheel;
+	SwerveModule *m_blWheel;
 	Solenoid *m_shifter;
 
 	AHRS* m_imu;
@@ -57,6 +57,9 @@ private:
 
 	Observer m_observer;
 
+	Rotation2D m_oldGyroYaw;
+
+
 public:
 	enum SwerveModuleType{
 		FRONT_LEFT_MODULE,
@@ -64,8 +67,8 @@ public:
 		BACK_LEFT_MODULE,
 		BACK_RIGHT_MODULE,
 	};
-	DriveTrain2017();
-	virtual ~DriveTrain2017();
+	DriveTrain();
+	virtual ~DriveTrain();
 	void InitDefaultCommand();
 	void Drive(double xPos, double yPos, double twist);
 	void SetOrigin(double xPos, double yPos);
@@ -85,7 +88,7 @@ public:
 	void SetBrake(bool brake);
 	void Shift(bool state);
 	bool IsShifted() const;
-	class SwerveModuleV2* GetModule(DriveTrain2017::SwerveModuleType module) const;
+	class SwerveModule* GetModule(DriveTrain::SwerveModuleType module) const;
 	Rotation2D GetHeading() const;
 	void DriveCloseLoopDistance(Translation2D setpoint);
 
@@ -106,7 +109,7 @@ public:
 
 	void CheckDiagnostics();
 
-	double m_timestamp;
+	double m_oldTimestamp;
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

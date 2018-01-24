@@ -13,7 +13,7 @@
 #include <Components/SwerveModule.h>
 //#include <RoboUtils.h>
 
-SwerveModuleV2::SwerveModuleV2(uint32_t driveID, uint32_t steerID,
+SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID,
 		const std::string name) {
 	m_name = name;
 	std::stringstream ss;
@@ -70,19 +70,19 @@ SwerveModuleV2::SwerveModuleV2(uint32_t driveID, uint32_t steerID,
 //	m_steerMotor->SetStatusFrameRateMs(TalonSRX::StatusFrameRateGeneral, 10);
 }
 
-SwerveModuleV2::~SwerveModuleV2() {
+SwerveModule::~SwerveModule() {
 	// TODO Auto-generated destructor stub
 }
 
-Rotation2D SwerveModuleV2::GetAngle() const {
+Rotation2D SwerveModule::GetAngle() const {
 	return m_steerEncoder->GetAngle();
 }
 
-void SwerveModuleV2::SetOptimized(bool isOptimized) {
+void SwerveModule::SetOptimized(bool isOptimized) {
 	m_optimizationEnabled = isOptimized;
 }
 
-void SwerveModuleV2::SetAngle(Rotation2D angle, bool force) {
+void SwerveModule::SetAngle(Rotation2D angle, bool force) {
 	if(m_isMoving || force) {
 		Rotation2D currentAngle = m_steerEncoder->GetAngle();
 		Rotation2D deltaAngle = currentAngle.rotateBy(angle.inverse());
@@ -100,11 +100,11 @@ void SwerveModuleV2::SetAngle(Rotation2D angle, bool force) {
 	}
 }
 
-bool SwerveModuleV2::IsSteerOnTarget() const {
+bool SwerveModule::IsSteerOnTarget() const {
 	return fabs(m_steerMotor->GetClosedLoopError(0)) <= 20;
 }
 
-void SwerveModuleV2::SetOpenLoopSpeed(double speed) {
+void SwerveModule::SetOpenLoopSpeed(double speed) {
 	if(m_angleOptimized) {
 		speed *= -1;
 	}
@@ -113,11 +113,11 @@ void SwerveModuleV2::SetOpenLoopSpeed(double speed) {
 	m_isCloseLoopControl = false;
 }
 
-double SwerveModuleV2::GetSpeed()const {
+double SwerveModule::GetSpeed()const {
 	return m_driveEncoder->GetEncoderSpeed();
 }
 
-void SwerveModuleV2::SetCloseLoopDriveDistance(Translation2D distance) {
+void SwerveModule::SetCloseLoopDriveDistance(Translation2D distance) {
 	double distInches = distance.getX();
 	if(m_angleOptimized) {
 		distInches *= -1;
@@ -127,27 +127,27 @@ void SwerveModuleV2::SetCloseLoopDriveDistance(Translation2D distance) {
 	m_isCloseLoopControl = true;
 }
 
-void SwerveModuleV2::DisableCloseLoopDrive() {
+void SwerveModule::DisableCloseLoopDrive() {
 	SetOpenLoopSpeed(0);
 }
 
-Translation2D SwerveModuleV2::GetDistance() const {
+Translation2D SwerveModule::GetDistance() const {
 	return m_driveEncoder->GetDistance();
 }
 
-void SwerveModuleV2::ZeroDriveDistance() {
+void SwerveModule::ZeroDriveDistance() {
 	m_driveEncoder->ResetDistance();
 }
 
-double SwerveModuleV2::GetDistanceError() const {
+double SwerveModule::GetDistanceError() const {
 	return m_driveMotor->GetClosedLoopError(0);
 }
 
-bool SwerveModuleV2::IsDriveOnTarget() const {
+bool SwerveModule::IsDriveOnTarget() const {
 	return GetDistanceError() < 4; //absolute value?
 }
 
-void SwerveModuleV2::Set(double speed, Rotation2D angle) {
+void SwerveModule::Set(double speed, Rotation2D angle) {
 	if(m_isCloseLoopControl){
 		SetAngle(angle, true);
 	}
@@ -157,30 +157,30 @@ void SwerveModuleV2::Set(double speed, Rotation2D angle) {
 	}
 }
 
-void SwerveModuleV2::SetBrake(bool brake) {
+void SwerveModule::SetBrake(bool brake) {
 	m_driveMotor->SetNeutralMode(brake ? Brake : Coast);
 }
 
-void SwerveModuleV2::SetMagicAccel(double accel) {
+void SwerveModule::SetMagicAccel(double accel) {
 	m_driveMotor->ConfigMotionAcceleration(accel, 0);
 }
 
-bool SwerveModuleV2::GetOptimized() {
+bool SwerveModule::GetOptimized() {
 	return m_angleOptimized;
 }
 
-CTREMagEncoder* SwerveModuleV2::GetSteerEncoder() {
+CTREMagEncoder* SwerveModule::GetSteerEncoder() {
 	return m_steerEncoder;
 }
 
-GreyhillEncoder* SwerveModuleV2::GetDriveEncoder() {
+GreyhillEncoder* SwerveModule::GetDriveEncoder() {
 	return m_driveEncoder;
 }
 
-double SwerveModuleV2::GetSteerCurrent() const {
+double SwerveModule::GetSteerCurrent() const {
 	return m_steerMotor->GetOutputCurrent();
 }
 
-double SwerveModuleV2::GetDriveCurrent() const {
+double SwerveModule::GetDriveCurrent() const {
 	return m_driveMotor->GetOutputCurrent();
 }

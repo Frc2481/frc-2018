@@ -21,11 +21,11 @@ Observer::~Observer() {
 
 void Observer::AddDriveTrainObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
 		RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity,
-		Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timestamp) {
+		Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timestamp, double k) {
 	RigidTransform2D::Delta deltaRobotPos = Kinematics::SwerveForwardKinematics(flAngle, flVelocity, frAngle, frVelocity, blAngle, blVelocity, brAngle, brVelocity);
 
-	RigidTransform2D oldRobotPos = GetRobotPos(timestamp - 20000); //m_robotPos.cbegin()->second; //ToDo: check timestamp
-	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(Rotation2D::fromRadians(deltaRobotPos.GetTheta()));
+	RigidTransform2D oldRobotPos = GetLastRobotPos();
+	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(Rotation2D::fromRadians(deltaRobotPos.GetTheta() * k));
 
 	Translation2D newRobotTranslation = oldRobotPos.getTranslation().
 										translateBy(Translation2D(deltaRobotPos.GetX(),deltaRobotPos.GetY()).
@@ -35,13 +35,18 @@ void Observer::AddDriveTrainObservation(Rotation2D flAngle, RigidTransform2D::De
 
 	SetRobotPos(robotPos, timestamp);
 
-	SmartDashboard::PutNumber("delta robot angle", deltaRobotPos.GetTheta());
-	SmartDashboard::PutNumber("delta robot x", deltaRobotPos.GetX());
-	SmartDashboard::PutNumber("delta robot y", deltaRobotPos.GetY());
+	SmartDashboard::PutNumber("delta robot angle kinematics", deltaRobotPos.GetTheta() * 180 / M_PI);
+	SmartDashboard::PutNumber("delta robot x kinematics", deltaRobotPos.GetX());
+	SmartDashboard::PutNumber("delta robot y kinematics", deltaRobotPos.GetY());
 }
 
-void Observer::AddGyroObservation(Rotation2D gyroAngleVelZ, double timeStamp) {
-	//SetRobotPos(robotPos, timestamp);
+void Observer::AddGyroObservation(Rotation2D deltaGyroYaw, double timeStamp, double k) {
+	RigidTransform2D oldRobotPos = GetLastRobotPos();
+	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(Rotation2D::fromDegrees(deltaGyroYaw.getDegrees() * k));
+	RigidTransform2D robotPos(oldRobotPos.getTranslation(), newRobotAngle);
+	SetRobotPos(robotPos, timeStamp + 0.0001);
+
+	SmartDashboard::PutNumber("delta robot angle gyro", deltaGyroYaw.getDegrees());
 }
 
 RigidTransform2D Observer::GetRobotPos(double timestamp) {
@@ -55,4 +60,8 @@ void Observer::SetRobotPos(RigidTransform2D robotPos, double timestamp) {
 void Observer::ResetPose() {
 	m_robotPos.clear();
 	SetRobotPos(RigidTransform2D(), RobotController::GetFPGATime());
+}
+
+RigidTransform2D Observer::GetLastRobotPos() {
+	return m_robotPos.rbegin()->second;
 }
