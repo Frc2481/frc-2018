@@ -14,9 +14,8 @@
 #include "utils/Translation2D.h"
 #include "Subsystems/Observer.h"
 #include "Kinematics.h"
-#include "SwerveModule.h"
 
-
+class SwerveModuleV2;
 class AHRS;
 
 class DriveTrain2017 : public Subsystem{
@@ -105,9 +104,7 @@ public:
 
 	virtual void Periodic();
 
-
 	void CheckDiagnostics();
-
 
 	double m_timestamp;
 };

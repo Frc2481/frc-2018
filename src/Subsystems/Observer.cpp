@@ -27,7 +27,9 @@ void Observer::AddDriveTrainObservation(Rotation2D flAngle, RigidTransform2D::De
 	RigidTransform2D oldRobotPos = GetRobotPos(timestamp - 20000); //m_robotPos.cbegin()->second; //ToDo: check timestamp
 	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(Rotation2D::fromRadians(deltaRobotPos.GetTheta()));
 
-	Translation2D newRobotTranslation = oldRobotPos.getTranslation().translateBy(Translation2D(deltaRobotPos.GetX(),deltaRobotPos.GetY()));
+	Translation2D newRobotTranslation = oldRobotPos.getTranslation().
+										translateBy(Translation2D(deltaRobotPos.GetX(),deltaRobotPos.GetY()).
+										rotateBy(newRobotAngle.inverse()));
 
 	RigidTransform2D robotPos(newRobotTranslation, newRobotAngle);
 

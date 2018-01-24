@@ -1,5 +1,5 @@
 /*
- * DriveTrain2017.cpp
+ * DriveTrain.cpp
  *
  *  Created on: Aug 28, 2017
  *      Author: Team2481
@@ -19,7 +19,7 @@
 #include "Components/GreyhillEncoder.h"
 #include "RobotParameters.h"
 #include "../Commands/ObserverResetPosCommand.h"
-
+#include "WPILib.h"
 
 DriveTrain2017::DriveTrain2017() : Subsystem("DriveTrain2017"),
 	m_flWheel(new SwerveModuleV2(FRONT_LEFT_DRIVE, FRONT_LEFT_STEER, "FRONT_LEFT")),
@@ -288,16 +288,10 @@ void DriveTrain2017::Periodic() {
 	Rotation2D deltaFlAngle = newFlAngle.rotateBy(m_oldFlAngle.inverse());
 	m_oldFlAngle = newFlAngle;
 
-	Translation2D newFlDistance = m_flWheel->GetDistance();
-	Translation2D deltaFlDistance = newFlDistance.translateBy(GetOldFlDistance().inverse());
-	SmartDashboard::PutNumber("old FL distance", GetOldFlDistance().getX());
-	SetOldFlDistance(newFlDistance);
-
-	Translation2D newFlDistance = m_flWheel->GetDistance().inverse(); //TODO: Inverse ??
+	Translation2D newFlDistance = m_flWheel->GetDistance(); //TODO: Inverse ??
 	Translation2D deltaFlDistance = newFlDistance.translateBy(m_oldFlDistance.inverse());
 	SmartDashboard::PutNumber("old FL distance", m_oldFlDistance.getX());
 	m_oldFlDistance = newFlDistance;
-
 
 	Rotation2D newFrAngle = m_frWheel->GetAngle();
 //	if(m_frWheel->GetOptimized()) {
@@ -307,7 +301,7 @@ void DriveTrain2017::Periodic() {
 	Rotation2D deltaFrAngle = newFrAngle.rotateBy(m_oldFrAngle.inverse());
 	m_oldFrAngle = newFrAngle;
 
-	Translation2D newFrDistance = m_frWheel->GetDistance().inverse();
+	Translation2D newFrDistance = m_frWheel->GetDistance();
 	Translation2D deltaFrDistance = newFrDistance.translateBy(m_oldFrDistance.inverse());
 	m_oldFrDistance = newFrDistance;
 
@@ -320,7 +314,7 @@ void DriveTrain2017::Periodic() {
 	Rotation2D deltaBlAngle = newBlAngle.rotateBy(m_oldBlAngle.inverse());
 	m_oldBlAngle = newBlAngle;
 
-	Translation2D newBlDistance = m_blWheel->GetDistance().inverse();
+	Translation2D newBlDistance = m_blWheel->GetDistance();
 	Translation2D deltaBlDistance = newBlDistance.translateBy(m_oldBlDistance.inverse());
 	m_oldBlDistance = newBlDistance;
 
@@ -333,7 +327,7 @@ void DriveTrain2017::Periodic() {
 	Rotation2D deltaBrAngle = newBrAngle.rotateBy(m_oldBrAngle.inverse());
 	m_oldBrAngle = newBrAngle;
 
-	Translation2D newBrDistance = m_brWheel->GetDistance().inverse();
+	Translation2D newBrDistance = m_brWheel->GetDistance();
 	Translation2D deltaBrDistance = newBrDistance.translateBy(m_oldBrDistance.inverse());
 	m_oldBrDistance = newBrDistance;
 
@@ -342,7 +336,6 @@ void DriveTrain2017::Periodic() {
 	RigidTransform2D::Delta deltaBlVelocity = RigidTransform2D::Delta::fromDelta(deltaBlDistance.getX(), 0, 0, deltaTimestamp);
 	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(deltaBrDistance.getX(), 0, 0, deltaTimestamp);
 
-	double obsAngleThresh = 30;
 	double obsDistanceThresh = 500;
 	if(fabs(deltaFlDistance.getX() < obsDistanceThresh) && fabs(deltaFrDistance.getX() < obsDistanceThresh) &&
 	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
@@ -373,10 +366,10 @@ void DriveTrain2017::Periodic() {
 //This Method must be called when when all 8 swerve modules are on.
 void DriveTrain2017::CheckDiagnostics() {
 //	TODO:figure out how to see if sensor is present
-	SmartDashboard::PutBoolean("FL Drive Enc Present", std::abs(m_flWheel->GetDriveEncoder()->GetRotations()) > 0);
-	SmartDashboard::PutBoolean("FR Drive Enc Present", std::abs(m_frWheel->GetDriveEncoder()->GetRotations()) > 0);
-	SmartDashboard::PutBoolean("BL Drive Enc Present", std::abs(m_blWheel->GetDriveEncoder()->GetRotations()) > 0);
-	SmartDashboard::PutBoolean("BR Drive Enc Present", std::abs(m_brWheel->GetDriveEncoder()->GetRotations()) > 0);
+	SmartDashboard::PutBoolean("FL Drive Enc Present", std::abs(m_flWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
+	SmartDashboard::PutBoolean("FR Drive Enc Present", std::abs(m_frWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
+	SmartDashboard::PutBoolean("BL Drive Enc Present", std::abs(m_blWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
+	SmartDashboard::PutBoolean("BR Drive Enc Present", std::abs(m_brWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
 
 	SmartDashboard::PutBoolean("FL Steer Enc Calibrated", m_flWheel->GetSteerEncoder()->IsCalibrated());
 	SmartDashboard::PutBoolean("FR Steer Enc Calibrated", m_frWheel->GetSteerEncoder()->IsCalibrated());
@@ -402,7 +395,7 @@ void DriveTrain2017::CheckDiagnostics() {
 	SmartDashboard::PutBoolean("Front Right Steer Motor Present", frSteerMotorPresent);
 	SmartDashboard::PutBoolean("Back Left Steer Motor Present", blSteerMotorPresent);
 	SmartDashboard::PutBoolean("Back Right Steer Motor Present", brSteerMotorPresent);
-	
+
 	bool allMotorsPresent = flDriveMotorPresent && frDriveMotorPresent && blDriveMotorPresent && brDriveMotorPresent &&
 					flSteerMotorPresent && frSteerMotorPresent && blSteerMotorPresent && brSteerMotorPresent;
 

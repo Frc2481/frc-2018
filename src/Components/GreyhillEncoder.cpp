@@ -28,9 +28,6 @@ Translation2D GreyhillEncoder::GetRawDistance() const {
 	double wheelRotations = ConvertEncoderRotationsToWheelRotations(encoderRotations);
 
 	// convert wheel rotations to distance
-	std::stringstream tt;
-	tt << "get inches" << m_name;
-	SmartDashboard::PutNumber(tt.str(), ConvertWheelRotationsToDistance(wheelRotations));
 	return Translation2D(ConvertWheelRotationsToDistance(wheelRotations), 0);
 }
 

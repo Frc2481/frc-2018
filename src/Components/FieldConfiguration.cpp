@@ -6,7 +6,7 @@
  */
 
 #include <string>
-#include <FieldConfiguration.h>
+#include <Components/FieldConfiguration.h>
 
 FieldConfiguration::FieldConfiguration() {
 	m_ourSwitchPlate = UNKNOWN;

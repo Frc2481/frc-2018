@@ -10,7 +10,6 @@
 
 #include "utils/Translation2D.h"
 #include "utils/RigidTransform2D.h"
-#include "WPILib.h"
 
 class Kinematics {
 public:
