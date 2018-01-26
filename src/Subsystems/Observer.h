@@ -15,6 +15,7 @@
 #include "utils/RigidTransform2D.h"
 #include "Kinematics.h"
 
+
 class Observer {
 public:
 	Observer();
@@ -22,9 +23,9 @@ public:
 
 	void ResetPose();
 
-	void AddDriveTrainObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
+	void UpdatedRobotPositionObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
 			RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity,
-			Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timeStamp, double k);
+			Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timeStamp, Rotation2D deltaGyroYaw);
 	void AddGyroObservation(Rotation2D gyroAngle, double timeStamp, double k);
 	RigidTransform2D GetRobotPos(double timestamp);
 	void SetRobotPos(RigidTransform2D robotPos, double timestamp);
@@ -32,6 +33,9 @@ public:
 
 private:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_robotPos;
+	Rotation2D m_oldGyroYaw;
+	const double kFwdKinematicsWeight = 0.1;
+	const double kGyroWeight = 0.9;
 
 
 };

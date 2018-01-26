@@ -194,7 +194,7 @@ SwerveModule* DriveTrain::GetModule(DriveTrain::SwerveModuleType module) const{
 }
 
 Rotation2D DriveTrain::GetHeading() const{
-	return Rotation2D::fromDegrees(m_imu->GetAngle());
+	return Rotation2D::fromDegrees(m_imu->GetFusedHeading());
 }
 
 void DriveTrain::DriveCloseLoopDistance(Translation2D setpoint) {
@@ -291,7 +291,6 @@ void DriveTrain::Periodic() {
 
 	Translation2D newFlDistance = m_flWheel->GetDistance(); //TODO: Inverse ??
 	Translation2D deltaFlDistance = newFlDistance.translateBy(m_oldFlDistance.inverse());
-	SmartDashboard::PutNumber("old FL distance", m_oldFlDistance.getX());
 	m_oldFlDistance = newFlDistance;
 
 	Rotation2D newFrAngle = m_frWheel->GetAngle();
@@ -337,21 +336,21 @@ void DriveTrain::Periodic() {
 	RigidTransform2D::Delta deltaBlVelocity = RigidTransform2D::Delta::fromDelta(deltaBlDistance.getX(), 0, 0, deltaTimestamp);
 	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(deltaBrDistance.getX(), 0, 0, deltaTimestamp);
 
-	double obsDistanceThresh = 500;
+	Rotation2D newGyroYaw = GetHeading();
+	Rotation2D deltaGyroYaw = newGyroYaw.rotateBy(m_oldGyroYaw.inverse());
+	m_oldGyroYaw = newGyroYaw;
+
+	SmartDashboard::PutNumber("fused heading", m_imu->GetFusedHeading());
+
+	const double obsDistanceThresh = 500;
 	if(fabs(deltaFlDistance.getX() < obsDistanceThresh) && fabs(deltaFrDistance.getX() < obsDistanceThresh) &&
 	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
 
-		m_observer.AddDriveTrainObservation(newFlAngle, deltaFlVelocity,
+		m_observer.UpdatedRobotPositionObservation(newFlAngle, deltaFlVelocity,
 											newFrAngle, deltaFrVelocity,
 											newBlAngle, deltaBlVelocity,
-											newBrAngle, deltaBrVelocity, timeStamp, 0.1);
+											newBrAngle, deltaBrVelocity, timeStamp, deltaGyroYaw);
 	}
-
-	Rotation2D newGyroYaw = Rotation2D::fromDegrees(m_imu->GetFusedHeading());
-	SmartDashboard::PutNumber("fused heading", m_imu->GetFusedHeading());
-	Rotation2D deltaGyroYaw = newGyroYaw.rotateBy(m_oldGyroYaw.inverse());
-	m_oldGyroYaw = newGyroYaw;
-	m_observer.AddGyroObservation(deltaGyroYaw, timeStamp, 0.9);
 
 	RigidTransform2D observerPos =  m_observer.GetLastRobotPos();
 
