@@ -9,7 +9,7 @@
 #define SRC_COMMANDS_DIAG_DRIVETRAINCHECKCOMMAND_H_
 
 #include "CommandBase.h"
-#include "Subsystems/DriveTrain2017.h"
+#include "Subsystems/DriveTrain.h"
 
 class DriveTrainCheckCommand : public InstantCommand {
 public:

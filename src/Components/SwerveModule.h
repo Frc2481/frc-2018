@@ -1,12 +1,12 @@
 /*
- * SwerveModuleV2.h
+ * SwerveModule.h
  *
  *  Created on: Jul 17, 2017
  *      Author: Team2481
  */
 
-#ifndef SRC_SWERVEMODULEV2_H_
-#define SRC_SWERVEMODULEV2_H_
+#ifndef SRC_SWERVEMODULE_H_
+#define SRC_SWERVEMODULE_H_
 
 #include <WPILib.h>
 #include "ctre/Phoenix.h"
@@ -16,7 +16,7 @@
 class CTREMagEncoder;
 class GreyhillEncoder;
 
-class SwerveModuleV2 {
+class SwerveModule {
 private:
 	TalonSRX *m_steerMotor;
 	TalonSRX *m_driveMotor;
@@ -30,11 +30,12 @@ private:
 	std::string m_name;
 
 public:
-	SwerveModuleV2(uint32_t driveID, uint32_t steerID, const std::string name);
-	virtual ~SwerveModuleV2();
+	SwerveModule(uint32_t driveID, uint32_t steerID, const std::string name);
+	virtual ~SwerveModule();
 
 	Rotation2D GetAngle() const;
 	void SetOptimized(bool isOptimized);
+	bool GetOptimized();
 	void SetAngle(Rotation2D angle, bool force = false);
 	bool IsSteerOnTarget() const;
 
@@ -59,4 +60,4 @@ public:
 	double GetDriveCurrent() const;
 };
 
-#endif /* SRC_SWERVEMODULEV2_H_ */
+#endif /* SRC_SWERVEMODULE_H_ */

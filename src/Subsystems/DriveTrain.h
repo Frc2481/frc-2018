@@ -1,30 +1,29 @@
 /*
- * DriveTrain2017.h
+ * DriveTrain.h
  *
  *  Created on: Aug 28, 2017
  *      Author: Team2481
  */
 
-#ifndef SRC_SUBSYSTEMS_DRIVETRAIN2017_H_
-#define SRC_SUBSYSTEMS_DRIVETRAIN2017_H_
+#ifndef SRC_SUBSYSTEMS_DRIVETRAIN_H_
+#define SRC_SUBSYSTEMS_DRIVETRAIN_H_
 
 #include "Commands/Subsystem.h"
 #include "Solenoid.h"
 #include "utils/Rotation2D.h"
 #include "utils/Translation2D.h"
-#include "Observer.h"
+#include "Subsystems/Observer.h"
 #include "Kinematics.h"
-#include "SwerveModuleV2.h"
 
-
+class SwerveModule;
 class AHRS;
 
-class DriveTrain2017 : public Subsystem{
+class DriveTrain : public Subsystem{
 private:
-	SwerveModuleV2 *m_flWheel;
-	SwerveModuleV2 *m_frWheel;
-	SwerveModuleV2 *m_brWheel;
-	SwerveModuleV2 *m_blWheel;
+	SwerveModule *m_flWheel;
+	SwerveModule *m_frWheel;
+	SwerveModule *m_brWheel;
+	SwerveModule *m_blWheel;
 	Solenoid *m_shifter;
 
 	AHRS* m_imu;
@@ -44,10 +43,22 @@ private:
 	float m_roll;
 	float m_pitch;
 
+	Rotation2D m_oldFlAngle;
+	Rotation2D m_oldFrAngle;
+	Rotation2D m_oldBlAngle;
+	Rotation2D m_oldBrAngle;
+
+	Translation2D m_oldFlDistance;
+	Translation2D m_oldFrDistance;
+	Translation2D m_oldBlDistance;
+	Translation2D m_oldBrDistance;
 
 	Translation2D m_motionSetpoint;
 
 	Observer m_observer;
+
+	Rotation2D m_oldGyroYaw;
+
 
 public:
 	enum SwerveModuleType{
@@ -56,8 +67,8 @@ public:
 		BACK_LEFT_MODULE,
 		BACK_RIGHT_MODULE,
 	};
-	DriveTrain2017();
-	virtual ~DriveTrain2017();
+	DriveTrain();
+	virtual ~DriveTrain();
 	void InitDefaultCommand();
 	void Drive(double xPos, double yPos, double twist);
 	void SetOrigin(double xPos, double yPos);
@@ -77,9 +88,11 @@ public:
 	void SetBrake(bool brake);
 	void Shift(bool state);
 	bool IsShifted() const;
-	class SwerveModuleV2* GetModule(DriveTrain2017::SwerveModuleType module) const;
+	class SwerveModule* GetModule(DriveTrain::SwerveModuleType module) const;
 	Rotation2D GetHeading() const;
 	void DriveCloseLoopDistance(Translation2D setpoint);
+
+	void ResetRobotPose();
 
 	Translation2D GetMotionMagicSetpoint() const;
 
@@ -95,6 +108,8 @@ public:
 	virtual void Periodic();
 
 	void CheckDiagnostics();
+
+	double m_oldTimestamp;
 };
 
-#endif /* SRC_SUBSYSTEMS_DRIVETRAIN2017_H_ */
+#endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

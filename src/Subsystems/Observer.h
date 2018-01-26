@@ -9,25 +9,33 @@
 #define SRC_SUBSYSTEMS_OBSERVER_H_
 
 #include "ctre/Phoenix.h"
-#include "utils/Rotation2D.h"
-#include "Translation2D.h"
-#include "RobotChains.h"
-#include "InterpolatingDouble.h"
-#include "InterpolatingMap.h"
-#include "RigidTransform2D.h"
+#include "utils/RobotChains.h"
+#include "utils/InterpolatingDouble.h"
+#include "utils/InterpolatingMap.h"
+#include "utils/RigidTransform2D.h"
+#include "Kinematics.h"
+
 
 class Observer {
 public:
 	Observer();
 	virtual ~Observer();
-	void AddDriveTrainObservation(RigidTransform2D robotCenterVel, double timeStamp);
-	void AddGyroObservation(Rotation2D gyroAngle, double timeStamp);
-	void TimeUpdateRobotState(double timestamp);
+
+	void ResetPose();
+
+	void UpdatedRobotPositionObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
+			RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity,
+			Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timeStamp, Rotation2D deltaGyroYaw);
+	void AddGyroObservation(Rotation2D gyroAngle, double timeStamp, double k);
+	RigidTransform2D GetRobotPos(double timestamp);
+	void SetRobotPos(RigidTransform2D robotPos, double timestamp);
+	RigidTransform2D GetLastRobotPos();
 
 private:
-	InterpolatingMap<InterpolatingDouble, Rotation2D> m_gyroAngleVelZ;
-	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_driveTrainVel;
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_robotPos;
+	Rotation2D m_oldGyroYaw;
+	const double kFwdKinematicsWeight = 0.1;
+	const double kGyroWeight = 0.9;
 
 
 };

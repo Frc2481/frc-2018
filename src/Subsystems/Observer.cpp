@@ -6,9 +6,10 @@
  */
 
 #include <Subsystems/Observer.h>
-#include "SwerveModuleV2Constants.h"
+#include "RobotParameters.h"
 #include <cmath>
 #include <algorithm>
+#include "WPILib.h"
 
 Observer::Observer() {
 
@@ -18,60 +19,52 @@ Observer::~Observer() {
 	// TODO Auto-generated destructor stub
 }
 
-RigidTransform2D Observer::ForwardKinematicsDriveTrain(Rotation2D flAngle, Translation2D flVelocity, Rotation2D frAngle,
-										  Translation2D frVelocity, Rotation2D blAngle, Translation2D blVelocity,
-										  Rotation2D brAngle, Translation2D brVelocity) {
-	double length = SwerveModuleV2Constants::k_robotLength;
-	double width = SwerveModuleV2Constants::k_robotWidth;
-	double originY, originX;
-	originY = 0;
-	originX = 0;
+void Observer::UpdatedRobotPositionObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
+	RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity,
+	Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timestamp, Rotation2D deltaGyroYaw) {
+	RigidTransform2D::Delta deltaRobotPos = Kinematics::SwerveForwardKinematics(flAngle, flVelocity, frAngle, frVelocity, blAngle, blVelocity, brAngle, brVelocity);
 
-	double FR_B = frAngle.getSin() * frVelocity;
-	double FR_D = frAngle.getCos() * frVelocity;
+	RigidTransform2D oldRobotPos = GetLastRobotPos();
 
-	double FL_B = flAngle.getSin() * flVelocity;
-	double FL_C = flAngle.getCos() * flVelocity;
+	// Complementary filter to combine gyro and forward kinematic angle deltas together.
+	Rotation2D finalAngleDelta = Rotation2D::fromRadians((deltaRobotPos.GetTheta() * kFwdKinematicsWeight) + (deltaGyroYaw.getRadians() * kGyroWeight));
+	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(finalAngleDelta);
 
-	double BR_A = brAngle.getSin() * brVelocity;
-	double BR_D = brAngle.getCos() * brVelocity;
+	Translation2D newRobotTranslation = oldRobotPos.getTranslation().
+										translateBy(Translation2D(deltaRobotPos.GetX(),deltaRobotPos.GetY()).
+										rotateBy(newRobotAngle.inverse()));
 
-	double BL_A = blAngle.getSin() * blVelocity;
-	double BL_C = blAngle.getCos() * blVelocity;
+	RigidTransform2D robotPos(newRobotTranslation, newRobotAngle);
+	SetRobotPos(robotPos, timestamp);
 
-	double A = (BR_A + BL_A) / 2;
-	double B = (FR_B + FL_B) / 2;
-	double C = (FL_C + BL_C) / 2;
-	double D = (FR_D + BR_D) / 2;
-
-	double omega1, omega2, omega;
-	omega1 = (B - A) / length;
-	omega2 = (C - D) / width;
-	omega = (omega1 + omega2) / 2;
-
-	double Vyc, Vxc, Vyc1, Vyc2, Vxc1, Vxc2;
-	double rx = width / 2.0;
-	double ry = length / 2.0;
-	Vyc1 = omega * (ry + originY) + A;
-	Vyc2 = -omega * (ry - originY) + B;
-	Vxc1 = omega * (rx + originX) + C;
-	Vxc2 = -omega * (rx - originX) + D;
-
-	Vyc = (Vyc1 + Vyc2) / 2;
-	Vxc = (Vxc1 + Vxc2) / 2;
-
-	return RigidTransform2D(Vxc, Vyc, omega);
+	SmartDashboard::PutNumber("delta robot angle gyro", deltaGyroYaw.getDegrees());
+	SmartDashboard::PutNumber("delta robot angle kinematics", deltaRobotPos.GetTheta() * 180 / M_PI);
+	SmartDashboard::PutNumber("delta robot x kinematics", deltaRobotPos.GetX());
+	SmartDashboard::PutNumber("delta robot y kinematics", deltaRobotPos.GetY());
 }
 
-void Observer::AddGyroObservation(Rotation2D gyroAngleVel, double timeStamp) {
-	m_gyroAngleVel.put(InterpolatingDouble(timeStamp), gyroAngleVel);
+void Observer::AddGyroObservation(Rotation2D deltaGyroYaw, double timeStamp, double k) {
+	RigidTransform2D oldRobotPos = GetLastRobotPos();
+	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(Rotation2D::fromDegrees(deltaGyroYaw.getDegrees() * k));
+	RigidTransform2D robotPos(oldRobotPos.getTranslation(), newRobotAngle);
+	SetRobotPos(robotPos, timeStamp + 0.0001);
+
+	SmartDashboard::PutNumber("delta robot angle gyro", deltaGyroYaw.getDegrees());
 }
 
-void Observer::AddDriveTrainObservation(RigidTransform2D robotCenterVel,
-		double timeStamp) {
-	m_driveTrainVel.put(InterpolatingDouble(timeStamp), centerVel);
+RigidTransform2D Observer::GetRobotPos(double timestamp) {
+	return m_robotPos.getInterpolated(timestamp);
 }
 
-void Observer::TimeUpdateRobotState(timestamp) {
-	center
+void Observer::SetRobotPos(RigidTransform2D robotPos, double timestamp) {
+	m_robotPos.put(InterpolatingDouble(timestamp), robotPos);
+}
+
+void Observer::ResetPose() {
+	m_robotPos.clear();
+	SetRobotPos(RigidTransform2D(), RobotController::GetFPGATime());
+}
+
+RigidTransform2D Observer::GetLastRobotPos() {
+	return m_robotPos.rbegin()->second;
 }

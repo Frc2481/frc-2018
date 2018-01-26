@@ -8,10 +8,10 @@
 #ifndef SRC_COMMANDS_CALIBRATEDRIVETRAINCOMMAND_H_
 #define SRC_COMMANDS_CALIBRATEDRIVETRAINCOMMAND_H_
 
+#include <Subsystems/DriveTrain.h>
+#include <Components/SwerveModule.h>
 #include "../CommandBase.h"
-#include "../Subsystems/DriveTrain2017.h"
-#include "../SwerveModuleV2.h"
-#include "../CTREMagEncoder.h"
+#include <Components/CTREMagEncoder.h>
 
 class CalibrateDriveTrainCommand : public InstantCommand{
 public:
@@ -21,10 +21,10 @@ public:
 	virtual ~CalibrateDriveTrainCommand() {}
 
 	void Initialize() {
-		CommandBase::m_driveTrain->GetModule(DriveTrain2017::SwerveModuleType::FRONT_LEFT_MODULE)->GetSteerEncoder()->Calibrate();
-		CommandBase::m_driveTrain->GetModule(DriveTrain2017::SwerveModuleType::FRONT_RIGHT_MODULE)->GetSteerEncoder()->Calibrate();
-		CommandBase::m_driveTrain->GetModule(DriveTrain2017::SwerveModuleType::BACK_LEFT_MODULE)->GetSteerEncoder()->Calibrate();
-		CommandBase::m_driveTrain->GetModule(DriveTrain2017::SwerveModuleType::BACK_RIGHT_MODULE)->GetSteerEncoder()->Calibrate();
+		CommandBase::m_driveTrain->GetModule(DriveTrain::SwerveModuleType::FRONT_LEFT_MODULE)->GetSteerEncoder()->Calibrate();
+		CommandBase::m_driveTrain->GetModule(DriveTrain::SwerveModuleType::FRONT_RIGHT_MODULE)->GetSteerEncoder()->Calibrate();
+		CommandBase::m_driveTrain->GetModule(DriveTrain::SwerveModuleType::BACK_LEFT_MODULE)->GetSteerEncoder()->Calibrate();
+		CommandBase::m_driveTrain->GetModule(DriveTrain::SwerveModuleType::BACK_RIGHT_MODULE)->GetSteerEncoder()->Calibrate();
 	}
 };
 

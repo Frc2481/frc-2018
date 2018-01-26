@@ -10,7 +10,6 @@
 
 #include "ctre/Phoenix.h"
 #include "WPILib.h"
-#include "DriveTrain2017.h"
 
 class Intake {
 private:

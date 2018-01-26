@@ -1,11 +1,11 @@
 #ifndef COMMAND_BASE_H
 #define COMMAND_BASE_H
 
+#include <Subsystems/DriveTrain.h>
 #include <string>
 #include "Commands/Command.h"
 #include "OI.h"
 #include "WPILib.h"
-#include "Subsystems/DriveTrain2017.h"
 #include "Subsystems/Intake.h"
 
 /**
@@ -20,7 +20,7 @@ public:
 	CommandBase();
 	static void init();
 	// Create a single static instance of all of your subsystems
-	static std::unique_ptr<DriveTrain2017> m_driveTrain;
+	static std::unique_ptr<DriveTrain> m_driveTrain;
 	static std::unique_ptr<Intake> m_intake;
 	static std::unique_ptr<OI> oi;
 

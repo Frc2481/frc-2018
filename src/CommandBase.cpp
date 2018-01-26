@@ -2,7 +2,7 @@
 #include "Commands/Scheduler.h"
 
 // Initialize a single static instance of all of your subsystems to NULL
-std::unique_ptr<DriveTrain2017> CommandBase::m_driveTrain;
+std::unique_ptr<DriveTrain> CommandBase::m_driveTrain;
 std::unique_ptr<Intake> CommandBase::m_intake;
 std::unique_ptr<OI> CommandBase::oi;
 bool CommandBase::m_pause;
@@ -22,7 +22,7 @@ void CommandBase::init()
 {
 	// Create a single static instance of all of your subsystems. The following
 	// line should be repeated for each subsystem in the project.
-	m_driveTrain.reset(new DriveTrain2017());
+	m_driveTrain.reset(new DriveTrain());
 	m_intake.reset(new Intake());
 	m_pause = false;
 
