@@ -9,6 +9,7 @@
 #include <Subsystems/DriveTrain.h>
 #include "CommandBase.h"
 #include "Commands/Diag/DriveTrainTestCommandGroup.h"
+#include "Commands/DriveTrainDriveToPosition.h"
 
 class Robot: public frc::TimedRobot {
 public:
@@ -16,6 +17,8 @@ public:
 		CommandBase::init();
 		frc::SmartDashboard::PutData("Auto Modes", &chooser);
 		frc::SmartDashboard::PutData("Drive Train Test", new DriveTrainTestCommandGroup());
+
+		SmartDashboard::PutData("Drive to Position", new DriveTrainDriveToPosition());
 	}
 
 	/**

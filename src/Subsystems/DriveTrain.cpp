@@ -57,7 +57,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 
 	m_oldGyroYaw = Rotation2D(1, 0, true);
 
-	m_driveState = DriveState::joystick;
+//	m_driveState = DriveState::joystick;
 }
 
 DriveTrain::~DriveTrain() {
@@ -74,74 +74,63 @@ void DriveTrain::InitDefaultCommand() {
 }
 
 void DriveTrain::Drive(double xPos, double yPos, double twist) {
-	switch(m_driveState) {
-		case position: // position
-			break;
-		default: // joystick
-			break;
+	m_xPos = xPos;
+	m_yPos = yPos;
+	m_twist = twist;
+
+	Translation2D translation(xPos, yPos); //xPos = STR & yPos = FWD
+	Rotation2D rotation = Rotation2D::fromDegrees(twist); //don't store twist as angle
+
+	Rotation2D gyroAngle = GetHeading();
+
+	if (m_headingCorrection) {
+		gyroAngle.rotateBy(m_headingCorrectionOffset);
+		twist = gyroAngle.getDegrees() * m_pHeadingCorrection;
+	}
+	twist *= -1;
+
+	if (m_isFieldCentric) {
+		m_heading = -(gyroAngle.getDegrees());
+		translation.rotateBy(gyroAngle);
+		twist *= 0.1;
+	}
+	else {
+		  //limit twist speed while not in field centric
+		twist *= 0.05;
 	}
 
+	if (!m_isForward) { //used for gare-e
+		translation.setY(-translation.getY());
+		translation.setX(-translation.getX());
+	}
 
-
-	if(m_driveState == DriveState::joystick) {
-		m_xPos = xPos;
-		m_yPos = yPos;
-		m_twist = twist;
-
-		Translation2D translation(xPos, yPos); //xPos = STR & yPos = FWD
-		Rotation2D rotation = Rotation2D::fromDegrees(twist); //don't store twist as angle
-
-		Rotation2D gyroAngle = GetHeading();
-
-		if (m_headingCorrection) {
-			gyroAngle.rotateBy(m_headingCorrectionOffset);
-			twist = gyroAngle.getDegrees() * m_pHeadingCorrection;
-		}
+	if(fabs(m_originX) > 0.1f || fabs(m_originY) > 0.1f){
 		twist *= -1;
-
-		if (m_isFieldCentric) {
-			m_heading = -(gyroAngle.getDegrees());
-			translation.rotateBy(gyroAngle);
-			twist *= 0.1;
-		}
-		else {
-			  //limit twist speed while not in field centric
-			twist *= 0.05;
-		}
-
-		if (!m_isForward) { //used for gare-e
-			translation.setY(-translation.getY());
-			translation.setX(-translation.getX());
-		}
-
-		if(fabs(m_originX) > 0.1f || fabs(m_originY) > 0.1f){
-			twist *= -1;
-		}
-
-		double flWheelSpeed;
-		double frWheelSpeed;
-		double blWheelSpeed;
-		double brWheelSpeed;
-		Rotation2D flWheelAngle;
-		Rotation2D frWheelAngle;
-		Rotation2D blWheelAngle;
-		Rotation2D brWheelAngle;
-
-		Kinematics::SwerveInverseKinematics(translation, twist,
-				flWheelSpeed, frWheelSpeed, blWheelSpeed, brWheelSpeed,
-				flWheelAngle, frWheelAngle, blWheelAngle, brWheelAngle);
-
-		m_flWheel->Set(flWheelSpeed, flWheelAngle);
-		SmartDashboard::PutNumber("flWheelSpeed", flWheelSpeed);
-		SmartDashboard::PutNumber("flWheelAngle", flWheelAngle.getDegrees());
-		m_frWheel->Set(frWheelSpeed, frWheelAngle);
-		m_blWheel->Set(blWheelSpeed, blWheelAngle);
-		m_brWheel->Set(brWheelSpeed, brWheelAngle);
-
-		SmartDashboard::PutNumber("twist", twist);
-		SmartDashboard::PutNumber("xPos", translation.getX());
-		SmartDashboard::PutNumber("yPos", translation.getY());
 	}
+
+	double flWheelSpeed;
+	double frWheelSpeed;
+	double blWheelSpeed;
+	double brWheelSpeed;
+	Rotation2D flWheelAngle;
+	Rotation2D frWheelAngle;
+	Rotation2D blWheelAngle;
+	Rotation2D brWheelAngle;
+
+	Kinematics::SwerveInverseKinematics(translation, twist,
+			flWheelSpeed, frWheelSpeed, blWheelSpeed, brWheelSpeed,
+			flWheelAngle, frWheelAngle, blWheelAngle, brWheelAngle);
+
+	m_flWheel->Set(flWheelSpeed, flWheelAngle);
+	SmartDashboard::PutNumber("flWheelSpeed", flWheelSpeed);
+	SmartDashboard::PutNumber("flWheelAngle", flWheelAngle.getDegrees());
+	m_frWheel->Set(frWheelSpeed, frWheelAngle);
+	m_blWheel->Set(blWheelSpeed, blWheelAngle);
+	m_brWheel->Set(brWheelSpeed, brWheelAngle);
+
+	SmartDashboard::PutNumber("twist", twist);
+	SmartDashboard::PutNumber("xPos", translation.getX());
+	SmartDashboard::PutNumber("yPos", translation.getY());
 }
 
 void DriveTrain::SetOrigin(double xPos, double yPos) {
@@ -166,9 +155,7 @@ float DriveTrain::GetPitch() const{
 }
 
 void DriveTrain::PeriodicUpdate() {
-	if(m_driveState == DriveState::joystick) {
 		Drive(m_xPos, m_yPos, m_twist);
-	}
 }
 
 void DriveTrain::SetBrake(bool brake) {
@@ -376,10 +363,10 @@ DriveController* DriveTrain::GetDriveController() {
 	return m_driveController;
 }
 
-DriveTrain::DriveState DriveTrain::GetDriveState() {
-	return m_driveState;
-}
-
-void DriveTrain::SetDriveState(DriveState state) {
-	m_driveState = state;
-}
+//DriveTrain::DriveState DriveTrain::GetDriveState() {
+//	return m_driveState;
+//}
+//
+//void DriveTrain::SetDriveState(DriveState state) {
+//	m_driveState = state;
+//}

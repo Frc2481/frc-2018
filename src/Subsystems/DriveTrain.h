@@ -67,7 +67,7 @@ private:
 
 	double m_oldTimestamp;
 
-	DriveState m_driveState;
+//	DriveState m_driveState;
 
 public:
 	enum SwerveModuleType {
@@ -110,8 +110,8 @@ public:
 
 	DriveController* GetDriveController();
 
-	DriveState GetDriveState();
-	void SetDriveState(DriveState state);
+//	DriveState GetDriveState();
+//	void SetDriveState(DriveState state);
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */
