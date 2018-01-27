@@ -23,10 +23,9 @@ public:
 
 	void ResetPose();
 
-	void UpdatedRobotPositionObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
+	void UpdateRobotPoseObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
 			RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity,
 			Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timeStamp, Rotation2D deltaGyroYaw);
-	void AddGyroObservation(Rotation2D gyroAngle, double timeStamp, double k);
 	RigidTransform2D GetRobotPos(double timestamp);
 	void SetRobotPos(RigidTransform2D robotPos, double timestamp);
 	RigidTransform2D GetLastRobotPos();

@@ -19,7 +19,7 @@ Observer::~Observer() {
 	// TODO Auto-generated destructor stub
 }
 
-void Observer::UpdatedRobotPositionObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
+void Observer::UpdateRobotPoseObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
 	RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity,
 	Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timestamp, Rotation2D deltaGyroYaw) {
 	RigidTransform2D::Delta deltaRobotPos = Kinematics::SwerveForwardKinematics(flAngle, flVelocity, frAngle, frVelocity, blAngle, blVelocity, brAngle, brVelocity);
@@ -41,15 +41,6 @@ void Observer::UpdatedRobotPositionObservation(Rotation2D flAngle, RigidTransfor
 	SmartDashboard::PutNumber("delta robot angle kinematics", deltaRobotPos.GetTheta() * 180 / M_PI);
 	SmartDashboard::PutNumber("delta robot x kinematics", deltaRobotPos.GetX());
 	SmartDashboard::PutNumber("delta robot y kinematics", deltaRobotPos.GetY());
-}
-
-void Observer::AddGyroObservation(Rotation2D deltaGyroYaw, double timeStamp, double k) {
-	RigidTransform2D oldRobotPos = GetLastRobotPos();
-	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(Rotation2D::fromDegrees(deltaGyroYaw.getDegrees() * k));
-	RigidTransform2D robotPos(oldRobotPos.getTranslation(), newRobotAngle);
-	SetRobotPos(robotPos, timeStamp + 0.0001);
-
-	SmartDashboard::PutNumber("delta robot angle gyro", deltaGyroYaw.getDegrees());
 }
 
 RigidTransform2D Observer::GetRobotPos(double timestamp) {

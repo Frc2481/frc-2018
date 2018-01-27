@@ -14,11 +14,17 @@
 #include "utils/Translation2D.h"
 #include "Subsystems/Observer.h"
 #include "Kinematics.h"
+#include "Components/DriveController.h"
 
 class SwerveModule;
 class AHRS;
 
 class DriveTrain : public Subsystem{
+public:
+	enum DriveState {
+		joystick = 0,
+		position = 1
+	};
 private:
 	SwerveModule *m_flWheel;
 	SwerveModule *m_frWheel;
@@ -30,12 +36,10 @@ private:
 	bool m_isFieldCentric;
 	bool m_isForward;
 	double m_xPos, m_yPos, m_twist;
-	float m_prevAngle;
 	float m_pHeadingCorrection;
 	float m_originX;
 	float m_originY;
 
-	double m_encRotationPerDegrees;
 	Rotation2D m_headingCorrectionOffset;
 
 	float m_heading;
@@ -55,18 +59,24 @@ private:
 
 	Translation2D m_motionSetpoint;
 
-	Observer m_observer;
+	Observer* m_observer;
 
 	Rotation2D m_oldGyroYaw;
 
+	DriveController* m_driveController;
+
+	double m_oldTimestamp;
+
+	DriveState m_driveState;
 
 public:
-	enum SwerveModuleType{
+	enum SwerveModuleType {
 		FRONT_LEFT_MODULE,
 		FRONT_RIGHT_MODULE,
 		BACK_LEFT_MODULE,
 		BACK_RIGHT_MODULE,
 	};
+
 	DriveTrain();
 	virtual ~DriveTrain();
 	void InitDefaultCommand();
@@ -79,37 +89,29 @@ public:
 	void Stop();
 	void SetFieldCentric(bool fieldCentric);
 	void SetForward(bool forward);
-	void SetHeadingCorrection(bool headingCorrection);
-	const Rotation2D& GetGyroCorrectionOffset() const;
-	void SetGyroCorrectionOffset(Rotation2D &offset);
 	void ZeroGyro();
-	bool IsHeadingCorrection() const;
 	void PeriodicUpdate();
 	void SetBrake(bool brake);
 	void Shift(bool state);
 	bool IsShifted() const;
 	class SwerveModule* GetModule(DriveTrain::SwerveModuleType module) const;
 	Rotation2D GetHeading() const;
-	void DriveCloseLoopDistance(Translation2D setpoint);
+
+	void SetHeadingCorrection(bool headingCorrection);
+	const Rotation2D& GetGyroCorrectionOffset() const;
+	void SetGyroCorrectionOffset(Rotation2D &offset);
+	bool IsHeadingCorrection() const;
 
 	void ResetRobotPose();
-
-	Translation2D GetMotionMagicSetpoint() const;
-
-	double ComputeDriveDistanceInchestoEncoderRotations(double inches);
-	double ComputeDegreesToEncoderRotations(double degrees);
-
-	void SetMotionMagicAccel(double accel);
-	double GetDriveDistance() const;
-
-	bool IsSteerOnTarget() const;
-	bool IsDriveOnTarget() const;
 
 	virtual void Periodic();
 
 	void CheckDiagnostics();
 
-	double m_oldTimestamp;
+	DriveController* GetDriveController();
+
+	DriveState GetDriveState();
+	void SetDriveState(DriveState state);
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

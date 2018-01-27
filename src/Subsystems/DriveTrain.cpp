@@ -32,10 +32,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_isForward(true),
 	m_xPos(0), m_yPos(0), m_twist(0), m_heading(0), m_headingCorrection(0), m_roll(0), m_pitch(0), m_oldTimestamp(1.0) {
 
-	m_prevAngle = 90.0;
-
 	m_headingCorrection = false;
-	m_encRotationPerDegrees = Preferences::GetInstance()->GetDouble("ENCODER_ROTATIONS_PER_DEGREE",0);
 	m_pHeadingCorrection = Preferences::GetInstance()->GetDouble("P_HEADING_CORRECTION",0);
 	m_originX = 0.0f;
 	m_originY = 0.0f;
@@ -53,9 +50,14 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	SmartDashboard::PutData(new CalibrateDriveTrainCommand());
 	SmartDashboard::PutData(new ObserverResetPosCommand());
 
-	m_observer.SetRobotPos(RigidTransform2D(Translation2D(0, 0), Rotation2D(1, 0, true)), 0.0);
+	m_observer = new Observer();
+	m_observer->SetRobotPos(RigidTransform2D(Translation2D(0, 0), Rotation2D(1, 0, true)), 0.0);
+
+	m_driveController = new DriveController(m_observer);
 
 	m_oldGyroYaw = Rotation2D(1, 0, true);
+
+	m_driveState = DriveState::joystick;
 }
 
 DriveTrain::~DriveTrain() {
@@ -72,65 +74,74 @@ void DriveTrain::InitDefaultCommand() {
 }
 
 void DriveTrain::Drive(double xPos, double yPos, double twist) {
-	m_xPos = xPos;
-	m_yPos = yPos;
-	m_twist = twist;
-
-	Translation2D translation(xPos, yPos); //xPos = STR & yPos = FWD
-	Rotation2D rotation = Rotation2D::fromDegrees(twist); //don't store twist as angle
-
-	Rotation2D gyroAngle = GetHeading();
-
-	if (m_headingCorrection) {
-		gyroAngle.rotateBy(m_headingCorrectionOffset);
-		twist = gyroAngle.getDegrees() * m_pHeadingCorrection;
-	}
-	twist *= -1;
-
-	if (m_isFieldCentric) {
-		m_heading = -(gyroAngle.getDegrees());
-		translation.rotateBy(gyroAngle);
-		twist *= 0.1;
-	}
-	else {
-		  //limit twist speed while not in field centric
-		twist *= .05;
+	switch(m_driveState) {
+		case position: // position
+			break;
+		default: // joystick
+			break;
 	}
 
 
 
-	if (!m_isForward) { //used for gare-e
-		translation.setY(-translation.getY());
-		translation.setX(-translation.getX());
-	}
+	if(m_driveState == DriveState::joystick) {
+		m_xPos = xPos;
+		m_yPos = yPos;
+		m_twist = twist;
 
-	if(fabs(m_originX) > 0.1f || fabs(m_originY) > 0.1f){
+		Translation2D translation(xPos, yPos); //xPos = STR & yPos = FWD
+		Rotation2D rotation = Rotation2D::fromDegrees(twist); //don't store twist as angle
+
+		Rotation2D gyroAngle = GetHeading();
+
+		if (m_headingCorrection) {
+			gyroAngle.rotateBy(m_headingCorrectionOffset);
+			twist = gyroAngle.getDegrees() * m_pHeadingCorrection;
+		}
 		twist *= -1;
+
+		if (m_isFieldCentric) {
+			m_heading = -(gyroAngle.getDegrees());
+			translation.rotateBy(gyroAngle);
+			twist *= 0.1;
+		}
+		else {
+			  //limit twist speed while not in field centric
+			twist *= 0.05;
+		}
+
+		if (!m_isForward) { //used for gare-e
+			translation.setY(-translation.getY());
+			translation.setX(-translation.getX());
+		}
+
+		if(fabs(m_originX) > 0.1f || fabs(m_originY) > 0.1f){
+			twist *= -1;
+		}
+
+		double flWheelSpeed;
+		double frWheelSpeed;
+		double blWheelSpeed;
+		double brWheelSpeed;
+		Rotation2D flWheelAngle;
+		Rotation2D frWheelAngle;
+		Rotation2D blWheelAngle;
+		Rotation2D brWheelAngle;
+
+		Kinematics::SwerveInverseKinematics(translation, twist,
+				flWheelSpeed, frWheelSpeed, blWheelSpeed, brWheelSpeed,
+				flWheelAngle, frWheelAngle, blWheelAngle, brWheelAngle);
+
+		m_flWheel->Set(flWheelSpeed, flWheelAngle);
+		SmartDashboard::PutNumber("flWheelSpeed", flWheelSpeed);
+		SmartDashboard::PutNumber("flWheelAngle", flWheelAngle.getDegrees());
+		m_frWheel->Set(frWheelSpeed, frWheelAngle);
+		m_blWheel->Set(blWheelSpeed, blWheelAngle);
+		m_brWheel->Set(brWheelSpeed, brWheelAngle);
+
+		SmartDashboard::PutNumber("twist", twist);
+		SmartDashboard::PutNumber("xPos", translation.getX());
+		SmartDashboard::PutNumber("yPos", translation.getY());
 	}
-
-	double flWheelSpeed;
-	double frWheelSpeed;
-	double blWheelSpeed;
-	double brWheelSpeed;
-	Rotation2D flWheelAngle;
-	Rotation2D frWheelAngle;
-	Rotation2D blWheelAngle;
-	Rotation2D brWheelAngle;
-
-	Kinematics::SwerveInverseKinematics(translation, twist,
-			flWheelSpeed, frWheelSpeed, blWheelSpeed, brWheelSpeed,
-			flWheelAngle, frWheelAngle, blWheelAngle, brWheelAngle);
-
-	m_flWheel->Set(flWheelSpeed, flWheelAngle);
-	SmartDashboard::PutNumber("flWheelSpeed", flWheelSpeed);
-	SmartDashboard::PutNumber("flWheelAngle", flWheelAngle.getDegrees());
-	m_frWheel->Set(frWheelSpeed, frWheelAngle);
-	m_blWheel->Set(blWheelSpeed, blWheelAngle);
-	m_brWheel->Set(brWheelSpeed, brWheelAngle);
-
-	SmartDashboard::PutNumber("twist", twist);
-	SmartDashboard::PutNumber("xPos", translation.getX());
-	SmartDashboard::PutNumber("yPos", translation.getY());
 }
 
 void DriveTrain::SetOrigin(double xPos, double yPos) {
@@ -155,7 +166,9 @@ float DriveTrain::GetPitch() const{
 }
 
 void DriveTrain::PeriodicUpdate() {
-	Drive(m_xPos, m_yPos, m_twist);
+	if(m_driveState == DriveState::joystick) {
+		Drive(m_xPos, m_yPos, m_twist);
+	}
 }
 
 void DriveTrain::SetBrake(bool brake) {
@@ -197,25 +210,6 @@ Rotation2D DriveTrain::GetHeading() const{
 	return Rotation2D::fromDegrees(m_imu->GetFusedHeading());
 }
 
-void DriveTrain::DriveCloseLoopDistance(Translation2D setpoint) {
-	m_motionSetpoint = setpoint;
-	m_flWheel->SetCloseLoopDriveDistance(m_motionSetpoint);
-	m_frWheel->SetCloseLoopDriveDistance(m_motionSetpoint.inverse());
-	m_blWheel->SetCloseLoopDriveDistance(m_motionSetpoint);
-	m_brWheel->SetCloseLoopDriveDistance(m_motionSetpoint.inverse());
-}
-
-Translation2D DriveTrain::GetMotionMagicSetpoint() const{
-	return m_motionSetpoint;
-}
-
-double DriveTrain::ComputeDriveDistanceInchestoEncoderRotations(double inches) {
-	double revolutions;
-	revolutions = inches / RobotParameters::k_inchesPerWheelRev;
-	revolutions *= RobotParameters::k_encoderRevPerWheelRev;
-	return revolutions;
-}
-
 void DriveTrain::Stop() {
 	Drive(0, 0, 0);
 }
@@ -240,40 +234,12 @@ bool DriveTrain::IsHeadingCorrection() const {
 	return m_headingCorrection;
 }
 
-bool DriveTrain::IsSteerOnTarget() const{
-	return m_flWheel->IsSteerOnTarget() && m_frWheel->IsSteerOnTarget()
-			&& m_blWheel->IsSteerOnTarget() && m_brWheel->IsSteerOnTarget();
-}
-
-void DriveTrain::SetMotionMagicAccel(double accel) {
-	m_flWheel->SetMagicAccel(accel);
-	m_frWheel->SetMagicAccel(accel);
-	m_blWheel->SetMagicAccel(accel);
-	m_brWheel->SetMagicAccel(accel);
-}
-
-double DriveTrain::GetDriveDistance() const{
-	return std::max(fabs(m_flWheel->GetDistance().getX()),
-			std::max(fabs(m_frWheel->GetDistance().getX()),
-			std::max(fabs(m_blWheel->GetDistance().getX()),
-					fabs(m_brWheel->GetDistance().getX()))));
-}
-
 bool DriveTrain::IsShifted() const{
 	return m_shifter->Get();
 }
 
-double DriveTrain::ComputeDegreesToEncoderRotations(double degrees) {
-	return (degrees * m_encRotationPerDegrees);
-}
-
-bool DriveTrain::IsDriveOnTarget() const {
-	return m_flWheel->IsDriveOnTarget() && m_frWheel->IsDriveOnTarget()
-			&& m_blWheel->IsDriveOnTarget() && m_brWheel->IsDriveOnTarget(); //make robust against encoder failure
-}
-
 void DriveTrain::ResetRobotPose() {
-	m_observer.ResetPose();
+	m_observer->ResetPose();
 }
 
 void DriveTrain::Periodic() {
@@ -340,19 +306,17 @@ void DriveTrain::Periodic() {
 	Rotation2D deltaGyroYaw = newGyroYaw.rotateBy(m_oldGyroYaw.inverse());
 	m_oldGyroYaw = newGyroYaw;
 
-	SmartDashboard::PutNumber("fused heading", m_imu->GetFusedHeading());
-
 	const double obsDistanceThresh = 500;
 	if(fabs(deltaFlDistance.getX() < obsDistanceThresh) && fabs(deltaFrDistance.getX() < obsDistanceThresh) &&
 	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
 
-		m_observer.UpdatedRobotPositionObservation(newFlAngle, deltaFlVelocity,
+		m_observer->UpdateRobotPoseObservation(newFlAngle, deltaFlVelocity,
 											newFrAngle, deltaFrVelocity,
 											newBlAngle, deltaBlVelocity,
 											newBrAngle, deltaBrVelocity, timeStamp, deltaGyroYaw);
 	}
 
-	RigidTransform2D observerPos =  m_observer.GetLastRobotPos();
+	RigidTransform2D observerPos = m_observer->GetLastRobotPos();
 
 	SmartDashboard::PutNumber("Field X", observerPos.getTranslation().getX());
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
@@ -406,4 +370,16 @@ void DriveTrain::CheckDiagnostics() {
 					flSteerMotorPresent && frSteerMotorPresent && blSteerMotorPresent && brSteerMotorPresent;
 
 	SmartDashboard::PutBoolean("All Drive Train Motors Present", allMotorsPresent);
+}
+
+DriveController* DriveTrain::GetDriveController() {
+	return m_driveController;
+}
+
+DriveTrain::DriveState DriveTrain::GetDriveState() {
+	return m_driveState;
+}
+
+void DriveTrain::SetDriveState(DriveState state) {
+	m_driveState = state;
 }
