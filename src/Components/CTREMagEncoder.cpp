@@ -37,7 +37,7 @@ Rotation2D CTREMagEncoder::GetAngle() const {
 }
 
 int CTREMagEncoder::GetRotations() const {
-	SmartDashboard::PutNumber("Rotations", GetEncoderTicks(true)/4096);
+	SmartDashboard::PutNumber("Rotations", GetEncoderTicks(true) / 4096);
 	return GetEncoderTicks(true) / 4096;
 }
 

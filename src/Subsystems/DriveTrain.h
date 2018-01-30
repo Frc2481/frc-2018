@@ -20,11 +20,6 @@ class SwerveModule;
 class AHRS;
 
 class DriveTrain : public Subsystem{
-public:
-	enum DriveState {
-		joystick = 0,
-		position = 1
-	};
 private:
 	SwerveModule *m_flWheel;
 	SwerveModule *m_frWheel;
@@ -33,17 +28,17 @@ private:
 	Solenoid *m_shifter;
 
 	AHRS* m_imu;
-	bool m_isFieldCentric;
-	bool m_isForward;
-	double m_xPos, m_yPos, m_twist;
-	float m_pHeadingCorrection;
-	float m_originX;
-	float m_originY;
+//	bool m_isFieldCentric;
+//	bool m_isForward;
+	double m_xVel, m_yVel, m_yawRate;
+//	float m_pHeadingCorrection;
+//	float m_originX;
+//	float m_originY;
 
-	Rotation2D m_headingCorrectionOffset;
+//	Rotation2D m_headingCorrectionOffset;
 
-	float m_heading;
-	bool m_headingCorrection;
+//	float m_heading;
+//	bool m_headingCorrection;
 	float m_roll;
 	float m_pitch;
 
@@ -67,8 +62,6 @@ private:
 
 	double m_oldTimestamp;
 
-//	DriveState m_driveState;
-
 public:
 	enum SwerveModuleType {
 		FRONT_LEFT_MODULE,
@@ -80,27 +73,27 @@ public:
 	DriveTrain();
 	virtual ~DriveTrain();
 	void InitDefaultCommand();
-	void Drive(double xPos, double yPos, double twist);
-	void SetOrigin(double xPos, double yPos);
-	double GetXOrigin() const;
-	double GetYOrigin() const;
+	void Drive(double xVel, double yVel, double yawRate);
+//	void SetOrigin(double xPos, double yPos);
+//	double GetXOrigin() const;
+//	double GetYOrigin() const;
 	float GetRoll() const;
 	float GetPitch() const;
 	void Stop();
-	void SetFieldCentric(bool fieldCentric);
-	void SetForward(bool forward);
+//	void SetFieldCentric(bool fieldCentric);
+//	void SetForward(bool forward);
 	void ZeroGyro();
-	void PeriodicUpdate();
+//	void PeriodicUpdate();
 	void SetBrake(bool brake);
 	void Shift(bool state);
 	bool IsShifted() const;
 	class SwerveModule* GetModule(DriveTrain::SwerveModuleType module) const;
 	Rotation2D GetHeading() const;
 
-	void SetHeadingCorrection(bool headingCorrection);
-	const Rotation2D& GetGyroCorrectionOffset() const;
-	void SetGyroCorrectionOffset(Rotation2D &offset);
-	bool IsHeadingCorrection() const;
+//	void SetHeadingCorrection(bool headingCorrection);
+//	const Rotation2D& GetGyroCorrectionOffset() const;
+//	void SetGyroCorrectionOffset(Rotation2D &offset);
+//	bool IsHeadingCorrection() const;
 
 	void ResetRobotPose();
 
@@ -109,9 +102,6 @@ public:
 	void CheckDiagnostics();
 
 	DriveController* GetDriveController();
-
-//	DriveState GetDriveState();
-//	void SetDriveState(DriveState state);
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

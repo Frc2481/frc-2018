@@ -25,17 +25,18 @@ void Kinematics::SwerveInverseKinematics(Translation2D &velocity, double yawRate
 										Rotation2D &wheelAngleFL, Rotation2D &wheelAngleFR, Rotation2D &wheelAngleBL, Rotation2D &wheelAngleBR) {
 	// +x = robot right
 	// +y = robot forward
-	// +yaw = CW, zero is forward
+	// +yaw = CCW, zero is robot forward
+	// +encoder yaw = CW, zero is robot forward
 
 	// get robot dimensions
 	double length = RobotParameters::k_robotLength;
 	double width = RobotParameters::k_robotWidth;
 
 	// calculate average velocities
-	double VxBack = velocity.getX() - yawRate * (length / 2.0);
-	double VxFront = velocity.getX() + yawRate * (length / 2.0);
-	double VyRight = velocity.getY() - yawRate * (width / 2.0);
-	double VyLeft = velocity.getY() + yawRate * (width / 2.0);
+	double VxBack = velocity.getX() + yawRate * (length / 2.0);
+	double VxFront = velocity.getX() - yawRate * (length / 2.0);
+	double VyRight = velocity.getY() + yawRate * (width / 2.0);
+	double VyLeft = velocity.getY() - yawRate * (width / 2.0);
 
 	// calculate wheel speed
 	wheelSpeedFL = sqrt(pow(VxFront, 2) + pow(VyLeft, 2));
@@ -63,7 +64,8 @@ RigidTransform2D::Delta Kinematics::SwerveForwardKinematics(Rotation2D flAngle, 
 		RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity, Rotation2D brAngle, RigidTransform2D::Delta brVelocity) {
 	// +x = robot right
 	// +y = robot forward
-	// +yaw = clockwise, zero is forward
+	// +yaw = CCW, zero is robot forward
+	// +encoder yaw = CW, zero is robot forward
 
 	// get robot dimensions
 	double length = RobotParameters::k_robotLength;
@@ -89,15 +91,15 @@ RigidTransform2D::Delta Kinematics::SwerveForwardKinematics(Rotation2D flAngle, 
 	double VyLeft = (VyFL + VyBL) / 2.0;
 
 	// calculate robot yaw rate
-	double yawRate1 = (VxFront - VxBack) / length;
-	double yawRate2 = (VyLeft - VyRight) / width;
+	double yawRate1 = (VxBack - VxFront) / length;
+	double yawRate2 = (VyRight - VyLeft) / width;
 	double yawRate = (yawRate1 + yawRate2) / 2.0;
 
 	// calculate robot center velocity
-	double Vxc1 = yawRate * length / 2.0 + VxBack;
-	double Vxc2 = -yawRate * length / 2.0 + VxFront;
-	double Vyc1 = yawRate * width / 2.0 + VyRight;
-	double Vyc2 = -yawRate * width / 2.0 + VyLeft;
+	double Vxc1 = VxBack - yawRate * length / 2.0;
+	double Vxc2 = VxFront + yawRate * length / 2.0;
+	double Vyc1 = VyRight - yawRate * width / 2.0;
+	double Vyc2 = VyLeft + yawRate * width / 2.0;
 	double Vxc = (Vxc1 + Vxc2) / 2.0;
 	double Vyc = (Vyc1 + Vyc2) / 2.0;
 

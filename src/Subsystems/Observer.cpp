@@ -30,9 +30,7 @@ void Observer::UpdateRobotPoseObservation(Rotation2D flAngle, RigidTransform2D::
 	Rotation2D finalAngleDelta = Rotation2D::fromRadians((deltaRobotPos.GetTheta() * kFwdKinematicsWeight) + (deltaGyroYaw.getRadians() * kGyroWeight));
 	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(finalAngleDelta);
 
-	Translation2D newRobotTranslation = oldRobotPos.getTranslation().
-										translateBy(Translation2D(deltaRobotPos.GetX(),deltaRobotPos.GetY()).
-										rotateBy(newRobotAngle.inverse()));
+	Translation2D newRobotTranslation = oldRobotPos.getTranslation().translateBy(Translation2D(deltaRobotPos.GetX(),deltaRobotPos.GetY()).rotateBy(newRobotAngle.inverse()));
 
 	RigidTransform2D robotPos(newRobotTranslation, newRobotAngle);
 	SetRobotPos(robotPos, timestamp);
