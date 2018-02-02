@@ -35,8 +35,6 @@ private:
 	Rotation2D m_oldGyroYaw;
 	const double kFwdKinematicsWeight = 0.1;
 	const double kGyroWeight = 0.9;
-
-
 };
 
 #endif /* SRC_SUBSYSTEMS_OBSERVER_H_ */

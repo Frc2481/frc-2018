@@ -86,6 +86,10 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 	Translation2D translation(xVel, yVel);
 	Rotation2D rotation = Rotation2D::fromDegrees(yawRate); //don't store twist as angle
 
+	SmartDashboard::PutNumber("yawRate", yawRate);
+	SmartDashboard::PutNumber("xVel", translation.getX());
+	SmartDashboard::PutNumber("yVel", translation.getY());
+
 //	Rotation2D gyroAngle = GetHeading();
 
 //	if (m_headingCorrection) {
@@ -132,10 +136,6 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 	m_frWheel->Set(frWheelSpeed, frWheelAngle);
 	m_blWheel->Set(blWheelSpeed, blWheelAngle);
 	m_brWheel->Set(brWheelSpeed, brWheelAngle);
-
-	SmartDashboard::PutNumber("yawRate", yawRate);
-	SmartDashboard::PutNumber("xVel", translation.getX());
-	SmartDashboard::PutNumber("yVel", translation.getY());
 }
 
 //void DriveTrain::SetOrigin(double xPos, double yPos) {
@@ -199,7 +199,7 @@ SwerveModule* DriveTrain::GetModule(DriveTrain::SwerveModuleType module) const{
 }
 
 Rotation2D DriveTrain::GetHeading() const{
-	return Rotation2D::fromDegrees(m_imu->GetFusedHeading());
+	return Rotation2D::fromDegrees(-m_imu->GetFusedHeading());
 }
 
 void DriveTrain::Stop() {
@@ -243,7 +243,7 @@ void DriveTrain::Periodic() {
 //	if(m_flWheel->GetOptimized()) {
 //		newFlAngle = newFlAngle.inverse();
 //	}
-+
+
 	Rotation2D deltaFlAngle = newFlAngle.rotateBy(m_oldFlAngle.inverse());
 	m_oldFlAngle = newFlAngle;
 
@@ -289,10 +289,10 @@ void DriveTrain::Periodic() {
 	Translation2D deltaBrDistance = newBrDistance.translateBy(m_oldBrDistance.inverse());
 	m_oldBrDistance = newBrDistance;
 
-	RigidTransform2D::Delta deltaFlVelocity = RigidTransform2D::Delta::fromDelta(deltaFlDistance.getX(), 0, 0, deltaTimestamp);
-	RigidTransform2D::Delta deltaFrVelocity = RigidTransform2D::Delta::fromDelta(deltaFrDistance.getX(), 0, 0, deltaTimestamp);
-	RigidTransform2D::Delta deltaBlVelocity = RigidTransform2D::Delta::fromDelta(deltaBlDistance.getX(), 0, 0, deltaTimestamp);
-	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(deltaBrDistance.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaFlVelocity = RigidTransform2D::Delta::fromDelta(-deltaFlDistance.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaFrVelocity = RigidTransform2D::Delta::fromDelta(-deltaFrDistance.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaBlVelocity = RigidTransform2D::Delta::fromDelta(-deltaBlDistance.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(-deltaBrDistance.getX(), 0, 0, deltaTimestamp);
 
 	Rotation2D newGyroYaw = GetHeading();
 	Rotation2D deltaGyroYaw = newGyroYaw.rotateBy(m_oldGyroYaw.inverse());
