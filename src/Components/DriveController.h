@@ -30,7 +30,7 @@ public:
 
 	RigidTransform2D GetDriveControlSignal();
 
-private:
+//private:
 
 	PIDController* m_positionXController;
 	PIDController* m_positionYController;

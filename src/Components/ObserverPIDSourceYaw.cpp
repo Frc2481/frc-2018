@@ -16,5 +16,5 @@ ObserverPIDSourceYaw::~ObserverPIDSourceYaw() {
 }
 
 double ObserverPIDSourceYaw::PIDGet() {
-	return obj->GetLastRobotPos().getRotation().getDegrees();
+	return obj->GetLastRobotPose().getRotation().getDegrees();
 }

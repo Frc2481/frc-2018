@@ -28,7 +28,7 @@ public:
 			Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timeStamp, Rotation2D deltaGyroYaw);
 	RigidTransform2D GetRobotPos(double timestamp);
 	void SetRobotPos(RigidTransform2D robotPos, double timestamp);
-	RigidTransform2D GetLastRobotPos();
+	RigidTransform2D GetLastRobotPose();
 
 private:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_robotPos;

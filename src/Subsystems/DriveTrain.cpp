@@ -28,7 +28,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER, "BACK_LEFT")),
 	m_shifter(new Solenoid(SHIFTER)),
 	m_imu(new AHRS(SPI::kMXP)),
-//	m_isFieldCentric(false),
+	m_isFieldCentric(false),
 //	m_isForward(true),
 	m_xVel(0),
 	m_yVel(0),
@@ -98,16 +98,16 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 //	}
 //	yawRate *= -1;
 
-//	if (m_isFieldCentric) {
+	if (m_isFieldCentric) {
 //		m_heading = gyroAngle.getDegrees();
 //		translation.rotateBy(gyroAngle);
-//		yawRate *= 0.1;
-//	}
-//	else {
-//		  //limit yawRate speed while not in field centric
-//		yawRate *= 0.05;
-//	}
-//
+		yawRate *= 0.1;
+	}
+	else {
+		  //limit yawRate speed while not in field centric
+		yawRate *= 0.05;
+	}
+
 //	if (!m_isForward) { //used for gare-e
 //		translation.setY(-translation.getY());
 //		translation.setX(-translation.getX());
@@ -308,7 +308,7 @@ void DriveTrain::Periodic() {
 											newBrAngle, deltaBrVelocity, timeStamp, deltaGyroYaw);
 	}
 
-	RigidTransform2D observerPos = m_observer->GetLastRobotPos();
+	RigidTransform2D observerPos = m_observer->GetLastRobotPose();
 
 	SmartDashboard::PutNumber("Field X", observerPos.getTranslation().getX());
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());

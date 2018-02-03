@@ -1,0 +1,27 @@
+Left side is going to drive to Left sweet spot 
+optional drop off cube at the switch on the way
+
+Right side is going to drive to Right sweet spot 
+optional drop off cube at the switch on the way
+
+robot oriantation sideways if we drop off at the switch
+
+Drive to sweet spot forward 
+Drive to sweet spot sideways
+
+If sideways need to oriantate the robot forward
+
+If cube dropped in switch, 
+rotate around to face nearest cube
+
+Identify cube
+Pick up cube
+
+Rotate to face switch
+Rotate to face scale
+
+Place cube on switch
+Place cube on scale
+work
+
+Rotate to face and return to safe spot

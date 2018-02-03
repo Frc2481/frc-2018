@@ -64,12 +64,16 @@ public:
 	static constexpr double k_steerI = 0;
 	static constexpr double k_steerD = 40;
 
-	static constexpr double kpPos = 0;
+	static constexpr double kpPos = 0.1;
 	static constexpr double kiPos = 0;
 	static constexpr double kdPos = 0;
-	static constexpr double kpYaw = 0;
+	static constexpr double kpYaw = 0.1;
 	static constexpr double kiYaw = 0;
 	static constexpr double kdYaw = 0;
-	static constexpr double PositionControllerPeriod = 0;
+	static constexpr double PositionControllerPeriod = 0.05;
+
+	static constexpr double kTolerancePos = 1.0;
+	static constexpr double kToleranceHeading = 1.0;
+
 };
 #endif

@@ -14,6 +14,7 @@
 class DriveTrainDriveToPosition : public CommandBase {
 private:
 	DriveController* m_driveController;
+	int m_counter;
 
 public:
 	DriveTrainDriveToPosition() {
@@ -23,19 +24,14 @@ public:
 		SmartDashboard::PutNumber("target x position", 0);
 		SmartDashboard::PutNumber("target y position", 0);
 		SmartDashboard::PutNumber("target heading", 0);
-		SmartDashboard::PutNumber("tolerance position", 0);
-		SmartDashboard::PutNumber("tolerance heading", 0);
-
-		SmartDashboard::PutNumber("kpPos", 0);
-		SmartDashboard::PutNumber("kiPos", 0);
-		SmartDashboard::PutNumber("kdPos", 0);
-		SmartDashboard::PutNumber("kpYaw", 0);
-		SmartDashboard::PutNumber("kiYaw", 0);
-		SmartDashboard::PutNumber("kdYaw", 0);
+		SmartDashboard::PutNumber("tolerance position", RobotParameters::kTolerancePos);
+		SmartDashboard::PutNumber("tolerance heading", RobotParameters::kToleranceHeading);
 
 		SmartDashboard::PutNumber("x control signal", 0);
 		SmartDashboard::PutNumber("y control signal", 0);
 		SmartDashboard::PutNumber("yaw control signal", 0);
+
+		m_counter = 0;
 	}
 
 	~DriveTrainDriveToPosition() {
@@ -45,18 +41,14 @@ public:
 		double xPos = SmartDashboard::GetNumber("target x position", 0);
 		double yPos = SmartDashboard::GetNumber("target y position", 0);
 		double yaw = SmartDashboard::GetNumber("target heading", 0);
-		double tolPos = SmartDashboard::GetNumber("tolerance position", 0);
-		double tolYaw = SmartDashboard::GetNumber("tolerance heading", 0);
-
-		double kpPos = SmartDashboard::GetNumber("kpPos", 0);
-		double kiPos = SmartDashboard::GetNumber("kiPos", 0);
-		double kdPos = SmartDashboard::GetNumber("kdPos", 0);
-		double kpYaw = SmartDashboard::GetNumber("kpYaw", 0);
-		double kiYaw = SmartDashboard::GetNumber("kiYaw", 0);
-		double kdYaw = SmartDashboard::GetNumber("kdYaw", 0);
+		double tolPos = SmartDashboard::GetNumber("tolerance position", RobotParameters::kTolerancePos);
+		double tolYaw = SmartDashboard::GetNumber("tolerance heading", RobotParameters::kToleranceHeading);
 
 		m_driveController = m_driveTrain->GetDriveController();
-		m_driveController->SetPIDGains(kpPos, kiPos, kdPos, kpYaw, kiYaw, kdYaw);
+//		m_driveController->SetPIDGains(kpPos, RobotParameters::kiPos, RobotParameters::kdPos,
+//									   kpYaw, RobotParameters::kiYaw, RobotParameters::kdYaw);
+		SmartDashboard::PutNumber("kpPosDebug2", m_driveController->m_positionYController->GetP());
+
 		m_driveController->SetFieldTarget(RigidTransform2D(Translation2D(xPos, yPos), Rotation2D::fromDegrees(yaw)),
 										  RigidTransform2D(Translation2D(tolPos, tolPos), Rotation2D::fromDegrees(tolYaw)));
 		m_driveController->EnableController();
@@ -70,6 +62,9 @@ public:
 		SmartDashboard::PutNumber("x control signal", translation.getX());
 		SmartDashboard::PutNumber("y control signal", translation.getY());
 		SmartDashboard::PutNumber("yaw control signal", rotation.getDegrees());
+
+		m_counter++;
+		SmartDashboard::PutNumber("counter", m_counter);
 
 		m_driveTrain->Drive(translation.getX(), translation.getY(), rotation.getDegrees());
 	}

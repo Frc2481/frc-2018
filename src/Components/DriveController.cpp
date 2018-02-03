@@ -27,12 +27,16 @@ DriveController::DriveController(Observer* observerObj) {
 										m_positionYawControlSource, m_positionYawControlSignal, RobotParameters::PositionControllerPeriod);
 
 	m_positionYawController->SetInputRange(-180, 180);
-	m_positionYawController->SetContinuous();
+	m_positionYawController->SetContinuous(true);
 
 	SmartDashboard::PutNumber("RobotTarget X:", 0);
 	SmartDashboard::PutNumber("RobotTarget Y:", 0);
 	SmartDashboard::PutNumber("RobotTarget Yaw:", 0);
 
+
+	SmartDashboard::PutData(m_positionXController);
+	SmartDashboard::PutData(m_positionYController);
+	SmartDashboard::PutData(m_positionYawController);
 	// TODO make yaw controller continuous
 }
 
@@ -41,10 +45,8 @@ DriveController::~DriveController() {
 }
 
 void DriveController::SetFieldTarget(RigidTransform2D fieldTarget, RigidTransform2D absTolerance) {
-	RigidTransform2D robotPoseInv = m_observer->GetLastRobotPos().inverse();
+	RigidTransform2D robotPoseInv = m_observer->GetLastRobotPose().inverse();
 
-//	RigidTransform2D robotTarget = RigidTransform2D(fieldTarget.getTranslation().translateBy(robotPoseInv.getTranslation()).rotateBy(robotPoseInv.getRotation()),
-//													fieldTarget.getRotation().rotateBy(robotPoseInv.getRotation()));
 	RigidTransform2D robotTarget = fieldTarget;
 
 	SmartDashboard::PutNumber("RobotTarget X:", robotTarget.getTranslation().getX());
@@ -70,23 +72,34 @@ bool DriveController::IsOnTarget() {
 
 RigidTransform2D DriveController::GetDriveControlSignal() {
 	Translation2D controlSignalTranslation;
-	Rotation2D controlSignalRotation;
 
 	controlSignalTranslation.setX(m_positionXControlSignal->GetOutput());
 	controlSignalTranslation.setY(m_positionYControlSignal->GetOutput());
-	controlSignalRotation.fromDegrees(m_positionYawControlSignal->GetOutput());
+	Rotation2D controlSignalRotation = Rotation2D::fromDegrees(m_positionYawControlSignal->GetOutput());
+
+	SmartDashboard::PutNumber("Output Yaw Signal", m_positionYawControlSignal->GetOutput());
 
 	m_positionYawController->IsEnabled();
 	m_positionYawController->GetSetpoint();
 	m_positionYawController->GetError();
 	m_positionYawController->GetP();
 
-	SmartDashboard::PutBoolean("Is Enabled", m_positionYawController->IsEnabled());
-	SmartDashboard::PutNumber("Get Setpoint", m_positionYawController->GetSetpoint());
-	SmartDashboard::PutNumber("Get Error", m_positionYawController->GetError());
-	SmartDashboard::PutNumber("Get P", m_positionYawController->GetP());
 
-	RigidTransform2D driveControlSignal(controlSignalTranslation, controlSignalRotation);
+	SmartDashboard::PutNumber("Get Setpoint X", m_positionXController->GetSetpoint());
+	SmartDashboard::PutNumber("Get Error X", m_positionXController->GetError());
+
+	SmartDashboard::PutNumber("Get Output", m_positionYControlSignal->GetOutput()); // saturates at 1
+	SmartDashboard::PutBoolean("Is Enabled", m_positionYController->IsEnabled());
+	SmartDashboard::PutNumber("Get Setpoint Y", m_positionYController->GetSetpoint());
+	SmartDashboard::PutNumber("Get Error Y", m_positionYController->GetError());
+	SmartDashboard::PutNumber("Get P", m_positionYController->GetP());
+
+	SmartDashboard::PutNumber("Get Setpoint Yaw", m_positionYawController->GetSetpoint());
+	SmartDashboard::PutNumber("Get Error Yaw", m_positionYawController->GetError());
+
+	Rotation2D robotHeading = m_observer->GetLastRobotPose().getRotation();
+	RigidTransform2D driveControlSignal(controlSignalTranslation.rotateBy(robotHeading.inverse()), controlSignalRotation);
+
 	return driveControlSignal;
 }
 

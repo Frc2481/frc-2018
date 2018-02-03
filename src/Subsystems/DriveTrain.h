@@ -28,7 +28,7 @@ private:
 	Solenoid *m_shifter;
 
 	AHRS* m_imu;
-//	bool m_isFieldCentric;
+	bool m_isFieldCentric;
 //	bool m_isForward;
 	double m_xVel, m_yVel, m_yawRate;
 //	float m_pHeadingCorrection;
@@ -37,7 +37,7 @@ private:
 
 //	Rotation2D m_headingCorrectionOffset;
 
-//	float m_heading;
+	float m_heading;
 //	bool m_headingCorrection;
 	float m_roll;
 	float m_pitch;

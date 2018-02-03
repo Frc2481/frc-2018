@@ -16,5 +16,5 @@ ObserverPIDSourceY::~ObserverPIDSourceY() {
 }
 
 double ObserverPIDSourceY::PIDGet() {
-	return obj->GetLastRobotPos().getTranslation().getY();
+	return obj->GetLastRobotPose().getTranslation().getY();
 }
