@@ -64,10 +64,10 @@ public:
 	static constexpr double k_steerI = 0;
 	static constexpr double k_steerD = 40;
 
-	static constexpr double kpPos = 0.05;
-	static constexpr double kiPos = 0.001;
+	static constexpr double kpPos = 0.03;
+	static constexpr double kiPos = 0.0;
 	static constexpr double kdPos = 0;
-	static constexpr double kfPos = 1.0;
+	static constexpr double kfPos = 0;
 	static constexpr double kIZonePos = 5;
 
 	static constexpr double kpYaw = 0.01;

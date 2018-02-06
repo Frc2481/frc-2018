@@ -10,6 +10,7 @@
 #include "CommandBase.h"
 #include "Commands/Diag/DriveTrainTestCommandGroup.h"
 #include "Commands/DriveTrainDriveToPosition.h"
+#include "Commands/DrivetrainDrivePathCommand.h"
 
 class Robot: public frc::TimedRobot {
 public:
@@ -19,6 +20,7 @@ public:
 		frc::SmartDashboard::PutData("Drive Train Test", new DriveTrainTestCommandGroup());
 
 		SmartDashboard::PutData("Drive to Position", new DriveTrainDriveToPosition());
+		SmartDashboard::PutData("Drive Path", new DriveTrainDrivePathCommand());
 	}
 
 	/**
