@@ -16,6 +16,7 @@
 #include "DriveControllerOutput.h"
 #include "WPILib.h"
 #include "RobotParameters.h"
+#include "../PIDController2481.h"
 
 class DriveController {
 public:
@@ -24,17 +25,16 @@ public:
 
 	void SetFieldTarget(RigidTransform2D fieldTarget, RigidTransform2D absTolerance);
 	void SetRobotTarget(RigidTransform2D robotTarget, RigidTransform2D absTolerance);
-	void SetPIDGains(double kpPos, double kiPos, double kdPos, double kpYaw, double kiYaw, double kdYaw);
 	void EnableController();
 	bool IsOnTarget();
-
+	RigidTransform2D GetControllerError();
 	RigidTransform2D GetDriveControlSignal();
 
-//private:
+private:
 
-	PIDController* m_positionXController;
-	PIDController* m_positionYController;
-	PIDController* m_positionYawController;
+	PIDController2481* m_positionXController;
+	PIDController2481* m_positionYController;
+	PIDController2481* m_positionYawController;
 
 	ObserverPIDSourceX* m_positionXControlSource;
 	ObserverPIDSourceY* m_positionYControlSource;

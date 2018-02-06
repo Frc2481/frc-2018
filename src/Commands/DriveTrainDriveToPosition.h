@@ -10,11 +10,12 @@
 
 #include <Components/DriveController.h>
 #include "CommandBase.h"
+#include "../PIDController2481.h"
 
 class DriveTrainDriveToPosition : public CommandBase {
 private:
 	DriveController* m_driveController;
-	int m_counter;
+	int m_onTargetCounter;
 
 public:
 	DriveTrainDriveToPosition() {
@@ -31,7 +32,9 @@ public:
 		SmartDashboard::PutNumber("y control signal", 0);
 		SmartDashboard::PutNumber("yaw control signal", 0);
 
-		m_counter = 0;
+		SmartDashboard::PutNumber("Position Error to enable kiPos", 0);
+		SmartDashboard::PutNumber("Yaw Error to enable kiYaw", 0);
+		m_onTargetCounter = 0;
 	}
 
 	~DriveTrainDriveToPosition() {
@@ -44,29 +47,21 @@ public:
 		double tolPos = SmartDashboard::GetNumber("tolerance position", RobotParameters::kTolerancePos);
 		double tolYaw = SmartDashboard::GetNumber("tolerance heading", RobotParameters::kToleranceHeading);
 
-		m_driveController = m_driveTrain->GetDriveController();
-//		m_driveController->SetPIDGains(kpPos, RobotParameters::kiPos, RobotParameters::kdPos,
-//									   kpYaw, RobotParameters::kiYaw, RobotParameters::kdYaw);
-		SmartDashboard::PutNumber("kpPosDebug2", m_driveController->m_positionYController->GetP());
-
 		m_driveController->SetFieldTarget(RigidTransform2D(Translation2D(xPos, yPos), Rotation2D::fromDegrees(yaw)),
 										  RigidTransform2D(Translation2D(tolPos, tolPos), Rotation2D::fromDegrees(tolYaw)));
 		m_driveController->EnableController();
+		m_onTargetCounter = 0;
 	}
 
 	void Execute() {
 		RigidTransform2D driveSignal = m_driveController->GetDriveControlSignal();
-		Translation2D translation = driveSignal.getTranslation();
-		Rotation2D rotation = driveSignal.getRotation();
+		m_driveTrain->Drive(driveSignal.getTranslation().getX(),
+							driveSignal.getTranslation().getY(),
+							driveSignal.getRotation().getDegrees());
 
-		SmartDashboard::PutNumber("x control signal", translation.getX());
-		SmartDashboard::PutNumber("y control signal", translation.getY());
-		SmartDashboard::PutNumber("yaw control signal", rotation.getDegrees());
-
-		m_counter++;
-		SmartDashboard::PutNumber("counter", m_counter);
-
-		m_driveTrain->Drive(translation.getX(), translation.getY(), rotation.getDegrees());
+		SmartDashboard::PutNumber("x control signal", driveSignal.getTranslation().getX());
+		SmartDashboard::PutNumber("y control signal", driveSignal.getTranslation().getY());
+		SmartDashboard::PutNumber("yaw control signal", driveSignal.getRotation().getDegrees());
 	}
 
 	void Interrupted() {
@@ -74,11 +69,20 @@ public:
 	}
 
 	bool IsFinished() {
-		return m_driveController->IsOnTarget();
+
+		//debounce 5
+		if(m_driveController->IsOnTarget()) {
+			m_onTargetCounter++;
+		} else {
+			m_onTargetCounter = 0;
+		}
+
+		return m_onTargetCounter > 5;
 	}
 
 	void End() {
 		m_driveTrain->Drive(0, 0, 0);
+		SmartDashboard::PutNumber("Drive to Position Duration", TimeSinceInitialized());
 	}
 };
 

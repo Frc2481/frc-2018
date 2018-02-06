@@ -17,7 +17,7 @@ public:
 	virtual ~Kinematics();
 
 	static void SwerveInverseKinematics(Translation2D &velocity, double yawRate,
-			double &wheelSpeedFR, double &wheelSpeedFL, double &wheelSpeedBR, double &wheelSpeedBL,
+			double &wheelSpeedFL, double &wheelSpeedFR, double &wheelSpeedBL, double &wheelSpeedBR,
 			Rotation2D &wheelAngleFL, Rotation2D &wheelAngleFR, Rotation2D &wheelAngleBL, Rotation2D &wheelAngleBR);
 
 	static RigidTransform2D::Delta SwerveForwardKinematics(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
