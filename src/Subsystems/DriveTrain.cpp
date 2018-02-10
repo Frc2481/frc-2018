@@ -19,6 +19,8 @@
 #include "Components/GreyhillEncoder.h"
 #include "RobotParameters.h"
 #include "../Commands/ObserverResetPosCommand.h"
+#include "Commands/DriveTrainEngagePtoCommand.h"
+#include "Commands/DriveTrainOpenLoopCommand.h"
 #include "WPILib.h"
 
 DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
@@ -27,6 +29,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_brWheel(new SwerveModule(BACK_RIGHT_DRIVE, BACK_RIGHT_STEER, "BACK_RIGHT")),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER, "BACK_LEFT")),
 	m_shifter(new Solenoid(SHIFTER)),
+	m_pto(new DoubleSolenoid(PTO1, PTO2)),
 	m_imu(new AHRS(SPI::kMXP)),
 	m_isFieldCentric(false),
 //	m_isForward(true),
@@ -62,7 +65,17 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_observer = new Observer();
 	m_observer->SetRobotPos(RigidTransform2D(Translation2D(0, 0), Rotation2D(1, 0, true)), 0.0);
 
+
 	m_driveController = new DriveController(m_observer);
+
+	m_oldGyroYaw = Rotation2D(1, 0, true);
+
+	m_isPtoEngaged = false;
+
+	DisengagePTO();
+	SmartDashboard::PutData(new DriveTrainEngagePtoCommand());
+	SmartDashboard::PutData(new DriveTrainOpenLoopCommand());
+
 }
 
 DriveTrain::~DriveTrain() {
@@ -78,7 +91,17 @@ void DriveTrain::InitDefaultCommand() {
 	SetDefaultCommand(new DriveWithJoystickCommand());
 }
 
+
 void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
+	//prevent driving when pto engaged
+	if (IsPtoEngaged()) {
+		m_flWheel->Set(0, m_flWheel->GetAngle());
+		m_frWheel->Set(0, m_frWheel->GetAngle());
+		m_blWheel->Set(0, m_blWheel->GetAngle());
+		m_brWheel->Set(0, m_brWheel->GetAngle());
+		return;
+	}
+
 	m_xVel = xVel;
 	m_yVel = yVel;
 	m_yawRate = yawRate;
@@ -131,8 +154,6 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 			flWheelAngle, frWheelAngle, blWheelAngle, brWheelAngle);
 
 	m_flWheel->Set(flWheelSpeed, flWheelAngle);
-	SmartDashboard::PutNumber("flWheelSpeed", flWheelSpeed);
-	SmartDashboard::PutNumber("flWheelAngle", flWheelAngle.getDegrees());
 	m_frWheel->Set(frWheelSpeed, frWheelAngle);
 	m_blWheel->Set(blWheelSpeed, blWheelAngle);
 	m_brWheel->Set(brWheelSpeed, brWheelAngle);
@@ -312,6 +333,18 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("FR distance", m_frWheel->GetDistance().getX());
 	SmartDashboard::PutNumber("BL distance", m_blWheel->GetDistance().getX());
 	SmartDashboard::PutNumber("BR distance", m_brWheel->GetDistance().getX());
+
+	SmartDashboard::PutNumber("FL Speed", m_flWheel->GetSpeed());
+	SmartDashboard::PutNumber("FR Speed", m_frWheel->GetSpeed());
+	SmartDashboard::PutNumber("BL Speed", m_blWheel->GetSpeed());
+	SmartDashboard::PutNumber("BR Speed", m_brWheel->GetSpeed());
+
+	SmartDashboard::PutNumber("FL Current", m_flWheel->GetDriveCurrent());
+	SmartDashboard::PutNumber("FR Current", m_frWheel->GetDriveCurrent());
+	SmartDashboard::PutNumber("BL Current", m_blWheel->GetDriveCurrent());
+	SmartDashboard::PutNumber("BR Current", m_brWheel->GetDriveCurrent());
+
+
 }
 
 // This Method must be called when when all 8 swerve modules are on.
@@ -359,4 +392,45 @@ DriveController* DriveTrain::GetDriveController() {
 
 Observer* DriveTrain::GetObserver() {
 	return m_observer;
+}
+
+void DriveTrain::EngagePTO() {
+	m_pto->Set(DoubleSolenoid::kReverse);
+	m_flWheel->SetOptimized(false);
+	m_frWheel->SetOptimized(false);
+	m_blWheel->SetOptimized(false);
+	m_brWheel->SetOptimized(false);
+	m_isPtoEngaged = true;
+}
+
+void DriveTrain::DisengagePTO() {
+	m_pto->Set(DoubleSolenoid::kForward);
+	m_flWheel->SetOptimized(true);
+	m_frWheel->SetOptimized(true);
+	m_blWheel->SetOptimized(true);
+	m_brWheel->SetOptimized(true);
+	m_isPtoEngaged = false;
+}
+
+void DriveTrain::SetNearWinchSpeed(double speed) {
+	//back & front left physically linked, have to be run opposite direction
+	m_flWheel->Set(speed, m_flWheel->GetAngle());
+	m_blWheel->Set(-speed, m_blWheel->GetAngle());
+}
+
+void DriveTrain::SetFarWinchSpeed(double speed) {
+	//back & front right physically linked, have to be run opposite direction
+	m_frWheel->Set(speed, m_frWheel->GetAngle());
+	m_brWheel->Set(-speed, m_brWheel->GetAngle());
+}
+
+bool DriveTrain::IsPtoEngaged() {
+	return m_isPtoEngaged;
+}
+
+void DriveTrain::SetOpenLoopSteer(double speed) {
+	 m_flWheel->SetOpenLoopSteer(speed);
+	 m_frWheel->SetOpenLoopSteer(speed);
+	 m_blWheel->SetOpenLoopSteer(speed);
+	 m_brWheel->SetOpenLoopSteer(speed);
 }

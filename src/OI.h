@@ -14,6 +14,19 @@ public:
 	Joystick2481* GetOperatorStick();
 
 	Button* m_shifterButton;
+	Button* m_extenderButton;
+	Button* m_retractButton;
+	Button* m_intakeButton;
+	Button* m_pivotForwardButton;
+	Button* m_pivotReverseButton;
+	Button* m_stowButton;
+	Button* m_scaleFrontButton;
+	Button* m_scaleBackButton;
+	Button* m_releaseCubeButton;
+	Button* m_intakeCubeButton;
+
+	Button* m_farWinchButton;
+	Button* m_nearWinchButton;
 };
 
 #endif  // OI_H

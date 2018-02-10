@@ -113,6 +113,10 @@ void SwerveModule::SetOpenLoopSpeed(double speed) {
 	m_isCloseLoopControl = false;
 }
 
+void SwerveModule::SetOpenLoopSteer(double speed) {
+	m_steerMotor->Set(ControlMode::PercentOutput, speed);
+}
+
 double SwerveModule::GetSpeed()const {
 	return m_driveEncoder->GetEncoderSpeed();
 }

@@ -10,6 +10,7 @@
 
 #include "Commands/Subsystem.h"
 #include "Solenoid.h"
+#include "DoubleSolenoid.h"
 #include "utils/Rotation2D.h"
 #include "utils/Translation2D.h"
 #include "Subsystems/Observer.h"
@@ -26,6 +27,8 @@ private:
 	SwerveModule *m_brWheel;
 	SwerveModule *m_blWheel;
 	Solenoid *m_shifter;
+
+	DoubleSolenoid *m_pto;
 
 	AHRS* m_imu;
 	bool m_isFieldCentric;
@@ -61,6 +64,8 @@ private:
 	DriveController* m_driveController;
 
 	double m_oldTimestamp;
+
+	bool m_isPtoEngaged;
 
 public:
 	enum SwerveModuleType {
@@ -104,6 +109,14 @@ public:
 	DriveController* GetDriveController();
 
 	Observer* GetObserver();
+
+	void EngagePTO();
+	void DisengagePTO();
+	void SetNearWinchSpeed(double speed); //left
+	void SetFarWinchSpeed(double speed); //right
+	bool IsPtoEngaged();
+
+	void SetOpenLoopSteer(double speed);
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

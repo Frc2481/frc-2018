@@ -1,5 +1,5 @@
-#ifndef IntakeAquireCubeCommandGroup_H
-#define IntakeAquireCubeCommandGroup_H
+#ifndef IntakeAcquireCubeCommandGroup_H
+#define IntakeAcquireCubeCommandGroup_H
 
 #include <Commands/CommandGroup.h>
 #include "IntakeHasCubeCommand.h"
@@ -9,14 +9,14 @@
 #include "IntakeClampOpenCommand.h"
 #include "IntakeClampCloseCommand.h"
 
-class IntakeAquireCubeCommandGroup : public CommandGroup {
+class IntakeAcquireCubeCommandGroup : public CommandGroup {
 public:
-	IntakeAquireCubeCommandGroup() : CommandGroup("IntakeAquireCubeCommandGroup"){
+	IntakeAcquireCubeCommandGroup() : CommandGroup("IntakeAcquireCubeCommandGroup"){
 		AddSequential(new IntakeClampOpenCommand());
-		AddSequential(new IntakeRollerLoadCommand());
+		AddSequential(new IntakeRollerLoadCommand(1));
 		AddSequential(new IntakeHasCubeCommand());
 		AddSequential(new IntakeRollerOffCommand());
 		AddSequential(new IntakeClampCloseCommand());
 	}
 };
-#endif  // IntakeAquireCubeCommandGroup_H
+#endif  // IntakeAcquireCubeCommandGroup_H

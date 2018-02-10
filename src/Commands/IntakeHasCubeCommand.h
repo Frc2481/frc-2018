@@ -3,14 +3,28 @@
 
 #include "../CommandBase.h"
 
-class IntakeHasCubeCommand : public InstantCommand {
+class IntakeHasCubeCommand : public CommandBase {
+private:
+	int m_debounceCounter;
 public:
-	IntakeHasCubeCommand() : InstantCommand("IntakeHasCubeCommand"){
-
+	IntakeHasCubeCommand() : CommandBase("IntakeHasCubeCommand"){
+		m_debounceCounter = 0;
 	}
 
+	void Initialize() {
+		m_debounceCounter = 0;
+	}
+
+	void Execute() {}
+
 	bool IsFinished(){
-		return CommandBase::m_intake->HasCube();
+		if(m_intake->HasCube()) {
+			m_debounceCounter++;
+		}
+		else {
+			m_debounceCounter = 0;
+		}
+		return m_debounceCounter > 5;
 	}
 };
 

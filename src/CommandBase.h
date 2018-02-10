@@ -7,6 +7,7 @@
 #include "OI.h"
 #include "WPILib.h"
 #include "Subsystems/Intake.h"
+#include "Subsystems/Arm.h"
 
 /**
  * The base for all commands. All atomic commands should subclass CommandBase.
@@ -22,6 +23,8 @@ public:
 	// Create a single static instance of all of your subsystems
 	static std::unique_ptr<DriveTrain> m_driveTrain;
 	static std::unique_ptr<Intake> m_intake;
+	static std::unique_ptr<Arm> m_arm;
+	static std::unique_ptr<Compressor> m_compressor;
 	static std::unique_ptr<OI> oi;
 
 	static bool m_pause;

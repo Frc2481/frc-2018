@@ -47,12 +47,22 @@ class RobotParameters {
 public:
 	static constexpr int k_ticksPerEncoderRev = 512; // 128 * 4
 	static constexpr double k_encoderRevPerWheelRev = 28.15; // 2017 value = 15.47
-
 	// Wheel to bevel:          44:16 was 48:30
 	// Big Sprk to Little Sprk: 58:17
 	// Shaft to Encoder:        36:12
 
 	//(44/16) * (58/17) * (36/12)
+
+	static constexpr double k_encoderTicksPerPivotDegree = 31.03;
+
+	//chain 60:22
+
+	//60:22 * 4096 / 360
+
+	static constexpr double k_encoderTicksPerExtensionInch = 577.95;
+
+	//belt 1 / 7.087
+	//4086 / (1 / 7.087)
 
 	static constexpr double k_inchesPerWheelRev = 4.1 * 3.14159265; // 2017 value = 3.25 // pi * diameter
 	static constexpr double k_robotLength = 23.5;
@@ -81,5 +91,38 @@ public:
 	static constexpr double kTolerancePos = 1.0;
 	static constexpr double kToleranceHeading = 5.0;
 
+	static constexpr double k_extenderUpP = 0.3; //ToDo: change values //40% * 1023 / 3700
+	static constexpr double k_extenderDownP = 0.5;
+	static constexpr double k_extenderI = 0;
+	static constexpr double k_extenderD = 0;
+	static constexpr double k_extenderF = 0.445;
+	static constexpr double k_extenderVelocity = 2300;
+	static constexpr double k_extenderAcceleration = 13800;
+	static constexpr double k_extenderPeakOutputForward = 1.0;
+	static constexpr double k_extenderPeakOutputReverse = -1.0;
+
+	static constexpr double k_pivotP = 3;
+	static constexpr double k_pivotI = 0;
+	static constexpr double k_pivotD = 30;
+	static constexpr double k_pivotF = 2.046; //3
+
+	static constexpr double k_pivotVelocity = 500;
+	static constexpr double k_pivotAcceleration = 1000;
+	static constexpr double k_pivotPeakOutputForward = .5;
+	static constexpr double k_pivotPeakOutputReverse = -0.5;
+
+	static constexpr double k_minRobotExtend = 36; //32.25
+	static constexpr double k_gripperThickness = 1;
+	static constexpr double k_farthestPointLimit = 32.375;
+	static constexpr double k_pivotToMidpointPOB = 0.83;
+	static constexpr double k_pivotToMidpointPOT = 1.83;
+	static constexpr double k_upperLeftBound = -24;
+	static constexpr double k_upperRightBound = 26;
+	static constexpr double k_lowerLeftBound = -123;
+	static constexpr double k_lowerRightBound = 127;
+	static constexpr double k_right90 = 90;
+	static constexpr double k_left90 = -90;
+	static constexpr double k_rightFrameConstrained = 58; //calculated: 49, changed to be optimal
+	static constexpr double k_leftFrameConstrained = -66; //-55
 };
 #endif

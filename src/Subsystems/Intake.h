@@ -11,24 +11,31 @@
 #include "ctre/Phoenix.h"
 #include "WPILib.h"
 
-class Intake {
+
+
+class Intake : public Subsystem{
 private:
-	TalonSRX* m_rollerMotor;
+	TalonSRX* m_rollerMotorLeft;
+	TalonSRX* m_rollerMotorRight;
 	Solenoid* m_clampSolenoid;
+
 public:
 	Intake();
 	virtual ~Intake();
 
 	bool HasCube();
 
-	bool IsRollerOn();
-	void RollerLoad();
+	bool IsLeftRollerOn();
+	bool IsRightRollerOn();
+	void RollerLoad(double speed);
 	void RollerUnload();
 	void RollerOff();
 
 	bool IsClamped();
 	void OpenClamp();
 	void CloseClamp();
+
+	void Periodic();
 };
 
 #endif /* SRC_SUBSYSTEMS_INTAKE_H_ */
