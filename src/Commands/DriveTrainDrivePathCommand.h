@@ -25,17 +25,6 @@ public:
 	DriveTrainDrivePathCommand() {
 		Requires(m_driveTrain.get());
 		m_driveController = m_driveTrain->GetDriveController();
-
-//		if(m_path.empty()) {
-//			m_path.put(InterpolatingDouble(0), RigidTransform2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)));
-//			m_path.put(InterpolatingDouble(3/2.0), RigidTransform2D(Translation2D(30, 0), Rotation2D::fromDegrees(0)));
-//			m_path.put(InterpolatingDouble(5.5/2.0), RigidTransform2D(Translation2D(35, 5), Rotation2D::fromDegrees(0)));
-//			m_path.put(InterpolatingDouble(6/2.0), RigidTransform2D(Translation2D(40, 10), Rotation2D::fromDegrees(0)));
-//			m_path.put(InterpolatingDouble(9/2.0), RigidTransform2D(Translation2D(40, 40), Rotation2D::fromDegrees(0)));
-//			m_path.put(InterpolatingDouble(5.5), RigidTransform2D(Translation2D(30, 35), Rotation2D::fromDegrees(0)));
-//		}
-
-		SetTimeout(9/2.0);
 	}
 
 	~DriveTrainDrivePathCommand() {
@@ -47,8 +36,7 @@ public:
 
 	void Execute() {
 		RigidTransform2D targetPos = m_path.getInterpolated(InterpolatingDouble(TimeSinceInitialized()));
-		m_driveController->SetFieldTarget(targetPos,
-										  RigidTransform2D(Translation2D(1, 1), Rotation2D::fromDegrees(1)));
+		m_driveController->SetFieldTarget(targetPos);
 
 		SmartDashboard::PutNumber("PathX",targetPos.getTranslation().getX());
 		SmartDashboard::PutNumber("PathY",targetPos.getTranslation().getY());
@@ -68,9 +56,9 @@ public:
 		RigidTransform2D lastPoint = m_path.rbegin()->second;
 		RigidTransform2D robotPose = m_driveTrain->GetObserver()->GetLastRobotPose();
 
-		RigidTransform2D error = lastPoint.transformBy(robotPose.inverse());
+		RigidTransform2D errorPose = lastPoint.transformBy(robotPose.inverse());
 
-		return fabs(error.getTranslation().norm()) < 1;
+		return fabs(errorPose.getTranslation().norm()) < RobotParameters::kTolerancePos && fabs(errorPose.getRotation().getDegrees());
 	}
 
 	void End() {

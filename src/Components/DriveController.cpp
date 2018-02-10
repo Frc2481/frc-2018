@@ -32,10 +32,6 @@ DriveController::DriveController(Observer* observerObj) {
 	m_positionYController->SetIZone(RobotParameters::kIZonePos);
 	m_positionYawController->SetIZone(RobotParameters::kIZoneYaw);
 
-	m_positionXController->SetToleranceBuffer(10);
-	m_positionYController->SetToleranceBuffer(10);
-	m_positionYawController->SetToleranceBuffer(10);
-
 	SmartDashboard::PutData(m_positionXController);
 	SmartDashboard::PutData(m_positionYController);
 	SmartDashboard::PutData(m_positionYawController);
@@ -44,24 +40,17 @@ DriveController::DriveController(Observer* observerObj) {
 DriveController::~DriveController() {
 }
 
-void DriveController::SetFieldTarget(RigidTransform2D fieldTarget, RigidTransform2D absTolerance) {
+void DriveController::SetFieldTarget(RigidTransform2D fieldTarget) {
 	m_positionXController->SetSetpoint(fieldTarget.getTranslation().getX());
 	m_positionYController->SetSetpoint(fieldTarget.getTranslation().getY());
 	m_positionYawController->SetSetpoint(fieldTarget.getRotation().getDegrees());
-
-	m_positionXController->SetAbsoluteTolerance(absTolerance.getTranslation().getX());
-	m_positionYController->SetAbsoluteTolerance(absTolerance.getTranslation().getY());
-	m_positionYawController->SetAbsoluteTolerance(absTolerance.getRotation().getDegrees());
 }
 
-void DriveController::SetRobotTarget(RigidTransform2D robotTarget, RigidTransform2D absTolerance) {
+void DriveController::SetRobotTarget(RigidTransform2D robotTarget) {
+	//TODO transform from robot frame to field frame
 	m_positionXController->SetSetpoint(robotTarget.getTranslation().getX());
 	m_positionYController->SetSetpoint(robotTarget.getTranslation().getY());
 	m_positionYawController->SetSetpoint(robotTarget.getRotation().getDegrees());
-
-	m_positionXController->SetAbsoluteTolerance(absTolerance.getTranslation().getX());
-	m_positionYController->SetAbsoluteTolerance(absTolerance.getTranslation().getY());
-	m_positionYawController->SetAbsoluteTolerance(absTolerance.getRotation().getDegrees());
 }
 
 bool DriveController::IsOnTarget() {

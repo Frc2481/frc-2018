@@ -25,8 +25,6 @@ public:
 		SmartDashboard::PutNumber("target x position", 0);
 		SmartDashboard::PutNumber("target y position", 0);
 		SmartDashboard::PutNumber("target heading", 0);
-		SmartDashboard::PutNumber("tolerance position", RobotParameters::kTolerancePos);
-		SmartDashboard::PutNumber("tolerance heading", RobotParameters::kToleranceHeading);
 
 		SmartDashboard::PutNumber("x control signal", 0);
 		SmartDashboard::PutNumber("y control signal", 0);
@@ -44,11 +42,8 @@ public:
 		double xPos = SmartDashboard::GetNumber("target x position", 0);
 		double yPos = SmartDashboard::GetNumber("target y position", 0);
 		double yaw = SmartDashboard::GetNumber("target heading", 0);
-		double tolPos = SmartDashboard::GetNumber("tolerance position", RobotParameters::kTolerancePos);
-		double tolYaw = SmartDashboard::GetNumber("tolerance heading", RobotParameters::kToleranceHeading);
 
-		m_driveController->SetFieldTarget(RigidTransform2D(Translation2D(xPos, yPos), Rotation2D::fromDegrees(yaw)),
-										  RigidTransform2D(Translation2D(tolPos, tolPos), Rotation2D::fromDegrees(tolYaw)));
+		m_driveController->SetFieldTarget(RigidTransform2D(Translation2D(xPos, yPos), Rotation2D::fromDegrees(yaw)));
 		m_driveController->EnableController();
 		m_onTargetCounter = 0;
 	}
@@ -69,15 +64,8 @@ public:
 	}
 
 	bool IsFinished() {
-
-		//debounce 5
-		if(m_driveController->IsOnTarget()) {
-			m_onTargetCounter++;
-		} else {
-			m_onTargetCounter = 0;
-		}
-
-		return m_onTargetCounter > 5;
+		return fabs(m_driveController->GetControllerError().getTranslation().norm()) < RobotParameters::kTolerancePos &&
+			   fabs(m_driveController->GetControllerError().getRotation().getDegrees()) < RobotParameters::kToleranceHeading;
 	}
 
 	void End() {

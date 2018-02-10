@@ -23,8 +23,8 @@ public:
 	DriveController(Observer* observerObj);
 	virtual ~DriveController();
 
-	void SetFieldTarget(RigidTransform2D fieldTarget, RigidTransform2D absTolerance);
-	void SetRobotTarget(RigidTransform2D robotTarget, RigidTransform2D absTolerance);
+	void SetFieldTarget(RigidTransform2D fieldTarget);
+	void SetRobotTarget(RigidTransform2D robotTarget);
 	void EnableController();
 	bool IsOnTarget();
 	RigidTransform2D GetControllerError();
