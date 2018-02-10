@@ -13,6 +13,7 @@
 class ObserverResetPosCommand : public InstantCommand {
 public:
 	ObserverResetPosCommand() : InstantCommand("ObserverResetPosCommand") {
+		SetRunWhenDisabled(true);
 	}
 
 	void Initialize() {

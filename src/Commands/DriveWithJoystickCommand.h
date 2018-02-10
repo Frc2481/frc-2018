@@ -25,9 +25,9 @@ public:
 
 	void Execute() {
 		m_driveTrain->Drive(
-				-oi->GetDriverStick()->GetRawAxis(XB_LEFT_X_AXIS),
-				oi->GetDriverStick()->GetRawAxis(XB_LEFT_Y_AXIS),
-				oi->GetDriverStick()->GetRawAxisTwist(XB_RIGHT_X_AXIS));
+				oi->GetDriverStick()->GetRawAxis(XB_LEFT_X_AXIS),
+				-oi->GetDriverStick()->GetRawAxis(XB_LEFT_Y_AXIS),
+				-oi->GetDriverStick()->GetRawAxisTwist(XB_RIGHT_X_AXIS));
 	}
 
 	void End() {}

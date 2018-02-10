@@ -1,6 +1,7 @@
 #include <memory>
 
 #include <Commands/Command.h>
+#include <Commands/DriveTrainFollowPath.h>
 #include <Commands/Scheduler.h>
 #include <TimedRobot.h>
 #include <LiveWindow/LiveWindow.h>
@@ -9,6 +10,8 @@
 #include <Subsystems/DriveTrain.h>
 #include "CommandBase.h"
 #include "Commands/Diag/DriveTrainTestCommandGroup.h"
+#include "Commands/DriveTrainDriveToPosition.h"
+#include "Commands/DriveTrainShiftCommand.h"
 
 class Robot: public frc::TimedRobot {
 public:
@@ -16,6 +19,11 @@ public:
 		CommandBase::init();
 		frc::SmartDashboard::PutData("Auto Modes", &chooser);
 		frc::SmartDashboard::PutData("Drive Train Test", new DriveTrainTestCommandGroup());
+
+		SmartDashboard::PutData("Drive to Position", new DriveTrainDriveToPosition());
+		SmartDashboard::PutData("Drive Path", new DriveTrainFollowPath());
+
+		SmartDashboard::PutData("Shift Up", new DriveTrainShiftCommand());
 	}
 
 	/**

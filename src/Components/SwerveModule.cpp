@@ -86,15 +86,15 @@ void SwerveModule::SetAngle(Rotation2D angle, bool force) {
 	if(m_isMoving || force) {
 		Rotation2D currentAngle = m_steerEncoder->GetAngle();
 		Rotation2D deltaAngle = currentAngle.rotateBy(angle.inverse());
-//		if(m_optimizationEnabled &&
-//		   fabs(deltaAngle.getRadians()) > M_PI_2 &&
-//		   fabs(deltaAngle.getRadians()) < 3 * M_PI_2) {
-//			angle = angle.rotateBy(Rotation2D::fromRadians(M_PI));
-//			m_angleOptimized = true;
-//		}
-//		else {
-//			m_angleOptimized = false;
-//		}
+		if(m_optimizationEnabled &&
+		   fabs(deltaAngle.getRadians()) > M_PI_2 &&
+		   fabs(deltaAngle.getRadians()) < 3 * M_PI_2) {
+			angle = angle.rotateBy(Rotation2D::fromRadians(M_PI));
+			m_angleOptimized = true;
+		}
+		else {
+			m_angleOptimized = false;
+		}
 		int setpoint = m_steerEncoder->ConvertAngleToSetpoint(angle);
 		m_steerMotor->Set(ControlMode::Position, setpoint);
 	}
