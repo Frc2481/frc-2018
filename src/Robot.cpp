@@ -24,6 +24,8 @@ public:
 		SmartDashboard::PutData("Drive Path", new DriveTrainFollowPath());
 
 		SmartDashboard::PutData("Shift Up", new DriveTrainShiftCommand());
+
+		CommandBase::m_limeLight->ActivatePowerCubePipeline();
 	}
 
 	/**

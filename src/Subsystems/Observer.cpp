@@ -51,7 +51,7 @@ void Observer::SetRobotPos(RigidTransform2D robotPos, double timestamp) {
 
 void Observer::ResetPose() {
 	m_robotPos.clear();
-	RigidTransform2D zeroTranslation = Translation2D(0, 0);
+	Translation2D zeroTranslation = Translation2D(0, 0);
 	Rotation2D zeroRotation = Rotation2D(1, 0, true);
 	SetRobotPos(RigidTransform2D(zeroTranslation, zeroRotation), RobotController::GetFPGATime());
 }

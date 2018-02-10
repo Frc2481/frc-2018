@@ -7,6 +7,7 @@
 #include "OI.h"
 #include "WPILib.h"
 #include "Subsystems/Intake.h"
+#include "Subsystems/LimeLight.h"
 
 /**
  * The base for all commands. All atomic commands should subclass CommandBase.
@@ -23,6 +24,7 @@ public:
 	static std::unique_ptr<DriveTrain> m_driveTrain;
 	static std::unique_ptr<Intake> m_intake;
 	static std::unique_ptr<OI> oi;
+	static std::unique_ptr<LimeLight> m_limeLight;
 
 	static bool m_pause;
 };

@@ -81,5 +81,12 @@ public:
 	static constexpr double kTolerancePos = 1.0;
 	static constexpr double kToleranceHeading = 5.0;
 
+	static constexpr double cameraOffsetX = 0;
+	static constexpr double cameraOffsetY = 0;
+	static constexpr double cameraOffsetZ = 28.75;
+	static constexpr double cameraOffsetRoll = 0;
+	static constexpr double cameraOffsetPitch = -4.31;
+	static constexpr double cameraOffsetYaw = 0;
+	static constexpr double cubeHeight = 12.0;
 };
 #endif
