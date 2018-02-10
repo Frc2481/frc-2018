@@ -240,9 +240,6 @@ void DriveTrain::Periodic() {
 	m_oldTimestamp = timeStamp;
 
 	Rotation2D newFlAngle = m_flWheel->GetAngle();
-//	if(m_flWheel->GetOptimized()) {
-//		newFlAngle = newFlAngle.inverse();
-//	}
 
 	Rotation2D deltaFlAngle = newFlAngle.rotateBy(m_oldFlAngle.inverse());
 	m_oldFlAngle = newFlAngle;
@@ -252,9 +249,6 @@ void DriveTrain::Periodic() {
 	m_oldFlDistance = newFlDistance;
 
 	Rotation2D newFrAngle = m_frWheel->GetAngle();
-//	if(m_frWheel->GetOptimized()) {
-//			newFrAngle = newFrAngle.inverse();
-//	}
 
 	Rotation2D deltaFrAngle = newFrAngle.rotateBy(m_oldFrAngle.inverse());
 	m_oldFrAngle = newFrAngle;
@@ -265,9 +259,6 @@ void DriveTrain::Periodic() {
 
 
 	Rotation2D newBlAngle = m_blWheel->GetAngle();
-//	if(m_blWheel->GetOptimized()) {
-//			newBlAngle = newBlAngle.inverse();
-//	}
 
 	Rotation2D deltaBlAngle = newBlAngle.rotateBy(m_oldBlAngle.inverse());
 	m_oldBlAngle = newBlAngle;
@@ -278,9 +269,6 @@ void DriveTrain::Periodic() {
 
 
 	Rotation2D newBrAngle = m_brWheel->GetAngle();
-//	if(m_brWheel->GetOptimized()) {
-//			newBrAngle = newBrAngle.inverse();
-//	}
 
 	Rotation2D deltaBrAngle = newBrAngle.rotateBy(m_oldBrAngle.inverse());
 	m_oldBrAngle = newBrAngle;
@@ -300,7 +288,8 @@ void DriveTrain::Periodic() {
 
 	const double obsDistanceThresh = 500;
 	if(fabs(deltaFlDistance.getX() < obsDistanceThresh) && fabs(deltaFrDistance.getX() < obsDistanceThresh) &&
-	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) { // TODO: evaluate if we need this check
+	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
+	   // TODO: evaluate if we need this check
 
 		m_observer->UpdateRobotPoseObservation(newFlAngle, deltaFlVelocity,
 											newFrAngle, deltaFrVelocity,

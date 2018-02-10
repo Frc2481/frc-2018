@@ -6,12 +6,11 @@
 class LimeLightActivateBlueScaleCommand : public InstantCommand {
 public:
 	LimeLightActivateBlueScaleCommand() : InstantCommand("LimeLightActivateBlueScaleCommand"){
-
 	}
+
 	void Initialize(){
-	CommandBase :: m_limeLight->ActivateBlueScale();
+		CommandBase :: m_limeLight->ActivateBlueScale();
 	}
-
 };
 
 #endif  // LimeLightActivateBlueScale_H

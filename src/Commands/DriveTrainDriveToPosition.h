@@ -29,9 +29,6 @@ public:
 		SmartDashboard::PutNumber("x control signal", 0);
 		SmartDashboard::PutNumber("y control signal", 0);
 		SmartDashboard::PutNumber("yaw control signal", 0);
-
-		SmartDashboard::PutNumber("Position Error to enable kiPos", 0);
-		SmartDashboard::PutNumber("Yaw Error to enable kiYaw", 0);
 		m_onTargetCounter = 0;
 	}
 

@@ -47,7 +47,7 @@ void DriveController::SetFieldTarget(RigidTransform2D fieldTarget) {
 }
 
 void DriveController::SetRobotTarget(RigidTransform2D robotTarget) {
-	//TODO transform from robot frame to field frame
+	//TODO transform from robot frame to field frame and call SetFieldTarget()
 	m_positionXController->SetSetpoint(robotTarget.getTranslation().getX());
 	m_positionYController->SetSetpoint(robotTarget.getTranslation().getY());
 	m_positionYawController->SetSetpoint(robotTarget.getRotation().getDegrees());
@@ -66,7 +66,7 @@ RigidTransform2D DriveController::GetDriveControlSignal() {
 	controlSignalTranslation.setY(m_positionYControlSignal->GetOutput());
 	controlSignalRotation = Rotation2D::fromDegrees(m_positionYawControlSignal->GetOutput());
 
-	//Convert drive signal from field frame to robotFrame
+	//Convert drive signal from field frame to robot frame
 	Rotation2D robotYaw = m_observer->GetLastRobotPose().getRotation();
 	RigidTransform2D driveControlSignal(controlSignalTranslation.rotateBy(robotYaw.inverse()), controlSignalRotation);
 

@@ -6,12 +6,11 @@
 class LimeLightPowerCubePipelineCommand : public InstantCommand {
 public:
 	LimeLightPowerCubePipelineCommand() : InstantCommand("LimeLightPowerCubePipelineCommand"){
-
 	}
+
 	void Initialize(){
-	CommandBase :: m_limeLight->PowerCubePipeline();
+		CommandBase :: m_limeLight->PowerCubePipeline();
 	}
-
 };
 
 #endif  // LimeLightPowerCubePipelineCommand_H

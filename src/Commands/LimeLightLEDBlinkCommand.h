@@ -6,12 +6,11 @@
 class LimeLightLEDBlinkCommand : public InstantCommand {
 public:
 	LimeLightLEDBlinkCommand() : InstantCommand("LimeLightLEDBlinkCommand"){
-
 	}
+
 	void Initialize(){
 		CommandBase :: m_limeLight->BlinkLight();
 	}
-
 };
 
 #endif  // LimeLightLEDBlinkCommand_H

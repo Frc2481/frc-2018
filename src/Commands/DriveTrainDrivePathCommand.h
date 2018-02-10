@@ -58,7 +58,8 @@ public:
 
 		RigidTransform2D errorPose = lastPoint.transformBy(robotPose.inverse());
 
-		return fabs(errorPose.getTranslation().norm()) < RobotParameters::kTolerancePos && fabs(errorPose.getRotation().getDegrees());
+		return fabs(errorPose.getTranslation().norm()) < RobotParameters::kTolerancePos &&
+			   fabs(errorPose.getRotation().getDegrees()) < RobotParameters::kToleranceHeading;
 	}
 
 	void End() {

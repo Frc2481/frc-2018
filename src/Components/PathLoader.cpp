@@ -12,10 +12,11 @@ PathLoader::PathLoader(Path2D& path) : m_path(path) {
 }
 
 PathLoader::~PathLoader() {
-	// TODO Auto-generated destructor stub
 }
 
 void PathLoader::LoadPath(const std::string filePath) {
+	//TODO error handling when no path is available
+
 	std::ifstream fin(filePath);
 
 	double x, y, yaw, time;
