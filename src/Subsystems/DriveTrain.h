@@ -102,6 +102,8 @@ public:
 	void CheckDiagnostics();
 
 	DriveController* GetDriveController();
+
+	Observer* GetObserver();
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

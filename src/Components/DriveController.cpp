@@ -55,7 +55,6 @@ void DriveController::SetFieldTarget(RigidTransform2D fieldTarget, RigidTransfor
 }
 
 void DriveController::SetRobotTarget(RigidTransform2D robotTarget, RigidTransform2D absTolerance) {
-//	fix me
 	m_positionXController->SetSetpoint(robotTarget.getTranslation().getX());
 	m_positionYController->SetSetpoint(robotTarget.getTranslation().getY());
 	m_positionYawController->SetSetpoint(robotTarget.getRotation().getDegrees());

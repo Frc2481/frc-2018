@@ -367,3 +367,7 @@ void DriveTrain::CheckDiagnostics() {
 DriveController* DriveTrain::GetDriveController() {
 	return m_driveController;
 }
+
+Observer* DriveTrain::GetObserver() {
+	return m_observer;
+}

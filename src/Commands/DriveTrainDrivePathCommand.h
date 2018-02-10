@@ -12,22 +12,28 @@
 #include "CommandBase.h"
 #include "../PIDController2481.h"
 #include <utils/InterpolatingMap.h>
+#include <Components/PathLoader.h>
 
 class DriveTrainDrivePathCommand : public CommandBase {
 private:
 	DriveController* m_driveController;
-	InterpolatingMap<InterpolatingDouble,RigidTransform2D> m_path;
+
+protected:
+	Path2D m_path;
+
 public:
 	DriveTrainDrivePathCommand() {
 		Requires(m_driveTrain.get());
 		m_driveController = m_driveTrain->GetDriveController();
 
-		m_path.put(InterpolatingDouble(0), RigidTransform2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)));
-		m_path.put(InterpolatingDouble(3/2.0), RigidTransform2D(Translation2D(30, 0), Rotation2D::fromDegrees(0)));
-		m_path.put(InterpolatingDouble(5.5/2.0), RigidTransform2D(Translation2D(35, 5), Rotation2D::fromDegrees(0)));
-		m_path.put(InterpolatingDouble(6/2.0), RigidTransform2D(Translation2D(40, 10), Rotation2D::fromDegrees(0)));
-		m_path.put(InterpolatingDouble(9/2.0), RigidTransform2D(Translation2D(40, 40), Rotation2D::fromDegrees(0)));
-//		m_path.put(InterpolatingDouble(5.5), RigidTransform2D(Translation2D(30, 35), Rotation2D::fromDegrees(0)));
+//		if(m_path.empty()) {
+//			m_path.put(InterpolatingDouble(0), RigidTransform2D(Translation2D(0, 0), Rotation2D::fromDegrees(0)));
+//			m_path.put(InterpolatingDouble(3/2.0), RigidTransform2D(Translation2D(30, 0), Rotation2D::fromDegrees(0)));
+//			m_path.put(InterpolatingDouble(5.5/2.0), RigidTransform2D(Translation2D(35, 5), Rotation2D::fromDegrees(0)));
+//			m_path.put(InterpolatingDouble(6/2.0), RigidTransform2D(Translation2D(40, 10), Rotation2D::fromDegrees(0)));
+//			m_path.put(InterpolatingDouble(9/2.0), RigidTransform2D(Translation2D(40, 40), Rotation2D::fromDegrees(0)));
+//			m_path.put(InterpolatingDouble(5.5), RigidTransform2D(Translation2D(30, 35), Rotation2D::fromDegrees(0)));
+//		}
 
 		SetTimeout(9/2.0);
 	}
@@ -46,6 +52,7 @@ public:
 
 		SmartDashboard::PutNumber("PathX",targetPos.getTranslation().getX());
 		SmartDashboard::PutNumber("PathY",targetPos.getTranslation().getY());
+		SmartDashboard::PutNumber("PathYaw",targetPos.getRotation().getDegrees());
 
 		RigidTransform2D driveSignal = m_driveController->GetDriveControlSignal();
 		m_driveTrain->Drive(driveSignal.getTranslation().getX(),
@@ -58,7 +65,12 @@ public:
 	}
 
 	bool IsFinished() {
-		return IsTimedOut();
+		RigidTransform2D lastPoint = m_path.rbegin()->second;
+		RigidTransform2D robotPose = m_driveTrain->GetObserver()->GetLastRobotPose();
+
+		RigidTransform2D error = lastPoint.transformBy(robotPose.inverse());
+
+		return fabs(error.getTranslation().norm()) < 1;
 	}
 
 	void End() {
