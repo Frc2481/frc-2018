@@ -12,9 +12,9 @@
 
 class DriveTrainFollowPath : public DriveTrainDrivePathCommand {
 public:
-	DriveTrainFollowPath() : DriveTrainDrivePathCommand() {
+	DriveTrainFollowPath(std::string path) : DriveTrainDrivePathCommand() {
 		PathLoader loader(m_path);
-		loader.LoadPath("/home/lvuser/robotPath.csv");
+		loader.LoadPath(path);
 	}
 };
 
