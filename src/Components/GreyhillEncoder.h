@@ -11,6 +11,7 @@
 #include <Subsystems/DriveTrain.h>
 #include "ctre/Phoenix.h"
 #include "utils/Translation2D.h"
+#include "CommandBase.h"
 
 class GreyhillEncoder {
 	private:
@@ -20,10 +21,12 @@ class GreyhillEncoder {
 	Translation2D m_offset;
 	int m_ticksPerRev;
 	double m_inchesPerWheelRev;
-	double m_encoderRevPerWheelRev;
+	double m_encoderRevPerWheelRevLowGear;
+	double m_encoderRevPerWheelRevHighGear;
 
 public:
-	GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerEncoderRev, double inchesPerWheelRev, double encoderRevPerWheelRev);
+	GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerEncoderRev, double inchesPerWheelRev,
+				    double encoderRevPerWheelRevLowGear, double encoderRevPerWheelRevHighGear);
 	virtual ~GreyhillEncoder();
 	Translation2D GetRawDistance() const;
 	Translation2D GetDistance() const;

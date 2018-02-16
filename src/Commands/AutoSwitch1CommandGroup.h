@@ -12,16 +12,10 @@
 
 class AutoSwitch1CommandGroup : public CommandGroup{
 public:
-	AutoSwitch1CommandGroup(const std::string name, path) : CommandBase(name){
-		AddSequential(new IntakeClampCloseCommand());
-		AddSequential(new ArmToStow());
-		//path to switch
-		//potential wait command
-		AddParallel(new ArmToSwitchFront());
-		AddSequential(new IntakeRollerUnloadCommand());
-		AddSequential(new WaitCommand(.3)); //change time or use something different
-		AddSequential(new IntakeRollerOffCommand());
-		AddSequential(new ArmToStow());
+	AutoSwitch1CommandGroup(std::string pathToSwitch, std::string pathToMeeting) : CommandGroup("AutoSwitch1CommandGroup"){
+		AddSequential(new DriveTrainFollowPath(pathToSwitch));
+//		AddSequential(new ArmToSwitchFront("")); //front or back?
+		AddSequential(new IntakeReleaseCubeCommandGroup(1.0));
 	}
 };
 

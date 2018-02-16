@@ -16,6 +16,12 @@
 #include "Commands/ArmBaseCommand.h"
 #include "Commands/AutoCommand.h"
 #include "Components/FieldConfiguration.h"
+#include "Commands/AutoScale1CommandGroup.h"
+#include "Commands/AutoScale2CommandGroup.h"
+#include "Commands/AutoSwitch1CommandGroup.h"
+#include "Commands/AutoSwitch2CommandGroup.h"
+#include "Commands/TestDrivePathGeneratorCommand.h"
+
 
 enum Autos {
 	POS_LEFT = 1,
@@ -63,9 +69,10 @@ private:
 		frc::SmartDashboard::PutData("Drive Train Test", new DriveTrainTestCommandGroup());
 
 		SmartDashboard::PutData("Drive to Position", new DriveTrainDriveToPosition());
-		SmartDashboard::PutData("Drive Path", new DriveTrainFollowPath());
+		SmartDashboard::PutData("Drive Path", new DriveTrainFollowPath("/home/lvuser/robotPath.csv"));
 
 		SmartDashboard::PutData("Shift Up", new DriveTrainShiftCommand());
+		SmartDashboard::PutData("TestDrivePathGeneratorCommand", new TestDrivePathGeneratorCommand());
 
 //		frc::SmartDashboard::PutData("Drive Train Test", new DriveTrainTestCommandGroup());
 
@@ -167,124 +174,125 @@ private:
 
 	void AutoTasksFunction(){
 		AutoTasks = new std::map<int, Command*>();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE2] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH2] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE3] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
 
-
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
-
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH2] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
-
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
 
 
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
 
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE2] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH2] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
 
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE3] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
-
-
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
-
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH2] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
-
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
-			(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
 
 
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE2] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH2] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
 
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE3] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
-
-
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
-
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH2] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
-
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
 
 
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
 
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE2] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH2] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH2] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
 
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE3] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
-
-
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
-
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH2] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
-
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
-			(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
 
 
-			(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-			(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 
-			(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_LEFT | EXCHANGE1] = new AutoCommand();
-			(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_RIGHT | EXCHANGE1] = new AutoCommand();
-			(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_LEFT | EXCHANGE1] = new AutoCommand();
-			(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_RIGHT | EXCHANGE1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE2] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH2] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
 
-			(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_LEFT | EXCHANGE2] = new AutoCommand();
-			(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_RIGHT | EXCHANGE2] = new AutoCommand();
-			(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_LEFT | EXCHANGE2] = new AutoCommand();
-			(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_RIGHT | EXCHANGE2] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE3] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
+
+
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
+
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH2] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
+
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
+
+
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
+
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE2] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH2] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
+
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE3] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
+
+
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
+
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH2] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
+
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
+
+
+		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+
+		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_LEFT | EXCHANGE1] = new AutoCommand();
+		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_RIGHT | EXCHANGE1] = new AutoCommand();
+		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_LEFT | EXCHANGE1] = new AutoCommand();
+		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_RIGHT | EXCHANGE1] = new AutoCommand();
+
+		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_LEFT | EXCHANGE2] = new AutoCommand();
+		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_RIGHT | EXCHANGE2] = new AutoCommand();
+		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_LEFT | EXCHANGE2] = new AutoCommand();
+		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_RIGHT | EXCHANGE2] = new AutoCommand();
 
 };
 

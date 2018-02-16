@@ -17,7 +17,7 @@ public:
 	virtual ~ArmPivotReverseCommand(){}
 
 	void Initialize() {
-		m_arm->SetPivotOpenLoop(-.5);
+		m_arm->SetPivotOpenLoop(-.25);
 	}
 	bool IsFinished() {
 		return false;

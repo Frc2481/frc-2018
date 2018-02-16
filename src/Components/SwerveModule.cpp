@@ -25,8 +25,10 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID,
 	m_driveMotor = new TalonSRX(driveID);
 	m_driveEncoder = new GreyhillEncoder(m_driveMotor, ss.str(),
 			RobotParameters::k_ticksPerEncoderRev,
-			RobotParameters::k_encoderRevPerWheelRev,
-			RobotParameters::k_inchesPerWheelRev);
+			RobotParameters::k_inchesPerWheelRev,
+			RobotParameters::k_encoderRevPerWheelRevLowGear,
+			RobotParameters::k_encoderRevPerWheelRevHighGear
+			);
 
 	m_isCloseLoopControl = false;
 	m_angleOptimized = false;

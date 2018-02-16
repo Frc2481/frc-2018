@@ -39,7 +39,7 @@ class DrivePathGenerator {
 public:
 	DrivePathGenerator();
 	virtual ~DrivePathGenerator();
-	void GeneratePath(std::vector<Waypoint> waypoints, double maxSpeed, double maxAccel, double sampleRate);
+	void GeneratePath(std::vector<Waypoint> &waypoints, double maxSpeed, double maxAccel, double sampleRate);
 };
 
 #endif /* SRC_UTILS_DRIVEPATHGENERATOR_H_ */

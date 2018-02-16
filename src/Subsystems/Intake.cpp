@@ -74,7 +74,6 @@ void Intake::RollerLoad(double speed) {
 void Intake::RollerUnload() {
 	m_rollerMotorLeft->Set(ControlMode::PercentOutput, -1);
 	m_rollerMotorRight->Set(ControlMode::PercentOutput, -1);
-
 }
 
 void Intake::CloseClamp() {

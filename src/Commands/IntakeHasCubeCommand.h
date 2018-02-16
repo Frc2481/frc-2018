@@ -24,7 +24,7 @@ public:
 		else {
 			m_debounceCounter = 0;
 		}
-		return m_debounceCounter > 5;
+		return m_debounceCounter > 2;
 	}
 };
 

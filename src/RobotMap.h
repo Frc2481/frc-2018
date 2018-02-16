@@ -20,7 +20,8 @@
 		#define PTO1 2
 		#define PTO2 3
 
-		#define EXTENDER 15
-		#define PIVOT 16
+		#define EXTENDER_MASTER 15
+		#define EXTENDER_SLAVE 16
+		#define PIVOT 17
 
 #endif

@@ -9,20 +9,14 @@
 #define SRC_COMMANDS_AUTOSCALE1COMMANDGROUP_H_
 
 #include "CommandBase.h"
+#include "Commands/IntakeReleaseCubeCommandGroup.h"
 
 class AutoScale1CommandGroup : public CommandGroup{
 public:
-	AutoScale1CommandGroup(const std::string name, path) : CommandGroup(name){
-		AddSequential(new IntakeClampCloseCommand());
-		AddSequential(new ArmToStow());
-		//follow path
-		//potential wait command
-		AddParallel(new ArmToMidScaleFront());
-		AddSequential(new IntakeRollerUnloadCommand());
-		AddSequential(new WaitCommand(.3)); //change time or use something different
-		AddSequential(new IntakeRollerOffCommand());
-		AddSequential(new ArmToStow());
-		AddSequential(new AutoGetCubeCommandGroup());
+	AutoScale1CommandGroup(std::string path) : CommandGroup("AutoScale1CommandGroup"){
+		AddSequential(new DriveTrainFollowPath(path)); //to scale
+		AddSequential(new ArmToMidScaleFront("")); //front or back?
+		AddSequential(new IntakeReleaseCubeCommandGroup(1.0));
 	}
 };
 

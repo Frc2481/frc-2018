@@ -17,7 +17,8 @@
 
 class Arm : public Subsystem{
 private:
-	TalonSRX* m_extender;
+	TalonSRX* m_extenderMaster;
+	TalonSRX* m_extenderSlave;
 	TalonSRX* m_pivot;
 	bool m_prevExtensionTravellingDown;
 	double m_desiredExtensionSetpoint;
@@ -28,6 +29,7 @@ public:
 	virtual ~Arm();
 	void SetExtensionPostion(double position); //raw control of extension-> be careful of constraints
 	void SetDesiredExtension(double extension); //safely control extension obeying constraints
+	double GetDesiredExtension();
 	double GetExtensionPosition();
 	bool IsExtensionOnTarget();
 	void ZeroExtension();
@@ -36,12 +38,14 @@ public:
 	void SetPivotAngle(Rotation2D angle);
 	bool IsPivotOnTarget();
 	Rotation2D GetPivotAngle();
+	Rotation2D GetDesiredPivotAngle();
 	void ZeroPivot();
 	void SetPivotAccel(int accel);
 	virtual void Periodic();
 	double GetAllowedExtensionPos();
 	double ConvertInchesToEncTicks(double inches);
 	double ConvertEncTicksToInches(double ticks);
+	double GetLastCommandedSetpoint();
 
 };
 

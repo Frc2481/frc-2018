@@ -14,40 +14,47 @@
 #include "Commands/ArmBaseCommand.h"
 
 Arm::Arm() : Subsystem("Arm"){
-	m_extender = new TalonSRX(EXTENDER);
+	m_extenderMaster = new TalonSRX(EXTENDER_MASTER);
+	m_extenderSlave = new TalonSRX(EXTENDER_SLAVE);
 
-	m_extender->SelectProfileSlot(0, 0);
-	m_extender->Set(ControlMode::PercentOutput, 0);
-	m_extender->Config_kP(0, RobotParameters::k_extenderUpP, 0);
-	m_extender->Config_kI(0, RobotParameters::k_extenderI, 0);
-	m_extender->Config_kD(0, RobotParameters::k_extenderD, 0);
-	m_extender->Config_kF(0, RobotParameters::k_extenderF, 0);
+	m_extenderMaster->SelectProfileSlot(0, 0);
+	m_extenderMaster->Set(ControlMode::PercentOutput, 0);
+	m_extenderMaster->Config_kP(0, RobotParameters::k_extenderUpP, 0);
+	m_extenderMaster->Config_kI(0, RobotParameters::k_extenderI, 0);
+	m_extenderMaster->Config_kD(0, RobotParameters::k_extenderD, 0);
+	m_extenderMaster->Config_kF(0, RobotParameters::k_extenderF, 0);
 
-	m_extender->Config_kP(1, RobotParameters::k_extenderDownP, 0);
-	m_extender->Config_kI(1, RobotParameters::k_extenderI, 0);
-	m_extender->Config_kD(1, RobotParameters::k_extenderD, 0);
-	m_extender->Config_kF(1, RobotParameters::k_extenderF, 0);
-	m_extender->Config_IntegralZone(0, 200, 0);
-	m_extender->SetSensorPhase(true);
-	m_extender->SetInverted(false);
+	m_extenderMaster->Config_kP(1, RobotParameters::k_extenderDownP, 0);
+	m_extenderMaster->Config_kI(1, RobotParameters::k_extenderI, 0);
+	m_extenderMaster->Config_kD(1, RobotParameters::k_extenderD, 0);
+	m_extenderMaster->Config_kF(1, RobotParameters::k_extenderF, 0);
+	m_extenderMaster->Config_IntegralZone(0, 200, 0);
+	m_extenderMaster->SetSensorPhase(false);
+	m_extenderMaster->SetInverted(true);
 
-	m_extender->ConfigNominalOutputForward(0.0, 0.0);
-	m_extender->ConfigNominalOutputReverse(0.0, 0.0);
-	m_extender->ConfigPeakOutputForward(RobotParameters::k_extenderPeakOutputForward, 0.0);
-	m_extender->ConfigPeakOutputReverse(RobotParameters::k_extenderPeakOutputReverse, 0.0);
+	m_extenderMaster->ConfigNominalOutputForward(0.0, 0.0);
+	m_extenderMaster->ConfigNominalOutputReverse(0.0, 0.0);
+	m_extenderMaster->ConfigPeakOutputForward(RobotParameters::k_extenderPeakOutputForward, 0.0);
+	m_extenderMaster->ConfigPeakOutputReverse(RobotParameters::k_extenderPeakOutputReverse, 0.0);
 
-	m_extender->ConfigForwardSoftLimitThreshold(22012, 0); //change threshold-> in native units //23237 //5000 off extreme
-	m_extender->ConfigReverseSoftLimitThreshold(2740, 0); //change threshold-> in native units //5000 off extreme
-	m_extender->ConfigForwardSoftLimitEnable(true, 0);
-	m_extender->ConfigReverseSoftLimitEnable(true, 0);
+	m_extenderMaster->ConfigForwardSoftLimitThreshold(22300, 0); //change threshold-> in native units //23237 //5000 off extreme
+	m_extenderMaster->ConfigReverseSoftLimitThreshold(0, 0); //change threshold-> in native units //5000 off extreme
+	m_extenderMaster->ConfigForwardSoftLimitEnable(true, 0);
+	m_extenderMaster->ConfigReverseSoftLimitEnable(true, 0);
 
-	m_extender->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Relative, 0, 0);
+	m_extenderMaster->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Relative, 0, 0);
 
-	m_extender->ConfigMotionCruiseVelocity(RobotParameters::k_extenderVelocity, 0); //convert to talon speed: encoder count/100 ms / 2.0
-	m_extender->ConfigMotionAcceleration(RobotParameters::k_extenderAcceleration, 0); //9200
+	m_extenderMaster->ConfigMotionCruiseVelocity(RobotParameters::k_extenderVelocity, 0); //convert to talon speed: encoder count/100 ms / 2.0
+	m_extenderMaster->ConfigMotionAcceleration(RobotParameters::k_extenderAcceleration, 0); //9200
 
-	m_extender->SetStatusFramePeriod(Status_2_Feedback0_, 10, 0);
-	m_extender->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
+	m_extenderMaster->SetStatusFramePeriod(Status_2_Feedback0_, 100, 0);
+	m_extenderMaster->SetStatusFramePeriod(Status_10_MotionMagic, 100, 0);
+
+	m_extenderMaster->ConfigAllowableClosedloopError(0, 0, 0);
+
+	m_extenderSlave->SetInverted(true);
+	m_extenderSlave->Set(ControlMode::Follower, 15);
+
 	m_desiredExtensionSetpoint = 0;
 
 	m_pivot = new TalonSRX(PIVOT);
@@ -59,7 +66,7 @@ Arm::Arm() : Subsystem("Arm"){
 	m_pivot->Config_kF(0, RobotParameters::k_pivotF, 0);
 	m_pivot->Config_IntegralZone(0, 200, 0);
 	m_pivot->SetSensorPhase(true);
-	m_pivot->SetInverted(false);
+	m_pivot->SetInverted(true);
 
 	m_pivot->ConfigNominalOutputForward(0.0, 0.0);
 	m_pivot->ConfigNominalOutputReverse(0.0, 0.0);
@@ -67,19 +74,19 @@ Arm::Arm() : Subsystem("Arm"){
 	m_pivot->ConfigPeakOutputReverse(RobotParameters::k_pivotPeakOutputReverse, 0.0);
 
 	m_pivot->ConfigForwardSoftLimitEnable(true, 0);
-	m_pivot->ConfigForwardSoftLimitThreshold(3819, 0);
+	m_pivot->ConfigForwardSoftLimitThreshold(5740, 0);
 	m_pivot->ConfigReverseSoftLimitEnable(true, 0);
-	m_pivot->ConfigReverseSoftLimitThreshold(-3680, 0);
+	m_pivot->ConfigReverseSoftLimitThreshold(-5530, 0);
 
 	m_pivot->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Relative, 0, 0);
 
 	m_pivot->ConfigMotionCruiseVelocity(RobotParameters::k_pivotVelocity, 0);
 	m_pivot->ConfigMotionAcceleration(RobotParameters::k_pivotAcceleration, 0);
 
-	m_pivot->SetStatusFramePeriod(Status_2_Feedback0_, 10, 0);
-	m_pivot->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
+	m_pivot->SetStatusFramePeriod(Status_2_Feedback0_, 100, 0);
+	m_pivot->SetStatusFramePeriod(Status_10_MotionMagic, 100, 0);
 
-	m_pivot->ConfigAllowableClosedloopError(0, 5, 0);
+	m_pivot->ConfigAllowableClosedloopError(0, 0, 0);
 
 
 	m_prevExtensionTravellingDown = false;
@@ -115,7 +122,7 @@ Arm::~Arm() {
 
 void Arm::SetExtensionPostion(double position) {
 	position = ConvertInchesToEncTicks(position);
-	m_extender->Set(ControlMode::MotionMagic, position);
+	m_extenderMaster->Set(ControlMode::MotionMagic, position);
 
 	SmartDashboard::PutNumber("set position extension", position);
 
@@ -127,7 +134,7 @@ void Arm::SetExtensionPostion(double position) {
 //		}
 //		else {
 //			m_extender->SelectProfileSlot(0, 0);
-			m_extender->ConfigMotionAcceleration(13800, 0);
+			m_extenderMaster->ConfigMotionAcceleration(13800, 0);
 //		}
 //		m_prevExtensionTravellingDown = goingDown;
 //		SmartDashboard::PutNumber("isGoingDown", goingDown);
@@ -140,19 +147,19 @@ void Arm::SetDesiredExtension(double extension) {
 }
 
 double Arm::GetExtensionPosition() {
-	return ConvertEncTicksToInches(m_extender->GetSelectedSensorPosition(0));
+	return ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0));
 }
 
 void Arm::ZeroExtension() {
-	m_extender->SetSelectedSensorPosition(0, 0, 10);
+	m_extenderMaster->SetSelectedSensorPosition(0, 0, 10);
 }
 
 void Arm::SetExtensionOpenLoop(double speed) {
-	m_extender->Set(ControlMode::PercentOutput, speed);
+	m_extenderMaster->Set(ControlMode::PercentOutput, speed);
 }
 
 bool Arm::IsExtensionOnTarget() {
-	return fabs(m_extender->GetClosedLoopError(0)) < 300;
+	return fabs(m_extenderMaster->GetClosedLoopError(0)) < 300;
 }
 
 void Arm::SetPivotOpenLoop(double speed) {
@@ -160,7 +167,7 @@ void Arm::SetPivotOpenLoop(double speed) {
 }
 
 bool Arm::IsPivotOnTarget() {
-	return fabs(m_pivot->GetClosedLoopError(0)) < 20;
+	return fabs(m_pivot->GetClosedLoopError(0)) < 60;
 }
 
 void Arm::SetPivotAccel(int accel) {
@@ -173,13 +180,13 @@ void Arm::Periodic() {
 	SetExtensionPostion(GetAllowedExtensionPos());
 
 
-	SmartDashboard::PutNumber("extension speed", m_extender->GetSelectedSensorVelocity(0));
-	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extender->GetSelectedSensorPosition(0)));
-	SmartDashboard::PutNumber("extension current", m_extender->GetOutputCurrent());
-	SmartDashboard::PutNumber("extension error", m_extender->GetClosedLoopError(0));
-	SmartDashboard::PutNumber("active trajectory position extender", m_extender->GetActiveTrajectoryPosition());
-	SmartDashboard::PutNumber("active trajectory velocity extender", m_extender->GetActiveTrajectoryVelocity());
-	SmartDashboard::PutNumber("applied motor output extender", m_extender->GetMotorOutputVoltage());
+	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
+	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)));
+	SmartDashboard::PutNumber("extension current", m_extenderMaster->GetOutputCurrent());
+	SmartDashboard::PutNumber("extension error", m_extenderMaster->GetClosedLoopError(0));
+	SmartDashboard::PutNumber("active trajectory position extender", m_extenderMaster->GetActiveTrajectoryPosition());
+	SmartDashboard::PutNumber("active trajectory velocity extender", m_extenderMaster->GetActiveTrajectoryVelocity());
+	SmartDashboard::PutNumber("applied motor output extender", m_extenderMaster->GetMotorOutputVoltage());
 
 	SmartDashboard::PutNumber("pivot speed", m_pivot->GetSelectedSensorVelocity(0));
 	SmartDashboard::PutNumber("pivot angle", GetPivotAngle().getDegrees());
@@ -188,11 +195,13 @@ void Arm::Periodic() {
 	SmartDashboard::PutNumber("active trajectory position pivot", m_pivot->GetActiveTrajectoryPosition());
 	SmartDashboard::PutNumber("active trajectory velocity pivot", m_pivot->GetActiveTrajectoryVelocity());
 	SmartDashboard::PutNumber("applied motor output pivot", m_pivot->GetMotorOutputVoltage());
+
+	SmartDashboard::PutNumber("extender distance ticks", m_extenderMaster->GetSelectedSensorPosition(0));
 }
 
 void Arm::SetPivotAngle(Rotation2D angle) {
 	m_pivot->Set(ControlMode::MotionMagic, angle.getDegrees() * RobotParameters::k_encoderTicksPerPivotDegree); //control mode?
-
+	m_pivotAngle = angle;
 	SmartDashboard::PutNumber("pivotAngle", angle.getDegrees());
 }
 
@@ -214,6 +223,18 @@ double Arm::ConvertInchesToEncTicks(double inches) {
 	return inches * RobotParameters::k_encoderTicksPerExtensionInch;
 }
 
+double Arm::GetDesiredExtension() {
+	return m_desiredExtensionSetpoint;
+}
+
+Rotation2D Arm::GetDesiredPivotAngle() {
+	return m_pivotAngle;
+}
+
 double Arm::ConvertEncTicksToInches(double ticks) {
 	return ticks / RobotParameters::k_encoderTicksPerExtensionInch;
+}
+
+double Arm::GetLastCommandedSetpoint() {
+//	return
 }

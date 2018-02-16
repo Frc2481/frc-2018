@@ -304,6 +304,7 @@ void DriveTrain::Periodic() {
 	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(-deltaBrDistance.getX(), 0, 0, deltaTimestamp);
 
 	Rotation2D newGyroYaw = GetHeading();
+	SmartDashboard::PutNumber("new gyro yaw", newGyroYaw.getDegrees());
 	Rotation2D deltaGyroYaw = newGyroYaw.rotateBy(m_oldGyroYaw.inverse());
 	m_oldGyroYaw = newGyroYaw;
 
@@ -343,6 +344,14 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("FR Current", m_frWheel->GetDriveCurrent());
 	SmartDashboard::PutNumber("BL Current", m_blWheel->GetDriveCurrent());
 	SmartDashboard::PutNumber("BR Current", m_brWheel->GetDriveCurrent());
+
+	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BL encTicks", m_blWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BR encTicks", m_brWheel->GetDriveEncoder()->GetEncoderTicks());
+
+
+	SmartDashboard::PutNumber("isShifted", IsShifted());
 
 
 }

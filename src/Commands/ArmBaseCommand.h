@@ -33,6 +33,10 @@ public:
 		SmartDashboard::PutNumber("get allowed extension pos", m_arm->GetAllowedExtensionPos());
 		m_counter++;
 		SmartDashboard::PutNumber("arm base command counter", m_counter);
+		while((m_arm->GetPivotAngle().getDegrees() > 90 || m_arm->GetPivotAngle().getDegrees() < -90) &&
+				fabs(fabs(m_arm->GetDesiredPivotAngle().getDegrees()) - fabs(m_arm->GetPivotAngle().getDegrees())) > 15) {
+			m_arm->SetExtensionPostion(m_arm->GetExtensionPosition());
+		}
 	}
 	bool IsFinished() {
 		if(CommandBase::m_arm->IsPivotOnTarget()) {
@@ -58,20 +62,40 @@ public:
 	}
 };
 
+typedef ArmBaseCommandGroup<4, 120> ArmToIntakeFront;
+typedef ArmBaseCommandGroup<4, -119> ArmToIntakeBack;
 
-typedef ArmBaseCommandGroup<8, 54> ArmToLowScaleFront;
-typedef ArmBaseCommandGroup<8, -50> ArmToLowScaleBack;
+typedef ArmBaseCommandGroup<1, 104> ArmToIntake2Front;
+typedef ArmBaseCommandGroup<1, -101> ArmToIntake2Back;
+
+typedef ArmBaseCommandGroup<0, 83> ArmToIntake3Front;
+typedef ArmBaseCommandGroup<0, -83> ArmToIntake3Back;
+
+//typedef ArmBaseCommandGroup<0, 91> ArmToSwitchFront;
+//typedef ArmBaseCommandGroup<0, -86> ArmToSwitchBack;
+
+typedef ArmBaseCommandGroup<8, 39> ArmToLowScaleFront; //15, 44
+typedef ArmBaseCommandGroup<8, -39> ArmToLowScaleBack; // 11, -45
+
+typedef ArmBaseCommandGroup<8, 28> ArmToLowScale2Front;
+typedef ArmBaseCommandGroup<8, -28> ArmToLowScale2Back;
+
+typedef ArmBaseCommandGroup<24, 25> ArmToMidScaleFront;
+typedef ArmBaseCommandGroup<24, -25> ArmToMidScaleBack;
+
+typedef ArmBaseCommandGroup<30, 23> ArmToMidScale2Front;
+typedef ArmBaseCommandGroup<30, -23> ArmToMidScale2Back;
+
+typedef ArmBaseCommandGroup<36, 22> ArmToHighScaleFront; // 35, 15
+typedef ArmBaseCommandGroup<36, -22> ArmToHighScaleBack; //26, -20
+
+typedef ArmBaseCommandGroup<36, 16> ArmToHighScale2Front;
+typedef ArmBaseCommandGroup<36, -16> ArmToHighScale2Back;
+
 typedef ArmBaseCommandGroup<7, 125> ArmCubesToExchangeFront;
 typedef ArmBaseCommandGroup<4, -123> ArmCubesToExchangeBack;
-typedef ArmBaseCommandGroup<36, 25> ArmToHighScaleFront;
-typedef ArmBaseCommandGroup<36, -20> ArmToHighScaleBack;
-typedef ArmBaseCommandGroup<17, 42> ArmToMidScaleFront;
-typedef ArmBaseCommandGroup<16, -39> ArmToMidScaleBack;
-typedef ArmBaseCommandGroup<0, 91> ArmToSwitchFront;
-typedef ArmBaseCommandGroup<0, -86> ArmToSwitchBack;
-typedef ArmBaseCommandGroup<4, 118> ArmToIntakeFront;
-typedef ArmBaseCommandGroup<4, -115> ArmToIntakeBack;
-typedef ArmBaseCommandGroup<5, 0> ArmToStow;
+
+typedef ArmBaseCommandGroup<0, 0> ArmToStow;
 
 typedef ArmBaseCommandGroup<0, 90> ArmTo90Front;
 typedef ArmBaseCommandGroup<0, -90> ArmTo90Back;
