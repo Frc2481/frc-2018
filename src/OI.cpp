@@ -46,7 +46,7 @@ OI::OI() {
 //	m_shifterButton->WhileHeld(new DriveTrainShiftCommand());
 
 	m_shifterButton = new JoystickButton(m_driverStick, XB_RIGHT_BUMPER);
-	m_shifterButton->WhenPressed(new DriveTrainShiftCommand());
+	m_shifterButton->WhileHeld(new DriveTrainShiftCommand());
 
 //	m_fieldCentricButton = new JoystickButton(m_driverStick, XB_LEFT_BUMPER);
 //	m_fieldCentricButton->WhileHeld(new DriveTrainFieldCentricCommand());

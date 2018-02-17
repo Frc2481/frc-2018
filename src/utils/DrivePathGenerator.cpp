@@ -20,10 +20,9 @@ void DrivePathGenerator::GeneratePath(std::vector<Waypoint> &waypoints,
 		double maxSpeed, double maxAccel, double sampleRate) {
 	// TODO input error checking
 	// waypoints is empty
-	// waypoints max distance away from point is zero for not start and end points
-	// max speed is zero
-	// max accel is zero
-	// sample rate is zero
+	// max speed is not positive real number
+	// max accel is not positive real number
+	// sample rate is not positive real number
 
 	//add start point to path
 	std::vector<Translation2D> tempPath;
@@ -134,7 +133,6 @@ void DrivePathGenerator::GeneratePath(std::vector<Waypoint> &waypoints,
 					waypoints2.push_back(tempWayPnt);
 				}
 				printf("got here 4\n");
-
 			}
 
 			// add p5 to path
@@ -203,19 +201,20 @@ void DrivePathGenerator::GeneratePath(std::vector<Waypoint> &waypoints,
 	}
 	printf("got here 6\n");
 
-	printf("floor: %d\n", floor(totalTime * sampleRate) / sampleRate);
-
 	//calculate distance traveled with respect to time
 	for(int i = 2; i <= (floor(totalTime * sampleRate) / sampleRate); i++) {
 		printf("got here cnt: %d\n", i);
-		if(startMaxSpeedTime < time.at(i) && (time.at(i) < (startMaxSpeedTime + 1 / sampleRate))) {
-			dist.push_back(dist.back() + (time.at(i) - startMaxSpeedTime) * maxSpeed + (startMaxSpeedTime - time.at(i - 1)) * speed.at(i));
+		if((startMaxSpeedTime < time.at(i)) && (time.at(i) < (startMaxSpeedTime + 1 / sampleRate))) {
+			printf("if\n");
+			dist.push_back(dist.back() + (time.at(i) - startMaxSpeedTime) * maxSpeed + (startMaxSpeedTime - time.at(i - 1)) * speed.at(i - 1));
 		}
-		else if(stopMaxSpeedTime < time.at(i) && (time.at(i) < (stopMaxSpeedTime + 1 / sampleRate))) {
+		else if((stopMaxSpeedTime < time.at(i)) && (time.at(i) < (stopMaxSpeedTime + 1 / sampleRate))) {
 			dist.push_back(dist.back() + (stopMaxSpeedTime - time.at(i - 1)) * maxSpeed + (time.at(i) - stopMaxSpeedTime) * speed.at(i));
+			printf("else if\n");
 		}
 		else {
 			dist.push_back(dist.back() + (speed.at(i) + speed.at(i - 1)) / (2 * sampleRate));
+			printf("else\n");
 		}
 	}
 	printf("got here 7\n");
@@ -282,26 +281,6 @@ void DrivePathGenerator::GeneratePath(std::vector<Waypoint> &waypoints,
 
 	    newYaw = (it7 - 1)->pose.getRotation().getDegrees() + yawRate.at(j);
 		it7->pose.setRotation(Rotation2D::fromDegrees(newYaw));
-	}
-
-	if(waypoints.empty()) {
-		printf("waypoints is empty");
-		return;
-	}
-
-	if(maxSpeed > 0) {
-		printf("max speed is not positive real number");
-		return;
-	}
-
-	if(maxAccel > 0) {
-		printf("max accel is not positive real number");
-		return;
-	}
-
-	if(sampleRate > 0) {
-		printf("sample rate is not positive real number");
-		return;
 	}
 
 	// write final path to .csv file

@@ -109,9 +109,9 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 	Translation2D translation(xVel, yVel);
 	Rotation2D rotation = Rotation2D::fromDegrees(yawRate); //don't store twist as angle
 
-	SmartDashboard::PutNumber("yawRate", yawRate);
-	SmartDashboard::PutNumber("xVel", translation.getX());
-	SmartDashboard::PutNumber("yVel", translation.getY());
+//	SmartDashboard::PutNumber("yawRate", yawRate);
+//	SmartDashboard::PutNumber("xVel", translation.getX());
+//	SmartDashboard::PutNumber("yVel", translation.getY());
 
 //	Rotation2D gyroAngle = GetHeading();
 
@@ -325,33 +325,36 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
 	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
 
-	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
-	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
-	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
-	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
+//	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
+//	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
+//	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
+//	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
+//
+//	SmartDashboard::PutNumber("FL distance", m_flWheel->GetDistance().getX());
+//	SmartDashboard::PutNumber("FR distance", m_frWheel->GetDistance().getX());
+//	SmartDashboard::PutNumber("BL distance", m_blWheel->GetDistance().getX());
+//	SmartDashboard::PutNumber("BR distance", m_brWheel->GetDistance().getX());
+//
+//	SmartDashboard::PutNumber("FL Speed", m_flWheel->GetSpeed());
+//	SmartDashboard::PutNumber("FR Speed", m_frWheel->GetSpeed());
+//	SmartDashboard::PutNumber("BL Speed", m_blWheel->GetSpeed());
+//	SmartDashboard::PutNumber("BR Speed", m_brWheel->GetSpeed());
+//
+//	SmartDashboard::PutNumber("FL Current", m_flWheel->GetDriveCurrent());
+//	SmartDashboard::PutNumber("FR Current", m_frWheel->GetDriveCurrent());
+//	SmartDashboard::PutNumber("BL Current", m_blWheel->GetDriveCurrent());
+//	SmartDashboard::PutNumber("BR Current", m_brWheel->GetDriveCurrent());
 
-	SmartDashboard::PutNumber("FL distance", m_flWheel->GetDistance().getX());
-	SmartDashboard::PutNumber("FR distance", m_frWheel->GetDistance().getX());
-	SmartDashboard::PutNumber("BL distance", m_blWheel->GetDistance().getX());
-	SmartDashboard::PutNumber("BR distance", m_brWheel->GetDistance().getX());
-
-	SmartDashboard::PutNumber("FL Speed", m_flWheel->GetSpeed());
-	SmartDashboard::PutNumber("FR Speed", m_frWheel->GetSpeed());
-	SmartDashboard::PutNumber("BL Speed", m_blWheel->GetSpeed());
-	SmartDashboard::PutNumber("BR Speed", m_brWheel->GetSpeed());
-
-	SmartDashboard::PutNumber("FL Current", m_flWheel->GetDriveCurrent());
-	SmartDashboard::PutNumber("FR Current", m_frWheel->GetDriveCurrent());
-	SmartDashboard::PutNumber("BL Current", m_blWheel->GetDriveCurrent());
-	SmartDashboard::PutNumber("BR Current", m_brWheel->GetDriveCurrent());
-
-	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
-	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());
-	SmartDashboard::PutNumber("BL encTicks", m_blWheel->GetDriveEncoder()->GetEncoderTicks());
-	SmartDashboard::PutNumber("BR encTicks", m_brWheel->GetDriveEncoder()->GetEncoderTicks());
+//	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
+//	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());
+//	SmartDashboard::PutNumber("BL encTicks", m_blWheel->GetDriveEncoder()->GetEncoderTicks());
+//	SmartDashboard::PutNumber("BR encTicks", m_brWheel->GetDriveEncoder()->GetEncoderTicks());
 
 
-	SmartDashboard::PutNumber("isShifted", IsShifted());
+//	SmartDashboard::PutNumber("isShifted", IsShifted());
+
+	SmartDashboard::PutNumber("timestamp", timeStamp);
+	SmartDashboard::PutNumber("delta timestamp", deltaTimestamp);
 
 
 }
@@ -359,15 +362,15 @@ void DriveTrain::Periodic() {
 // This Method must be called when when all 8 swerve modules are on.
 void DriveTrain::CheckDiagnostics() {
 // TODO:figure out how to see if sensor is present
-	SmartDashboard::PutBoolean("FL Drive Enc Present", std::abs(m_flWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
-	SmartDashboard::PutBoolean("FR Drive Enc Present", std::abs(m_frWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
-	SmartDashboard::PutBoolean("BL Drive Enc Present", std::abs(m_blWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
-	SmartDashboard::PutBoolean("BR Drive Enc Present", std::abs(m_brWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
-
-	SmartDashboard::PutBoolean("FL Steer Enc Calibrated", m_flWheel->GetSteerEncoder()->IsCalibrated());
-	SmartDashboard::PutBoolean("FR Steer Enc Calibrated", m_frWheel->GetSteerEncoder()->IsCalibrated());
-	SmartDashboard::PutBoolean("BL Steer Enc Calibrated", m_blWheel->GetSteerEncoder()->IsCalibrated());
-	SmartDashboard::PutBoolean("BR Steer Enc Calibrated", m_brWheel->GetSteerEncoder()->IsCalibrated());
+//	SmartDashboard::PutBoolean("FL Drive Enc Present", std::abs(m_flWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
+//	SmartDashboard::PutBoolean("FR Drive Enc Present", std::abs(m_frWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
+//	SmartDashboard::PutBoolean("BL Drive Enc Present", std::abs(m_blWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
+//	SmartDashboard::PutBoolean("BR Drive Enc Present", std::abs(m_brWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
+//
+//	SmartDashboard::PutBoolean("FL Steer Enc Calibrated", m_flWheel->GetSteerEncoder()->IsCalibrated());
+//	SmartDashboard::PutBoolean("FR Steer Enc Calibrated", m_frWheel->GetSteerEncoder()->IsCalibrated());
+//	SmartDashboard::PutBoolean("BL Steer Enc Calibrated", m_blWheel->GetSteerEncoder()->IsCalibrated());
+//	SmartDashboard::PutBoolean("BR Steer Enc Calibrated", m_brWheel->GetSteerEncoder()->IsCalibrated());
 
 	bool flDriveMotorPresent = m_flWheel->GetDriveCurrent() > 0.1;
 	bool frDriveMotorPresent = m_frWheel->GetDriveCurrent() > 0.1;
@@ -379,20 +382,20 @@ void DriveTrain::CheckDiagnostics() {
 	bool blSteerMotorPresent = m_blWheel->GetSteerCurrent() > 0.1;
 	bool brSteerMotorPresent = m_brWheel->GetSteerCurrent() > 0.1;
 
-	SmartDashboard::PutBoolean("Front Left Drive Motor Present", flDriveMotorPresent);
-	SmartDashboard::PutBoolean("Front Right Drive Motor Present", frDriveMotorPresent);
-	SmartDashboard::PutBoolean("Back Left Drive Motor Present", blDriveMotorPresent);
-	SmartDashboard::PutBoolean("Back Right Drive Motor Present", brDriveMotorPresent);
-
-	SmartDashboard::PutBoolean("Front Left Steer Motor Present", flSteerMotorPresent);
-	SmartDashboard::PutBoolean("Front Right Steer Motor Present", frSteerMotorPresent);
-	SmartDashboard::PutBoolean("Back Left Steer Motor Present", blSteerMotorPresent);
-	SmartDashboard::PutBoolean("Back Right Steer Motor Present", brSteerMotorPresent);
+//	SmartDashboard::PutBoolean("Front Left Drive Motor Present", flDriveMotorPresent);
+//	SmartDashboard::PutBoolean("Front Right Drive Motor Present", frDriveMotorPresent);
+//	SmartDashboard::PutBoolean("Back Left Drive Motor Present", blDriveMotorPresent);
+//	SmartDashboard::PutBoolean("Back Right Drive Motor Present", brDriveMotorPresent);
+//
+//	SmartDashboard::PutBoolean("Front Left Steer Motor Present", flSteerMotorPresent);
+//	SmartDashboard::PutBoolean("Front Right Steer Motor Present", frSteerMotorPresent);
+//	SmartDashboard::PutBoolean("Back Left Steer Motor Present", blSteerMotorPresent);
+//	SmartDashboard::PutBoolean("Back Right Steer Motor Present", brSteerMotorPresent);
 
 	bool allMotorsPresent = flDriveMotorPresent && frDriveMotorPresent && blDriveMotorPresent && brDriveMotorPresent &&
 					flSteerMotorPresent && frSteerMotorPresent && blSteerMotorPresent && brSteerMotorPresent;
 
-	SmartDashboard::PutBoolean("All Drive Train Motors Present", allMotorsPresent);
+//	SmartDashboard::PutBoolean("All Drive Train Motors Present", allMotorsPresent);
 }
 
 DriveController* DriveTrain::GetDriveController() {

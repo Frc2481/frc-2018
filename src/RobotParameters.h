@@ -10,46 +10,17 @@
 #include "math.h"
 #define DEBUGGING 1
 #define ROBOT_SETTING_PATH "settings.cfg"
-#define ENCODER_OFFSET_FILENAME "/home/lvuser/Encoder_Offsets"
-#define ENCODER_ROTATION_PER_DEGREE_FILENAME "/home/lvuser/Rotations_Per_Degree"
-
-//Robot Base
-	#define ROBOT_LENGTH 22
-	#define ROBOT_WIDTH 25
-
-#define INCHES_PER_REV 3.25 * 3.14159265 //inches
-#define WHEEL_DIAMETER_INCHES 3.25
-#define ENCODER_TICKS_PER_REV 21.75 * 128
-#define MM_PER_REV 25.4 * INCHES_PER_REV
-//DRIVE_FIRST_STAGE_GEAR_RATIO 17.0/58.0 REAL      PRACTICE:18/58
-//DRIVE_SECOND_STAGE_GEAR_RATIO 1.0/1.6
-//DRIVE_THIRD_STAGE_GEAR_RATIO 36.0/12.0
-#define ENCODER_REV_PER_WHEEL_REV  /*16.37//REAL*/   /*PRACTICE:*/15.47
-							/*1 / (DRIVE_FIRST_STAGE_GEAR_RATIO * \
-								DRIVE_SECOND_STAGE_GEAR_RATIO * \
-								DRIVE_THIRD_STAGE_GEAR_RATIO)*/
-//#define ENCODER_TICKS_PER_INCH 8725.56317
-//#define ENCODER_TICKS_PER_MM 343.526109
-
-#define CIRCUMFERENCE_OF_ROTATION (sqrt((22*22)+(23.5*23.5)))*M_PI
-
-#define GEAR_FLICK_DELAY 1.0
-#define HOPPER_SPEED 0.2
-
-#define FEET_PER_SEC_LOW 6.38
-#define FEET_PER_SEC_HIGH 13.8
-#define ENCODER_UNITS_PER_REV 4096
-#define RPM 435
-#define FEED_FORWARD_LOW (1 * 1023) / ((FEET_PER_SEC_LOW * 60 * 12 / (INCHES_PER_REV))*(1/60.0)*(1/10.0)*(ENCODER_UNITS_PER_REV / ENCODER_REV_PER_WHEEL_REV))
-#define FEED_FORWARD_HIGH (1 * 1023) / ((FEET_PER_SEC_HIGH * 60 * 12 / (INCHES_PER_REV))*(1/60.0)*(1/10.0)*(ENCODER_UNITS_PER_REV / ENCODER_REV_PER_WHEEL_REV))
 
 class RobotParameters {
 public:
-	static constexpr int k_ticksPerEncoderRev = 512; //512; // 128 * 4
-	static constexpr double k_encoderRevPerWheelRevLowGear = 1 / 0.14836; //28.15 //1.3872;
-	static constexpr double k_encoderRevPerWheelRevHighGear = 1 / 0.32086; //3.0;
+	// wheel drive encoder
+	static constexpr int k_ticksPerEncoderRev = 512; // 128 * 4
+	static constexpr double k_encoderRevPerWheelRevLowGear = 6.7403;
+	static constexpr double k_encoderRevPerWheelRevHighGear = 3.1166;
 
-	//12:36 *
+	//low: 12:36 * 34:50 * 34:50 * 80:32 * 16:44 = .1401
+	//high: 12:36 * 34:50 * 50:34 * 80:32 * 16:44 = .303
+
 
 	// Wheel to bevel:          44:16 was 48:30
 	// Big Sprk to Little Sprk: 58:17
@@ -81,22 +52,22 @@ public:
 	static constexpr double k_steerI = 0;
 	static constexpr double k_steerD = 40;
 
-	static constexpr double kpPos = 0.1;
-	static constexpr double kiPos = 0.0;
+	static constexpr double kpPos = 0.007;
+	static constexpr double kiPos = 0;
 	static constexpr double kdPos = 0;
-	static constexpr double kfPos = 0.0154;
-	static constexpr double kIZonePos = 5;
+	static constexpr double kfPos = 0.007;
+	static constexpr double kIZonePos = 0;
 
 	static constexpr double kpYaw = 0.01;
-	static constexpr double kiYaw = 0.001;
+	static constexpr double kiYaw = 0;
 	static constexpr double kdYaw = 0;
-	static constexpr double kfYaw = 0;
-	static constexpr double kIZoneYaw = 5;
+	static constexpr double kfYaw = 0.005;
+	static constexpr double kIZoneYaw = 0;
 
 	static constexpr double PositionControllerPeriod = 0.05;
 
 	static constexpr double kTolerancePos = 1.0;
-	static constexpr double kToleranceHeading = 5.0;
+	static constexpr double kToleranceHeading = 3.0;
 
 	static constexpr double k_extenderUpP = 0.3; //ToDo: change values //40% * 1023 / 3700
 	static constexpr double k_extenderDownP = 0.5;

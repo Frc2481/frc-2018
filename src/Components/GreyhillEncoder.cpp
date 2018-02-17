@@ -9,6 +9,8 @@
 #include <sstream>
 #include <WPILib.h>
 
+//fix me!
+
 GreyhillEncoder::GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerRev, double inchesPerWheelRev, double encoderRevPerWheelRevLowGear, double encoderRevPerWheelRevHighGear)
 	: m_talon(talon), m_name(name), m_ticksPerRev(ticksPerRev), m_inchesPerWheelRev(inchesPerWheelRev),
 	  m_encoderRevPerWheelRevLowGear(encoderRevPerWheelRevLowGear), m_encoderRevPerWheelRevHighGear(encoderRevPerWheelRevHighGear) {
@@ -51,24 +53,24 @@ double GreyhillEncoder::GetEncoderSpeed() const {
 double GreyhillEncoder::ConvertEncoderRotationsToWheelRotations(double rotations) const {
 	double output;
 
-//	if(CommandBase::m_driveTrain->IsShifted() == false) {
-//		output = rotations / m_encoderRevPerWheelRevHighGear;
-//	}
-//	else {
+	if(CommandBase::m_driveTrain->IsShifted() == false) {
+		output = rotations / m_encoderRevPerWheelRevHighGear;
+	}
+	else {
 		output = rotations / m_encoderRevPerWheelRevLowGear;
-//	}
+	}
 	return output;
 }
 
 double GreyhillEncoder::ConvertWheelRotationsToEncoderRotations(double rotations) const {
 	double output;
 
-//	if(CommandBase::m_driveTrain->IsShifted() == false) {
-//		output = rotations * m_encoderRevPerWheelRevHighGear;
-//	}
-//	else {
+	if(CommandBase::m_driveTrain->IsShifted() == false) {
+		output = rotations * m_encoderRevPerWheelRevHighGear;
+	}
+	else {
 		output = rotations * m_encoderRevPerWheelRevLowGear;
-//	}
+	}
 	return output;
 }
 

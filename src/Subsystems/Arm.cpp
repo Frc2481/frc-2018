@@ -92,26 +92,26 @@ Arm::Arm() : Subsystem("Arm"){
 	m_prevExtensionTravellingDown = false;
 
 	SmartDashboard::PutData(new ArmExtensionEncoderZeroCommand());
-	SmartDashboard::PutData(new ArmToExtendedThresholdCommand());
-	SmartDashboard::PutData(new ArmToRetractedThresholdCommand());
+//	SmartDashboard::PutData(new ArmToExtendedThresholdCommand());
+//	SmartDashboard::PutData(new ArmToRetractedThresholdCommand());
 	SmartDashboard::PutData(new ArmPivotEncoderZeroCommand());
-	SmartDashboard::PutData(new ArmPivotToCenterCommand());
-	SmartDashboard::PutData(new ArmPivotTo90Command());
-	SmartDashboard::PutData(new ArmPivotToNeg90Command());
-
-
-	SmartDashboard::PutData(new ArmTo90Front("ArmTo90Front"));
-	SmartDashboard::PutData(new ArmTo90Back("ArmTo90Back"));
-	SmartDashboard::PutData(new ArmToIntakeFront("ArmToIntakeFront"));
-	SmartDashboard::PutData(new ArmToIntakeBack("ArmToIntakeBack"));
-	SmartDashboard::PutData(new ArmToMidScaleFront("ArmToMidScaleFront"));
-	SmartDashboard::PutData(new ArmToMidScaleBack("ArmToMidScaleBack"));
-
-	SmartDashboard::PutData(new ArmToLowScaleFront("ArmToLowScaleFront"));
-	SmartDashboard::PutData(new ArmToStow("ArmToStow"));
-
-	SmartDashboard::PutData(new ArmToHighScaleFront("ArmToHighScaleFront"));
-	SmartDashboard::PutData(new ArmToHighScaleBack("ArmToHighScaleBack"));
+//	SmartDashboard::PutData(new ArmPivotToCenterCommand());
+//	SmartDashboard::PutData(new ArmPivotTo90Command());
+//	SmartDashboard::PutData(new ArmPivotToNeg90Command());
+//
+//
+//	SmartDashboard::PutData(new ArmTo90Front("ArmTo90Front"));
+//	SmartDashboard::PutData(new ArmTo90Back("ArmTo90Back"));
+//	SmartDashboard::PutData(new ArmToIntakeFront("ArmToIntakeFront"));
+//	SmartDashboard::PutData(new ArmToIntakeBack("ArmToIntakeBack"));
+//	SmartDashboard::PutData(new ArmToMidScaleFront("ArmToMidScaleFront"));
+//	SmartDashboard::PutData(new ArmToMidScaleBack("ArmToMidScaleBack"));
+//
+//	SmartDashboard::PutData(new ArmToLowScaleFront("ArmToLowScaleFront"));
+//	SmartDashboard::PutData(new ArmToStow("ArmToStow"));
+//
+//	SmartDashboard::PutData(new ArmToHighScaleFront("ArmToHighScaleFront"));
+//	SmartDashboard::PutData(new ArmToHighScaleBack("ArmToHighScaleBack"));
 
 
 }
@@ -180,23 +180,23 @@ void Arm::Periodic() {
 	SetExtensionPostion(GetAllowedExtensionPos());
 
 
-	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
-	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)));
-	SmartDashboard::PutNumber("extension current", m_extenderMaster->GetOutputCurrent());
-	SmartDashboard::PutNumber("extension error", m_extenderMaster->GetClosedLoopError(0));
-	SmartDashboard::PutNumber("active trajectory position extender", m_extenderMaster->GetActiveTrajectoryPosition());
-	SmartDashboard::PutNumber("active trajectory velocity extender", m_extenderMaster->GetActiveTrajectoryVelocity());
-	SmartDashboard::PutNumber("applied motor output extender", m_extenderMaster->GetMotorOutputVoltage());
-
-	SmartDashboard::PutNumber("pivot speed", m_pivot->GetSelectedSensorVelocity(0));
-	SmartDashboard::PutNumber("pivot angle", GetPivotAngle().getDegrees());
-	SmartDashboard::PutNumber("pivot current", m_pivot->GetOutputCurrent());
-	SmartDashboard::PutNumber("pivot error", m_pivot->GetClosedLoopError(0));
-	SmartDashboard::PutNumber("active trajectory position pivot", m_pivot->GetActiveTrajectoryPosition());
-	SmartDashboard::PutNumber("active trajectory velocity pivot", m_pivot->GetActiveTrajectoryVelocity());
-	SmartDashboard::PutNumber("applied motor output pivot", m_pivot->GetMotorOutputVoltage());
-
-	SmartDashboard::PutNumber("extender distance ticks", m_extenderMaster->GetSelectedSensorPosition(0));
+//	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
+//	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)));
+//	SmartDashboard::PutNumber("extension current", m_extenderMaster->GetOutputCurrent());
+//	SmartDashboard::PutNumber("extension error", m_extenderMaster->GetClosedLoopError(0));
+//	SmartDashboard::PutNumber("active trajectory position extender", m_extenderMaster->GetActiveTrajectoryPosition());
+//	SmartDashboard::PutNumber("active trajectory velocity extender", m_extenderMaster->GetActiveTrajectoryVelocity());
+//	SmartDashboard::PutNumber("applied motor output extender", m_extenderMaster->GetMotorOutputVoltage());
+//
+//	SmartDashboard::PutNumber("pivot speed", m_pivot->GetSelectedSensorVelocity(0));
+//	SmartDashboard::PutNumber("pivot angle", GetPivotAngle().getDegrees());
+//	SmartDashboard::PutNumber("pivot current", m_pivot->GetOutputCurrent());
+//	SmartDashboard::PutNumber("pivot error", m_pivot->GetClosedLoopError(0));
+//	SmartDashboard::PutNumber("active trajectory position pivot", m_pivot->GetActiveTrajectoryPosition());
+//	SmartDashboard::PutNumber("active trajectory velocity pivot", m_pivot->GetActiveTrajectoryVelocity());
+//	SmartDashboard::PutNumber("applied motor output pivot", m_pivot->GetMotorOutputVoltage());
+//
+//	SmartDashboard::PutNumber("extender distance ticks", m_extenderMaster->GetSelectedSensorPosition(0));
 }
 
 void Arm::SetPivotAngle(Rotation2D angle) {

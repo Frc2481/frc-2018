@@ -46,7 +46,7 @@ public:
 		waypoint.maxDistAway = 0;
 		m_waypoints.push_back(waypoint);
 
-		drivePathGen.GeneratePath(m_waypoints, (105 - 11) * 0.9, (105 - 11) * 0.9 * 0.9, 10.0);
+		drivePathGen.GeneratePath(m_waypoints, 100, 100, 10.0);
 	}
 	virtual ~TestDrivePathGeneratorCommand() {}
 };
