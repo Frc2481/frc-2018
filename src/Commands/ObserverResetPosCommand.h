@@ -11,13 +11,16 @@
 #include "../CommandBase.h"
 
 class ObserverResetPosCommand : public InstantCommand {
+private:
+	RigidTransform2D m_pose;
 public:
-	ObserverResetPosCommand() : InstantCommand("ObserverResetPosCommand") {
+	ObserverResetPosCommand(RigidTransform2D pose = RigidTransform2D()) : InstantCommand("ObserverResetPosCommand") {
 		SetRunWhenDisabled(true);
+		m_pose = pose;
 	}
 
 	void Initialize() {
-		CommandBase::m_driveTrain->ResetRobotPose();
+		CommandBase::m_driveTrain->ResetRobotPose(m_pose);
 	}
 };
 

@@ -52,22 +52,22 @@ public:
 	static constexpr double k_steerI = 0;
 	static constexpr double k_steerD = 40;
 
-	static constexpr double kpPos = 0.007;
+	static constexpr double kpPos = 0.03; //0.01; //0.007;
 	static constexpr double kiPos = 0;
 	static constexpr double kdPos = 0;
-	static constexpr double kfPos = 0.007;
+	static constexpr double kfPos = 0; //0.007;
 	static constexpr double kIZonePos = 0;
 
 	static constexpr double kpYaw = 0.01;
-	static constexpr double kiYaw = 0;
+	static constexpr double kiYaw = 0.001;
 	static constexpr double kdYaw = 0;
-	static constexpr double kfYaw = 0.005;
-	static constexpr double kIZoneYaw = 0;
+	static constexpr double kfYaw = 0;
+	static constexpr double kIZoneYaw = 5.0;
 
 	static constexpr double PositionControllerPeriod = 0.05;
 
-	static constexpr double kTolerancePos = 1.0;
-	static constexpr double kToleranceHeading = 3.0;
+	static constexpr double kTolerancePos = 3.0; //3.0;
+	static constexpr double kToleranceHeading = 3.0; //3.0;
 
 	static constexpr double k_extenderUpP = 0.3; //ToDo: change values //40% * 1023 / 3700
 	static constexpr double k_extenderDownP = 0.5;
@@ -84,10 +84,10 @@ public:
 	static constexpr double k_pivotD = 30;
 	static constexpr double k_pivotF = 2.046; //3
 
-	static constexpr double k_pivotVelocity = 500;
-	static constexpr double k_pivotAcceleration = 1000;
-	static constexpr double k_pivotPeakOutputForward = .65;
-	static constexpr double k_pivotPeakOutputReverse = -0.65;
+	static constexpr double k_pivotVelocity = 900;
+	static constexpr double k_pivotAcceleration = 1800;
+	static constexpr double k_pivotPeakOutputForward = 1.0;
+	static constexpr double k_pivotPeakOutputReverse = -1.0;
 
 	static constexpr double k_minRobotExtend = 32.25;
 	static constexpr double k_gripperThickness = 1;
@@ -102,5 +102,31 @@ public:
 	static constexpr double k_left90 = -90;
 	static constexpr double k_rightFrameConstrained = 58; //calculated: 49, changed to be optimal
 	static constexpr double k_leftFrameConstrained = -66; //-55
+
+	static constexpr int k_intake1FrontAngle = 120;
+	static constexpr int k_intake2FrontAngle = 104;
+	static constexpr int k_intake3FrontAngle = 83;
+
+	static constexpr int k_intake1BackAngle = -119;
+	static constexpr int k_intake2BackAngle = -101;
+	static constexpr int k_intake3BackAngle = -83;
+
+	static constexpr int k_switchFrontAngle = 91;
+	static constexpr int k_switch2FrontAngle = 65;
+	static constexpr int k_scaleLowFrontAngle = 39;
+	static constexpr int k_scaleLow2FrontAngle = 28;
+	static constexpr int k_scaleMidFrontAngle = 25;
+	static constexpr int k_scaleMid2FrontAngle = 23;
+	static constexpr int k_scaleHighFrontAngle = 17;
+	static constexpr int k_scaleHigh2FrontAngle = 16;
+
+	static constexpr int k_switchBackAngle = -86;
+	static constexpr int k_switch2BackAngle = -65;
+	static constexpr int k_scaleLowBackAngle = -39;
+	static constexpr int k_scaleLow2BackAngle = -28;
+	static constexpr int k_scaleMidBackAngle = -25;
+	static constexpr int k_scaleMid2BackAngle = -23;
+	static constexpr int k_scaleHighBackAngle = -17;
+	static constexpr int k_scaleHigh2BackAngle = -16;
 };
 #endif

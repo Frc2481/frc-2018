@@ -6,6 +6,7 @@
 #include <Buttons/JoystickButton.h>
 #include <Components/ComboButton.h>
 #include "Components/AnalogJoystickButton.h"
+#include <Components/POVJoystickButton.h>
 
 class OI {
 public:
@@ -31,6 +32,12 @@ public:
 	Button* m_leftOpBumper;
 	Button* m_rightOpBumper;
 
+	Button* m_startButton;
+	Button* m_backButton;
+
+	Button* m_leftTrigger;
+	Button* m_rightTrigger;
+
 //driver
 //	Button* m_shifterButton;
 	Button* m_shifterButton;
@@ -41,7 +48,8 @@ public:
 	Button* m_armToIntakeBack;
 	Button* m_armToIntake2Front;
 	Button* m_armToIntake2Back;
-	Button* m_releaseCubeButton;
+	Button* m_releaseSlowCubeButton;
+	Button* m_releaseFastCubeButton;
 	Button* m_stowButton;
 
 //for testing
@@ -56,13 +64,23 @@ public:
 	Button* m_intakeButton;
 	Button* m_releaseButton;
 
-	Button* m_armToMiddleScaleFront;
-	Button* m_armToMiddleScaleBack;
+
+	Button* m_armToSwitchFront;
+	Button* m_armToSwitchBack;
 	Button* m_armToLowScaleFront;
 	Button* m_armToLowScaleBack;
+	Button* m_armToMiddleScaleFront;
+	Button* m_armToMiddleScaleBack;
 	Button* m_armToHighScaleFront;
 	Button* m_armToHighScaleBack;
 
+	Button* m_nextPos;
+	Button* m_lastPos;
+
+	Button* m_mirrorArmPos;
+
+	Button* m_deployRampsPTOButton;
+	Button* m_climbButton;
 };
 
 #endif  // OI_H

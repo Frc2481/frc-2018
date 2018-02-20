@@ -22,6 +22,7 @@ public:
 	virtual ~Observer();
 
 	void ResetPose();
+	void ResetPose(RigidTransform2D robotPose);
 
 	void UpdateRobotPoseObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
 			RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity,

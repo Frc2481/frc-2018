@@ -28,7 +28,7 @@ public:
 	bool IsLeftRollerOn();
 	bool IsRightRollerOn();
 	void RollerLoad(double speed);
-	void RollerUnload();
+	void RollerUnload(double speed);
 	void RollerOff();
 
 	bool IsClamped();

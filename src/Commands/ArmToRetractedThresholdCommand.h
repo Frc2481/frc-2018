@@ -16,7 +16,7 @@ public:
 	ArmToRetractedThresholdCommand() : CommandBase("ArmToRetractedThresholdCommand") {}
 	virtual ~ArmToRetractedThresholdCommand() {}
 	void Initialize() {
-		CommandBase::m_arm->SetExtensionPostion(m_arm->ConvertEncTicksToInches(3000)); // short threshold - 2000
+		CommandBase::m_arm->SetExtensionPosition(m_arm->ConvertEncTicksToInches(3000)); // short threshold - 2000
 	}
 	bool IsFinished() {
 		return CommandBase::m_arm->IsExtensionOnTarget();

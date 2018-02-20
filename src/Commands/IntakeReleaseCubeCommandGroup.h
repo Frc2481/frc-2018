@@ -17,9 +17,10 @@
 class IntakeReleaseCubeCommandGroup : public CommandGroup {
 public:
 	IntakeReleaseCubeCommandGroup(double speed) : CommandGroup("IntakeReleaseCubeCommandGroup") {
+		Requires(CommandBase::m_intake.get());
 		AddSequential(new IntakeClampOpenCommand());
-		AddSequential(new IntakeRollerUnloadCommand());
-		AddSequential(new WaitCommand(speed));
+		AddSequential(new IntakeRollerUnloadCommand(speed));
+		AddSequential(new WaitCommand(.5));
 		AddSequential(new IntakeRollerOffCommand());
 	}
 };

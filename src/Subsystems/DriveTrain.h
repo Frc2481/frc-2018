@@ -67,6 +67,8 @@ private:
 
 	bool m_isPtoEngaged;
 
+	bool m_first;
+
 public:
 	enum SwerveModuleType {
 		FRONT_LEFT_MODULE,
@@ -85,7 +87,7 @@ public:
 	float GetRoll() const;
 	float GetPitch() const;
 	void Stop();
-//	void SetFieldCentric(bool fieldCentric);
+	void SetFieldCentric(bool fieldCentric);
 //	void SetForward(bool forward);
 	void ZeroGyro();
 //	void PeriodicUpdate();
@@ -100,7 +102,7 @@ public:
 //	void SetGyroCorrectionOffset(Rotation2D &offset);
 //	bool IsHeadingCorrection() const;
 
-	void ResetRobotPose();
+	void ResetRobotPose(RigidTransform2D pose);
 
 	virtual void Periodic();
 

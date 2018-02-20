@@ -10,13 +10,17 @@
 
 #include "CommandBase.h"
 #include "Commands/IntakeReleaseCubeCommandGroup.h"
+#include "Commands/ObserverResetPosCommand.h"
+#include "Commands/ArmExtentionMotionScaling.h"
 
 class AutoScale1CommandGroup : public CommandGroup{
 public:
 	AutoScale1CommandGroup(std::string path) : CommandGroup("AutoScale1CommandGroup"){
+//		AddSequential(new ArmExtentionMotionScaling(0.3));
+//		AddParallel(new ArmToHighScaleFront("")); //front
 		AddSequential(new DriveTrainFollowPath(path)); //to scale
-		AddSequential(new ArmToMidScaleFront("")); //front or back?
-		AddSequential(new IntakeReleaseCubeCommandGroup(1.0));
+		AddSequential(new IntakeReleaseCubeCommandGroup(0.7));
+//		AddSequential(new ArmExtentionMotionScaling(1.0));
 	}
 };
 

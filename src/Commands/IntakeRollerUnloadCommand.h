@@ -4,12 +4,14 @@
 #include "../CommandBase.h"
 
 class IntakeRollerUnloadCommand : public InstantCommand {
+private:
+	double m_speed;
 public:
-	IntakeRollerUnloadCommand() : InstantCommand("IntakeRollerUnloadCommand"){
-
+	IntakeRollerUnloadCommand(double speed) : InstantCommand("IntakeRollerUnloadCommand"){
+		m_speed = speed;
 	}
 	void Initialize(){
-		CommandBase::m_intake->RollerUnload();
+		CommandBase::m_intake->RollerUnload(m_speed);
 	}
 
 };

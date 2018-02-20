@@ -11,16 +11,21 @@
 #include <Subsystems/DriveTrain.h>
 #include "CommandBase.h"
 #include "Commands/Diag/DriveTrainTestCommandGroup.h"
+#include "Commands/DriveTrainEngagePtoCommand.h"
+#include "Commands/DriveTrainOpenLoopCommand.h"
 #include "Commands/DriveTrainDriveToPosition.h"
 #include "Commands/DriveTrainShiftCommand.h"
 #include "Commands/ArmBaseCommand.h"
 #include "Commands/AutoCommand.h"
 #include "Components/FieldConfiguration.h"
 #include "Commands/AutoScale1CommandGroup.h"
-#include "Commands/AutoScale2CommandGroup.h"
+//#include "Commands/AutoScale2CommandGroup.h"
 #include "Commands/AutoSwitch1CommandGroup.h"
-#include "Commands/AutoSwitch2CommandGroup.h"
+//#include "Commands/AutoSwitch2CommandGroup.h"
 #include "Commands/TestDrivePathGeneratorCommand.h"
+#include "Commands/AutoRoutineCommandGroup.h"
+#include "Subsystems/Observer.h"
+#include "Commands/ArmZeroCommandGroup.h"
 
 
 enum Autos {
@@ -51,6 +56,9 @@ enum Autos {
 };
 
 class Robot: public IterativeRobot {
+public:
+	int m_intakePos;
+
 private:
 	SendableChooser<Autos>* m_posChooser;
 	SendableChooser<Autos>* m_firstCubeChooser;
@@ -74,6 +82,9 @@ private:
 		SmartDashboard::PutData("Shift Up", new DriveTrainShiftCommand());
 		SmartDashboard::PutData("TestDrivePathGeneratorCommand", new TestDrivePathGeneratorCommand());
 
+		SmartDashboard::PutData("DriveTrainEngagePtoCommand", new DriveTrainEngagePtoCommand());
+		SmartDashboard::PutData("DriveTrainOpenLoopCommand", new DriveTrainOpenLoopCommand());
+
 //		frc::SmartDashboard::PutData("Drive Train Test", new DriveTrainTestCommandGroup());
 
 		m_posChooser = new SendableChooser<Autos>();
@@ -95,6 +106,22 @@ private:
 		m_thirdCubeChooser->AddDefault("Nothing3", NOTHING3);
 		m_thirdCubeChooser->AddObject("Scale3", SCALE3);
 		m_thirdCubeChooser->AddObject("Switch3", SWITCH3);
+
+		SmartDashboard::PutData("Start Pos", m_posChooser);
+		SmartDashboard::PutData("First Cube", m_firstCubeChooser);
+		SmartDashboard::PutData("Second Cube", m_secondCubeChooser);
+		SmartDashboard::PutData("Third Cube", m_thirdCubeChooser);
+
+//		CommandBase::m_driveTrain->GetObserver()->ResetPose();
+
+		CommandBase::m_driveTrain->GetObserver()->ResetPose(RigidTransform2D(Translation2D(46.4, 19.5),
+																		  Rotation2D::fromDegrees(0)));
+
+		SmartDashboard::PutData(new AutoScale1CommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv"));
+//		SmartDashboard::PutData(new AutoRoutineCommandGroup());
+		SmartDashboard::PutData("not zero observer", new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
+		SmartDashboard::PutData(new ArmZeroCommandGroup());
+		SmartDashboard::PutData("zero observer", new ObserverResetPosCommand(RigidTransform2D(Translation2D(0, 0), Rotation2D::fromDegrees(0))));
 	}
 
 	/**
@@ -148,6 +175,19 @@ private:
 			autonomousCommand->Start();
 		}
 
+//		if(m_posChooser->GetSelected() == POS_LEFT) {
+//			CommandBase::m_driveTrain->GetObserver()->SetRobotPos(RigidTransform2D(Translation2D(46.4, 19.5),
+//																  Rotation2D::fromDegrees(0)), GetFPGATime());
+//		}
+//		else if(m_posChooser->GetSelected() == POS_CENTER) {
+//			CommandBase::m_driveTrain->GetObserver()->SetRobotPos(RigidTransform2D(Translation2D()));
+//		}
+//		else {
+//			CommandBase::m_driveTrain->GetObserver()->SetRobotPos(RigidTransform2D(Translation2D(279.656, 16.5),
+//																  Rotation2D::fromDegrees(0), GetFPGATime()));
+//		}
+
+
 	}
 
 	void AutonomousPeriodic() override {
@@ -175,7 +215,7 @@ private:
 	void AutoTasksFunction(){
 		AutoTasks = new std::map<int, Command*>();
 
-		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoScale1CommandGroup("PathLeftStartToLeftScale.csv");
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 

@@ -1,10 +1,14 @@
 
 #include <Commands/ArmExtendCommand.h>
-#include <Commands/ArmPivotForwardCommand.h>
-#include <Commands/ArmPivotReverseCommand.h>
 #include <Commands/ArmRetractCommand.h>
 #include <Commands/IntakeAcquireCubeCommandGroup.h>
 #include <commands/IntakeGrabCubeCommandGroup.h>
+#include <Commands/ArmIntakeFrontPosToggleCommand.h>
+#include <Commands/ArmIntakeBackPosToggleCommand.h>
+#include <Commands/ArmPivotDownCommand.h>
+#include <Commands/ArmPivotUpCommand.h>
+#include <Commands/ArmTogglePosUpCommand.h>
+#include <Commands/ArmTogglePosDownCommand.h>
 #include <Commands/IntakeReleaseCubeCommandGroup.h>
 #include <Commands/IntakeStopCubeCommandGroup.h>
 #include <Commands/DriveTrainFarWinchCommand.h>
@@ -15,6 +19,8 @@
 #include "Commands/DriveTrainShiftCommand.h"
 #include "XboxController.h"
 #include "Commands/ArmBaseCommand.h"
+#include "Subsystems/Arm.h"
+#include "Commands/ArmPosMirrorCommand.h"
 
 OI::OI() {
 	// Process operator interface input here.
@@ -22,13 +28,13 @@ OI::OI() {
 	m_operatorStick = new Joystick2481(1);
 
 //driver
-	m_aDriverButton = new JoystickButton(m_driverStick, XB_A_BUTTON);
-	m_bDriverButton = new JoystickButton(m_driverStick, XB_B_BUTTON);
-	m_xDriverButton = new JoystickButton(m_driverStick, XB_X_BUTTON);
-	m_yDriverButton = new JoystickButton(m_driverStick, XB_Y_BUTTON);
-
-	m_leftDriverBumper = new JoystickButton(m_driverStick, XB_LEFT_BUMPER);
-	m_rightDriverBumper = new JoystickButton(m_driverStick, XB_RIGHT_BUMPER);
+//	m_aDriverButton = new JoystickButton(m_driverStick, XB_A_BUTTON);
+//	m_bDriverButton = new JoystickButton(m_driverStick, XB_B_BUTTON);
+//	m_xDriverButton = new JoystickButton(m_driverStick, XB_X_BUTTON);
+//	m_yDriverButton = new JoystickButton(m_driverStick, XB_Y_BUTTON);
+//
+//	m_leftDriverBumper = new JoystickButton(m_driverStick, XB_LEFT_BUMPER);
+//	m_rightDriverBumper = new JoystickButton(m_driverStick, XB_RIGHT_BUMPER);
 
 //operator
 	m_aOpButton = new JoystickButton(m_operatorStick, XB_A_BUTTON);
@@ -38,6 +44,12 @@ OI::OI() {
 
 	m_leftOpBumper = new JoystickButton(m_operatorStick, XB_LEFT_BUMPER);
 	m_rightOpBumper = new JoystickButton(m_operatorStick, XB_RIGHT_BUMPER);
+
+	m_startButton = new JoystickButton(m_operatorStick, XB_START_BUTTON);
+	m_backButton = new JoystickButton(m_operatorStick, XB_BACK_BUTTON);
+
+	m_leftTrigger = new JoystickButton(m_operatorStick, XB_LEFT_TRIGGER);
+	m_rightTrigger = new JoystickButton(m_operatorStick, XB_RIGHT_TRIGGER);
 
 
 
@@ -60,6 +72,7 @@ OI::OI() {
 
 
 
+
 //	m_armToIntakeFront = new JoystickButton(m_driverStick, XB_A_BUTTON);
 //	m_armToIntakeFront->WhenPressed(new ArmToIntakeFront(""));
 //
@@ -75,24 +88,31 @@ OI::OI() {
 
 
 
-	m_armToIntakeFront = new ComboButton(m_aDriverButton, m_leftDriverBumper, false);
-	m_armToIntakeFront->WhenPressed(new ArmToIntakeFront(""));
+//	m_armToIntakeFront = new ComboButton(m_aDriverButton, m_leftDriverBumper, false);
+//	m_armToIntakeFront->WhenPressed(new ArmToIntakeFront(""));
 
-	m_armToIntakeBack = new ComboButton(m_xDriverButton, m_leftDriverBumper, false);
-	m_armToIntakeBack->WhenPressed(new ArmToIntakeBack(""));
+	m_armToIntakeFront = new JoystickButton(m_driverStick, XB_A_BUTTON);
+	m_armToIntakeFront->WhenPressed(new ArmIntakeFrontPosToggleCommand());
 
-	m_armToIntake2Front = new ComboButton(m_aDriverButton, m_leftDriverBumper, true);
-	m_armToIntake2Front->WhenPressed(new ArmToIntake2Front(""));
+	m_armToIntakeBack = new JoystickButton(m_driverStick, XB_X_BUTTON);
+	m_armToIntakeBack->WhenPressed(new ArmIntakeBackPosToggleCommand());
 
-	m_armToIntake2Back = new ComboButton(m_xDriverButton, m_leftDriverBumper, true);
-	m_armToIntake2Back->WhenPressed(new ArmToIntake2Back(""));
+//	m_armToIntake2Front = new ComboButton(m_aDriverButton, m_leftDriverBumper, true);
+//	m_armToIntake2Front->WhenPressed(new ArmToIntake2Front(""));
+//
+//	m_armToIntake2Back = new ComboButton(m_xDriverButton, m_leftDriverBumper, true);
+//	m_armToIntake2Back->WhenPressed(new ArmToIntake2Back(""));
 
-	m_releaseCubeButton = new ComboButton(m_bDriverButton, m_leftDriverBumper, false);
-	m_releaseCubeButton->WhileHeld(new IntakeReleaseCubeCommandGroup(0.5));
-	m_releaseCubeButton->WhenReleased(new IntakeRollerOffCommand());
+	m_releaseSlowCubeButton = new JoystickButton(m_driverStick, XB_B_BUTTON);
+	m_releaseSlowCubeButton->WhileHeld(new IntakeReleaseCubeCommandGroup(0.5));
+	m_releaseSlowCubeButton->WhenReleased(new IntakeRollerOffCommand());
 
-	m_stowButton = new ComboButton(m_yDriverButton, m_leftDriverBumper, false);
-	m_stowButton->WhenPressed(new ArmToStow(""));
+	m_releaseFastCubeButton = new JoystickButton(m_driverStick, XB_Y_BUTTON);
+	m_releaseFastCubeButton->WhileHeld(new IntakeReleaseCubeCommandGroup(1));
+	m_releaseFastCubeButton->WhenReleased(new IntakeRollerOffCommand());
+
+//	m_stowButton = new JoystickButton(m_driverStick, XB_Y_BUTTON);
+//	m_stowButton->WhenPressed(new ArmToStow(""));
 
 
 
@@ -124,10 +144,10 @@ OI::OI() {
 	m_retractButton->WhileHeld(new ArmRetractCommand());
 
 	m_pivotForwardButton = new AnalogJoystickButton(m_operatorStick, XB_RIGHT_Y_AXIS, 0.25); // right stick up
-	m_pivotForwardButton->WhileHeld(new ArmPivotForwardCommand());
+	m_pivotForwardButton->WhileHeld(new ArmPivotUpCommand());
 
 	m_pivotReverseButton = new AnalogJoystickButton(m_operatorStick, XB_RIGHT_Y_AXIS, -0.25); //right stick down
-	m_pivotReverseButton->WhileHeld(new ArmPivotReverseCommand());
+	m_pivotReverseButton->WhileHeld(new ArmPivotDownCommand());
 
 
 	m_intakeButton = new AnalogJoystickButton(m_operatorStick, XB_RIGHT_TRIGGER, 0.5);
@@ -137,8 +157,19 @@ OI::OI() {
 	m_releaseButton = new AnalogJoystickButton(m_operatorStick, XB_LEFT_TRIGGER, 0.5);
 	m_releaseButton->WhenPressed(new IntakeReleaseCubeCommandGroup(1.0));
 
+	m_stowButton = new ComboButton(m_rightOpBumper, m_leftOpBumper, false);
+	m_stowButton->WhenPressed(new ArmToStow(""));
+
+	m_deployRampsPTOButton = new ComboButton(m_startButton, m_backButton, true);
+//	m_deployRampsPTOButton->WhenPressed(new COMMAND);
+
+	m_climbButton = new ComboButton(m_rightTrigger, m_leftOpBumper, true);
+//	m_climbButton->WhileHeld(new CLIMB);
 
 	//arm positions
+	m_armToSwitchFront = new ComboButton(m_aOpButton, m_leftOpBumper, false);
+	m_armToSwitchFront->WhenPressed(new ArmToSwitchFront(""));
+
 	m_armToLowScaleFront = new ComboButton(m_bOpButton, m_leftOpBumper, false);
 	m_armToLowScaleFront->WhenPressed(new ArmToLowScaleFront(""));
 
@@ -149,6 +180,9 @@ OI::OI() {
 	m_armToHighScaleFront->WhenPressed(new ArmToHighScaleFront(""));
 
 
+	m_armToSwitchBack = new ComboButton(m_aOpButton, m_leftOpBumper, false);
+	m_armToSwitchBack->WhenPressed(new ArmToSwitchBack(""));
+
 	m_armToLowScaleBack = new ComboButton(m_bOpButton, m_leftOpBumper, true);
 	m_armToLowScaleBack->WhenPressed(new ArmToLowScaleBack(""));
 
@@ -158,9 +192,14 @@ OI::OI() {
 	m_armToHighScaleBack = new ComboButton(m_yOpButton, m_leftOpBumper, true);
 	m_armToHighScaleBack->WhenPressed(new ArmToHighScaleBack(""));
 
+	m_nextPos = new POVJoystickButton(m_operatorStick, 0, XB_DPAD_TOP);
+	m_nextPos->WhenPressed(new ArmTogglePosUpCommand());
 
-//	left & right trigger: deploy ramps & engage pto
-//	left bumper & right trigger: climb
+	m_lastPos = new POVJoystickButton(m_operatorStick, 0, XB_DPAD_BOTTOM);
+	m_lastPos->WhenPressed(new ArmTogglePosDownCommand());
+
+	m_mirrorArmPos = new ComboButton(m_rightOpBumper, m_leftOpBumper, true);
+	m_mirrorArmPos->WhenPressed(new ArmPosMirrorCommand());
 }
 
 Joystick2481* OI::GetDriverStick() {

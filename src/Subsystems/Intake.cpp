@@ -38,8 +38,8 @@ Intake::~Intake() {
 }
 
 bool Intake::HasCube() {
-	SmartDashboard::PutNumber("roller left is limit closed", m_rollerMotorLeft->GetSensorCollection().IsFwdLimitSwitchClosed());
-	SmartDashboard::PutNumber("roller right is limit closed", m_rollerMotorRight->GetSensorCollection().IsFwdLimitSwitchClosed());
+	SmartDashboard::PutBoolean("roller left is limit closed", m_rollerMotorLeft->GetSensorCollection().IsFwdLimitSwitchClosed());
+	SmartDashboard::PutBoolean("roller right is limit closed", m_rollerMotorRight->GetSensorCollection().IsFwdLimitSwitchClosed());
 
 	return m_rollerMotorLeft->GetSensorCollection().IsFwdLimitSwitchClosed() &&
 			m_rollerMotorRight->GetSensorCollection().IsFwdLimitSwitchClosed();
@@ -71,9 +71,9 @@ void Intake::RollerLoad(double speed) {
 	m_rollerMotorRight->Set(ControlMode::PercentOutput, speed);
 }
 
-void Intake::RollerUnload() {
-	m_rollerMotorLeft->Set(ControlMode::PercentOutput, -1);
-	m_rollerMotorRight->Set(ControlMode::PercentOutput, -1);
+void Intake::RollerUnload(double speed) {
+	m_rollerMotorLeft->Set(ControlMode::PercentOutput, -speed);
+	m_rollerMotorRight->Set(ControlMode::PercentOutput, -speed);
 }
 
 void Intake::CloseClamp() {

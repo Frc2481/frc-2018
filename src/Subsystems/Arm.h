@@ -24,10 +24,14 @@ private:
 	double m_desiredExtensionSetpoint;
 	ArmExtension m_armConstraints;
 	Rotation2D m_pivotAngle;
+	double m_scale;
+	bool m_isPivotZeroed;
+	bool m_isExtensionZeroed;
+
 public:
 	Arm();
 	virtual ~Arm();
-	void SetExtensionPostion(double position); //raw control of extension-> be careful of constraints
+	void SetExtensionPosition(double position); //raw control of extension-> be careful of constraints
 	void SetDesiredExtension(double extension); //safely control extension obeying constraints
 	double GetDesiredExtension();
 	double GetExtensionPosition();
@@ -46,6 +50,9 @@ public:
 	double ConvertInchesToEncTicks(double inches);
 	double ConvertEncTicksToInches(double ticks);
 	double GetLastCommandedSetpoint();
+	double SetExtentionMotionScaling(double scale);
+	void SetIntakePos(int intakePos);
+	int GetIntakePos();
 
 };
 
