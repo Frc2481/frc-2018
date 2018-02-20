@@ -10,7 +10,7 @@
 
 FieldConfiguration::FieldConfiguration() {
 	m_ourSwitchPlate = UNKNOWN;
-	m_theirSwitchPlate=UNKNOWN;
+	m_theirSwitchPlate = UNKNOWN;
 	m_scalePlate = UNKNOWN;
 }
 

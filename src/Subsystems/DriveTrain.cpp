@@ -19,6 +19,8 @@
 #include "Components/GreyhillEncoder.h"
 #include "RobotParameters.h"
 #include "../Commands/ObserverResetPosCommand.h"
+#include "Commands/DriveTrainEngagePtoCommand.h"
+#include "Commands/DriveTrainOpenLoopCommand.h"
 #include "WPILib.h"
 
 DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
@@ -27,6 +29,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_brWheel(new SwerveModule(BACK_RIGHT_DRIVE, BACK_RIGHT_STEER, "BACK_RIGHT")),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER, "BACK_LEFT")),
 	m_shifter(new Solenoid(SHIFTER)),
+	m_pto(new DoubleSolenoid(PTO1, PTO2)),
 	m_imu(new AHRS(SPI::kMXP)),
 	m_isFieldCentric(false),
 //	m_isForward(true),
@@ -62,7 +65,16 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_observer = new Observer();
 	m_observer->SetRobotPos(RigidTransform2D(Translation2D(0, 0), Rotation2D(1, 0, true)), 0.0);
 
+
 	m_driveController = new DriveController(m_observer);
+
+	m_oldGyroYaw = Rotation2D(1, 0, true);
+
+	m_isPtoEngaged = false;
+
+	m_first = true;
+
+	DisengagePTO();
 }
 
 DriveTrain::~DriveTrain() {
@@ -78,7 +90,17 @@ void DriveTrain::InitDefaultCommand() {
 	SetDefaultCommand(new DriveWithJoystickCommand());
 }
 
+
 void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
+	//prevent driving when pto engaged
+	if (IsPtoEngaged()) {
+		m_flWheel->Set(0, m_flWheel->GetAngle());
+		m_frWheel->Set(0, m_frWheel->GetAngle());
+		m_blWheel->Set(0, m_blWheel->GetAngle());
+		m_brWheel->Set(0, m_brWheel->GetAngle());
+		return;
+	}
+
 	m_xVel = xVel;
 	m_yVel = yVel;
 	m_yawRate = yawRate;
@@ -86,9 +108,9 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 	Translation2D translation(xVel, yVel);
 	Rotation2D rotation = Rotation2D::fromDegrees(yawRate); //don't store twist as angle
 
-	SmartDashboard::PutNumber("yawRate", yawRate);
-	SmartDashboard::PutNumber("xVel", translation.getX());
-	SmartDashboard::PutNumber("yVel", translation.getY());
+//	SmartDashboard::PutNumber("yawRate", yawRate);
+//	SmartDashboard::PutNumber("xVel", translation.getX());
+//	SmartDashboard::PutNumber("yVel", translation.getY());
 
 //	Rotation2D gyroAngle = GetHeading();
 
@@ -131,8 +153,6 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 			flWheelAngle, frWheelAngle, blWheelAngle, brWheelAngle);
 
 	m_flWheel->Set(flWheelSpeed, flWheelAngle);
-	SmartDashboard::PutNumber("flWheelSpeed", flWheelSpeed);
-	SmartDashboard::PutNumber("flWheelAngle", flWheelAngle.getDegrees());
 	m_frWheel->Set(frWheelSpeed, frWheelAngle);
 	m_blWheel->Set(blWheelSpeed, blWheelAngle);
 	m_brWheel->Set(brWheelSpeed, brWheelAngle);
@@ -206,9 +226,9 @@ void DriveTrain::Stop() {
 	Drive(0, 0, 0);
 }
 
-//void DriveTrain::SetFieldCentric(bool fieldCentric) {
-//	m_isFieldCentric = fieldCentric;
-//}
+void DriveTrain::SetFieldCentric(bool fieldCentric) {
+	m_isFieldCentric = fieldCentric;
+}
 
 //void DriveTrain::SetForward(bool forward) {
 //	m_isForward = forward;
@@ -230,11 +250,26 @@ bool DriveTrain::IsShifted() const{
 	return m_shifter->Get();
 }
 
-void DriveTrain::ResetRobotPose() {
-	m_observer->ResetPose();
+void DriveTrain::ResetRobotPose(RigidTransform2D pose) {
+	m_first = true;
+	m_observer->ResetPose(pose);
 }
 
 void DriveTrain::Periodic() {
+	if(m_first) {
+		m_first = false;
+		m_oldFlAngle = m_flWheel->GetAngle();
+		m_oldFrAngle = m_frWheel->GetAngle();
+		m_oldBlAngle = m_blWheel->GetAngle();
+		m_oldBrAngle = m_brWheel->GetAngle();
+		m_oldFlDistance = m_flWheel->GetDistance();
+		m_oldFrDistance = m_frWheel->GetDistance();
+		m_oldBlDistance = m_blWheel->GetDistance();
+		m_oldBrDistance = m_brWheel->GetDistance();
+		m_oldGyroYaw = GetHeading();
+	}
+
+
 	double timeStamp = RobotController::GetFPGATime();
 	double deltaTimestamp = timeStamp - m_oldTimestamp;
 	m_oldTimestamp = timeStamp;
@@ -283,19 +318,20 @@ void DriveTrain::Periodic() {
 	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(-deltaBrDistance.getX(), 0, 0, deltaTimestamp);
 
 	Rotation2D newGyroYaw = GetHeading();
+	SmartDashboard::PutNumber("new gyro yaw", newGyroYaw.getDegrees());
 	Rotation2D deltaGyroYaw = newGyroYaw.rotateBy(m_oldGyroYaw.inverse());
 	m_oldGyroYaw = newGyroYaw;
 
-	const double obsDistanceThresh = 500;
-	if(fabs(deltaFlDistance.getX() < obsDistanceThresh) && fabs(deltaFrDistance.getX() < obsDistanceThresh) &&
-	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
+//	const double obsDistanceThresh = 500;
+//	if(fabs(deltaFlDistance.getX() < obsDistanceThresh) && fabs(deltaFrDistance.getX() < obsDistanceThresh) &&
+//	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
 	   // TODO: evaluate if we need this check
 
 		m_observer->UpdateRobotPoseObservation(newFlAngle, deltaFlVelocity,
 											newFrAngle, deltaFrVelocity,
 											newBlAngle, deltaBlVelocity,
 											newBrAngle, deltaBrVelocity, timeStamp, deltaGyroYaw);
-	}
+//	}
 
 	RigidTransform2D observerPos = m_observer->GetLastRobotPose();
 
@@ -303,15 +339,38 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
 	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
 
-	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
-	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
-	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
-	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
+//	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
+//	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
+//	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
+//	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
+//
+//	SmartDashboard::PutNumber("FL distance", m_flWheel->GetDistance().getX());
+//	SmartDashboard::PutNumber("FR distance", m_frWheel->GetDistance().getX());
+//	SmartDashboard::PutNumber("BL distance", m_blWheel->GetDistance().getX());
+//	SmartDashboard::PutNumber("BR distance", m_brWheel->GetDistance().getX());
+//
+//	SmartDashboard::PutNumber("FL Speed", m_flWheel->GetSpeed());
+//	SmartDashboard::PutNumber("FR Speed", m_frWheel->GetSpeed());
+//	SmartDashboard::PutNumber("BL Speed", m_blWheel->GetSpeed());
+//	SmartDashboard::PutNumber("BR Speed", m_brWheel->GetSpeed());
+//
+//	SmartDashboard::PutNumber("FL Current", m_flWheel->GetDriveCurrent());
+//	SmartDashboard::PutNumber("FR Current", m_frWheel->GetDriveCurrent());
+//	SmartDashboard::PutNumber("BL Current", m_blWheel->GetDriveCurrent());
+//	SmartDashboard::PutNumber("BR Current", m_brWheel->GetDriveCurrent());
 
-	SmartDashboard::PutNumber("FL distance", m_flWheel->GetDistance().getX());
-	SmartDashboard::PutNumber("FR distance", m_frWheel->GetDistance().getX());
-	SmartDashboard::PutNumber("BL distance", m_blWheel->GetDistance().getX());
-	SmartDashboard::PutNumber("BR distance", m_brWheel->GetDistance().getX());
+//	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
+//	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());
+//	SmartDashboard::PutNumber("BL encTicks", m_blWheel->GetDriveEncoder()->GetEncoderTicks());
+//	SmartDashboard::PutNumber("BR encTicks", m_brWheel->GetDriveEncoder()->GetEncoderTicks());
+
+
+//	SmartDashboard::PutNumber("isShifted", IsShifted());
+
+	SmartDashboard::PutNumber("timestamp", timeStamp);
+	SmartDashboard::PutNumber("delta timestamp", deltaTimestamp);
+
+
 }
 
 // This Method must be called when when all 8 swerve modules are on.
@@ -350,7 +409,7 @@ void DriveTrain::CheckDiagnostics() {
 	bool allMotorsPresent = flDriveMotorPresent && frDriveMotorPresent && blDriveMotorPresent && brDriveMotorPresent &&
 					flSteerMotorPresent && frSteerMotorPresent && blSteerMotorPresent && brSteerMotorPresent;
 
-	SmartDashboard::PutBoolean("All Drive Train Motors Present", allMotorsPresent);
+//	SmartDashboard::PutBoolean("All Drive Train Motors Present", allMotorsPresent);
 }
 
 DriveController* DriveTrain::GetDriveController() {
@@ -359,4 +418,45 @@ DriveController* DriveTrain::GetDriveController() {
 
 Observer* DriveTrain::GetObserver() {
 	return m_observer;
+}
+
+void DriveTrain::EngagePTO() {
+	m_pto->Set(DoubleSolenoid::kReverse);
+	m_flWheel->SetOptimized(false);
+	m_frWheel->SetOptimized(false);
+	m_blWheel->SetOptimized(false);
+	m_brWheel->SetOptimized(false);
+	m_isPtoEngaged = true;
+}
+
+void DriveTrain::DisengagePTO() {
+	m_pto->Set(DoubleSolenoid::kForward);
+	m_flWheel->SetOptimized(true);
+	m_frWheel->SetOptimized(true);
+	m_blWheel->SetOptimized(true);
+	m_brWheel->SetOptimized(true);
+	m_isPtoEngaged = false;
+}
+
+void DriveTrain::SetNearWinchSpeed(double speed) {
+	//back & front left physically linked, have to be run opposite direction
+	m_flWheel->Set(speed, m_flWheel->GetAngle());
+	m_blWheel->Set(-speed, m_blWheel->GetAngle());
+}
+
+void DriveTrain::SetFarWinchSpeed(double speed) {
+	//back & front right physically linked, have to be run opposite direction
+	m_frWheel->Set(speed, m_frWheel->GetAngle());
+	m_brWheel->Set(-speed, m_brWheel->GetAngle());
+}
+
+bool DriveTrain::IsPtoEngaged() {
+	return m_isPtoEngaged;
+}
+
+void DriveTrain::SetOpenLoopSteer(double speed) {
+	 m_flWheel->SetOpenLoopSteer(speed);
+	 m_frWheel->SetOpenLoopSteer(speed);
+	 m_blWheel->SetOpenLoopSteer(speed);
+	 m_brWheel->SetOpenLoopSteer(speed);
 }

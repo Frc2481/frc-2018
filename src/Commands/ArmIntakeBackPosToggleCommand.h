@@ -1,0 +1,42 @@
+/*
+ * ArmIntakeBackPosToggleCommand.h
+ *
+ *  Created on: Feb 19, 2018
+ *      Author: FIRSTMentor
+ */
+
+#ifndef SRC_COMMANDS_ARMINTAKEBACKPOSTOGGLECOMMAND_H_
+#define SRC_COMMANDS_ARMINTAKEBACKPOSTOGGLECOMMAND_H_
+
+#include "CommandBase.h"
+#include "Commands/ArmBaseCommand.h"
+#include "Subsystems/Arm.h"
+#include "RobotParameters.h"
+
+class ArmIntakeBackPosToggleCommand : public InstantCommand {
+private:
+	Command* m_armIntake1Back;
+	Command* m_armIntake2Back;
+	Command* m_armIntake3Back;
+
+public:
+	ArmIntakeBackPosToggleCommand() : InstantCommand("ArmIntakeBackPosToggleCommand") {
+		m_armIntake1Back = new ArmToIntakeBack("");
+		m_armIntake2Back = new ArmToIntake2Back("");
+		m_armIntake3Back = new ArmToIntake3Back("");
+	}
+	virtual ~ArmIntakeBackPosToggleCommand() {}
+	void Initialize() {
+		if(fabs(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() - RobotParameters::k_intake1BackAngle) < .0001) {
+			m_armIntake2Back->Start();
+		}
+		else if(fabs(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() - RobotParameters::k_intake2BackAngle) < .0001) {
+			m_armIntake3Back->Start();
+		}
+		else {
+			m_armIntake1Back->Start();
+		}
+	}
+};
+
+#endif /* SRC_COMMANDS_ARMINTAKEBACKPOSTOGGLECOMMAND_H_ */
