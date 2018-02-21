@@ -21,6 +21,7 @@
 #include "Commands/ArmBaseCommand.h"
 #include "Subsystems/Arm.h"
 #include "Commands/ArmPosMirrorCommand.h"
+#include "Commands/DriveTrainSetFieldCentricCommand.h"
 
 OI::OI() {
 	// Process operator interface input here.
@@ -60,8 +61,8 @@ OI::OI() {
 	m_shifterButton = new JoystickButton(m_driverStick, XB_RIGHT_BUMPER);
 	m_shifterButton->WhileHeld(new DriveTrainShiftCommand());
 
-//	m_fieldCentricButton = new JoystickButton(m_driverStick, XB_LEFT_BUMPER);
-//	m_fieldCentricButton->WhileHeld(new DriveTrainFieldCentricCommand());
+	m_fieldCentricButton = new JoystickButton(m_driverStick, XB_LEFT_BUMPER);
+	m_fieldCentricButton->WhileHeld(new DriveTrainSetFieldCentricCommand(true));
 
 	m_intakeCubeButton = new AnalogJoystickButton(m_driverStick, XB_RIGHT_TRIGGER, 0.5);
 	m_intakeCubeButton->WhenPressed(new IntakeAcquireCubeCommandGroup());
@@ -144,10 +145,10 @@ OI::OI() {
 	m_retractButton->WhileHeld(new ArmRetractCommand());
 
 	m_pivotForwardButton = new AnalogJoystickButton(m_operatorStick, XB_RIGHT_Y_AXIS, 0.25); // right stick up
-	m_pivotForwardButton->WhileHeld(new ArmPivotUpCommand());
+//	m_pivotForwardButton->WhileHeld(new ArmPivotUpCommand());
 
 	m_pivotReverseButton = new AnalogJoystickButton(m_operatorStick, XB_RIGHT_Y_AXIS, -0.25); //right stick down
-	m_pivotReverseButton->WhileHeld(new ArmPivotDownCommand());
+//	m_pivotReverseButton->WhileHeld(new ArmPivotDownCommand());
 
 
 	m_intakeButton = new AnalogJoystickButton(m_operatorStick, XB_RIGHT_TRIGGER, 0.5);
@@ -180,7 +181,7 @@ OI::OI() {
 	m_armToHighScaleFront->WhenPressed(new ArmToHighScaleFront(""));
 
 
-	m_armToSwitchBack = new ComboButton(m_aOpButton, m_leftOpBumper, false);
+	m_armToSwitchBack = new ComboButton(m_aOpButton, m_leftOpBumper, true);
 	m_armToSwitchBack->WhenPressed(new ArmToSwitchBack(""));
 
 	m_armToLowScaleBack = new ComboButton(m_bOpButton, m_leftOpBumper, true);
@@ -199,7 +200,7 @@ OI::OI() {
 	m_lastPos->WhenPressed(new ArmTogglePosDownCommand());
 
 	m_mirrorArmPos = new ComboButton(m_rightOpBumper, m_leftOpBumper, true);
-	m_mirrorArmPos->WhenPressed(new ArmPosMirrorCommand());
+//	m_mirrorArmPos->WhenPressed(new ArmPosMirrorCommand());
 }
 
 Joystick2481* OI::GetDriverStick() {
