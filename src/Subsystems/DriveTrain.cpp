@@ -75,6 +75,8 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_first = true;
 
 	DisengagePTO();
+
+	Shift(false);
 }
 
 DriveTrain::~DriveTrain() {
