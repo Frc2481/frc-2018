@@ -62,7 +62,8 @@ OI::OI() {
 	m_shifterButton->WhileHeld(new DriveTrainShiftCommand());
 
 	m_fieldCentricButton = new JoystickButton(m_driverStick, XB_LEFT_BUMPER);
-	m_fieldCentricButton->WhileHeld(new DriveTrainSetFieldCentricCommand(true));
+	m_fieldCentricButton->WhenPressed(new DriveTrainSetFieldCentricCommand(true));
+	m_fieldCentricButton->WhenReleased(new DriveTrainSetFieldCentricCommand(false));
 
 	m_intakeCubeButton = new AnalogJoystickButton(m_driverStick, XB_RIGHT_TRIGGER, 0.5);
 	m_intakeCubeButton->WhenPressed(new IntakeAcquireCubeCommandGroup());

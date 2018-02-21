@@ -40,7 +40,7 @@ private:
 
 //	Rotation2D m_headingCorrectionOffset;
 
-	float m_heading;
+//	float m_heading;
 //	bool m_headingCorrection;
 	float m_roll;
 	float m_pitch;

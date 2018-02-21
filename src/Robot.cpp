@@ -26,6 +26,7 @@
 #include "Commands/AutoRoutineCommandGroup.h"
 #include "Subsystems/Observer.h"
 #include "Commands/ArmZeroCommandGroup.h"
+#include "Commands/DriveTrainZeroGyroCommand.h"
 
 
 enum Autos {
@@ -122,6 +123,7 @@ private:
 		SmartDashboard::PutData("not zero observer", new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
 		SmartDashboard::PutData(new ArmZeroCommandGroup());
 		SmartDashboard::PutData("zero observer", new ObserverResetPosCommand(RigidTransform2D(Translation2D(0, 0), Rotation2D::fromDegrees(0))));
+		SmartDashboard::PutData(new DriveTrainZeroGyroCommand());
 	}
 
 	/**
