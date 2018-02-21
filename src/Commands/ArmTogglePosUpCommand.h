@@ -33,7 +33,7 @@ class ArmTogglePosUpCommand : public InstantCommand{
 public:
 	ArmTogglePosUpCommand() : InstantCommand("ArmTogglePosUpCommand") {
 		m_switchFront = new ArmToSwitchFront("");
-		m_switch2Front = new ArmToSwitchFront("");
+		m_switch2Front = new ArmToSwitch2Front("");
 		m_scaleLowFront = new ArmToLowScaleFront("");
 		m_scaleLow2Front = new ArmToLowScale2Front("");
 		m_scaleMidFront = new ArmToMidScaleFront("");
@@ -42,7 +42,7 @@ public:
 		m_scaleHigh2Front = new ArmToHighScale2Front("");
 
 		m_switchBack = new ArmToSwitchBack("");
-		m_switch2Back = new ArmToSwitchBack("");
+		m_switch2Back = new ArmToSwitch2Back("");
 		m_scaleLowBack = new ArmToLowScaleBack("");
 		m_scaleLow2Back = new ArmToLowScale2Back("");
 		m_scaleMidBack = new ArmToMidScaleBack("");
@@ -52,51 +52,59 @@ public:
 	}
 	virtual ~ArmTogglePosUpCommand() {}
 	void Initialize() {
-		if(CommandBase::m_arm->GetPivotAngle().getDegrees() > 0) {
-			printf("got here toggle\n");
-			if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_switch2FrontAngle) {
+		double pivotAngle = CommandBase::m_arm->GetDesiredPivotAngle().getDegrees();
+		if(pivotAngle > 0) {
+			pivotAngle -= .001; //ensure doubles compare correctly
+			if(pivotAngle > ArmToSwitchFront::k_pivotAngle) {
+				m_switchFront->Start();
+			}
+			else if(pivotAngle > ArmToSwitch2Front::k_pivotAngle) {
 				m_switch2Front->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleLowFrontAngle) {
+			else if(pivotAngle > ArmToLowScaleFront::k_pivotAngle) {
 				m_scaleLowFront->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleLow2FrontAngle) {
+			else if(pivotAngle > ArmToLowScale2Front::k_pivotAngle) {
 				m_scaleLow2Front->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() <RobotParameters::k_scaleMidFrontAngle) {
+			else if(pivotAngle > ArmToMidScaleFront::k_pivotAngle) {
 				m_scaleMidFront->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleMid2FrontAngle) {
+			else if(pivotAngle > ArmToMidScale2Front::k_pivotAngle) {
 				m_scaleMid2Front->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleHighFrontAngle) {
+			else if(pivotAngle > ArmToHighScaleFront::k_pivotAngle) {
 				m_scaleHighFront->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleHigh2FrontAngle) {
+			else if(pivotAngle > ArmToHighScale2Front::k_pivotAngle) {
 				m_scaleHigh2Front->Start();
 			}
 		}
 
 		else {
-			if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_switch2BackAngle) {
+			pivotAngle += .001; //ensure doubles compare correctly
+			if(pivotAngle < ArmToSwitchBack::k_pivotAngle) {
+				m_switchBack->Start();
+			}
+			else if(pivotAngle < ArmToSwitch2Back::k_pivotAngle) {
 				m_switch2Back->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleLowBackAngle) {
+			else if(pivotAngle < ArmToLowScaleBack::k_pivotAngle) {
 				m_scaleLowBack->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleLow2BackAngle) {
+			else if(pivotAngle < ArmToLowScale2Back::k_pivotAngle) {
 				m_scaleLow2Back->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleMidBackAngle) {
+			else if(pivotAngle < ArmToMidScaleBack::k_pivotAngle) {
 				m_scaleMidBack->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleMid2BackAngle) {
+			else if(pivotAngle < ArmToMidScale2Back::k_pivotAngle) {
 				m_scaleMid2Back->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleHighBackAngle) {
+			else if(pivotAngle <  ArmToHighScaleBack::k_pivotAngle) {
 				m_scaleHighBack->Start();
 			}
-			else if(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() < RobotParameters::k_scaleHigh2BackAngle) {
+			else if(pivotAngle <  ArmToHighScale2Back::k_pivotAngle) {
 				m_scaleHigh2Back->Start();
 			}
 		}
