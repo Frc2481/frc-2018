@@ -16,7 +16,7 @@ public:
 	}
 
 	void Initialize() {
-		m_driveTrain->Shift(false);
+		m_driveTrain->Shift(true);
 	}
 
 	bool IsFinished() {
@@ -24,7 +24,7 @@ public:
 	}
 
 	void Interrupted() {
-		m_driveTrain->Shift(true);
+		m_driveTrain->Shift(false);
 	}
 };
 
