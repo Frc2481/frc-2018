@@ -1,17 +1,16 @@
 #ifndef SetFieldCentricCommand_H
 #define SetFieldCentricCommand_H
 
-#include "../CommandBase.h"
+#include "CommandBase.h"
 
-class SetFieldCentricCommand : public CommandBase {
+class DriveTrainSetFieldCentricCommand : public CommandBase {
 private:
 	bool m_state;
 public:
-	SetFieldCentricCommand(bool state) : CommandBase("SetFieldCentricCommand"){
+	DriveTrainSetFieldCentricCommand(bool state) : CommandBase("DriveTrainSetFieldCentricCommand"){
 		m_state = state;
 	}
 	void Initialize(){
-		CommandBase::m_driveTrain->ZeroGyro();
 		CommandBase::m_driveTrain->SetFieldCentric(m_state);
 	}
 	void Execute(){}
