@@ -42,7 +42,7 @@ public:
 	//belt 1 / 7.087
 	//4086 / (1 / 7.087)
 
-	static constexpr double k_inchesPerWheelRev = 4.0 * 3.14159265; // pi * diameter
+	static constexpr double k_inchesPerWheelRev = 3.95 * 3.14159265; // pi * diameter
 	static constexpr double k_robotLength = 27.0;
 	static constexpr double k_robotWidth = 22.25;
 	static constexpr double k_speedP = 1;

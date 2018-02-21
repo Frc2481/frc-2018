@@ -1,3 +1,4 @@
+#include <Commands/AutoScaleCommandGroup.h>
 #include <memory>
 
 #include "WPILib.h"
@@ -18,15 +19,17 @@
 #include "Commands/ArmBaseCommand.h"
 #include "Commands/AutoCommand.h"
 #include "Components/FieldConfiguration.h"
-#include "Commands/AutoScale1CommandGroup.h"
-//#include "Commands/AutoScale2CommandGroup.h"
-#include "Commands/AutoSwitch1CommandGroup.h"
 //#include "Commands/AutoSwitch2CommandGroup.h"
 #include "Commands/TestDrivePathGeneratorCommand.h"
 #include "Commands/AutoRoutineCommandGroup.h"
 #include "Subsystems/Observer.h"
 #include "Commands/ArmZeroCommandGroup.h"
-
+#include "Commands/AutoSwitchCommandGroup.h"
+#include "Commands/AutoCubeCommandGroup.h"
+#include "Commands/AutoRoutineLeftStartLeftScaleLeftCube1LeftSwitchCommandGroup.h"
+#include "Commands/AutoRoutineLeftStartLeftScaleRightCube1RightSwitchCommandGroup.h"
+#include "Commands/AutoRoutineRightStartRightScaleLeftCube1LeftSwitchCommandGroup.h"
+#include "Commands/AutoRoutineRightStartRightScaleRightCube1RightSwitchCommandGroup.h"
 
 enum Autos {
 	POS_LEFT = 1,
@@ -117,11 +120,34 @@ private:
 		CommandBase::m_driveTrain->GetObserver()->ResetPose(RigidTransform2D(Translation2D(46.4, 19.5),
 																		  Rotation2D::fromDegrees(0)));
 
-		SmartDashboard::PutData(new AutoScale1CommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv"));
+		SmartDashboard::PutData("PathLeftStartToLeftScale", new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv", "/home/lvuser/PathLeftScaleBackUp.csv"));
+		SmartDashboard::PutData("PathRightStartToRightScale", new AutoScaleCommandGroup("/home/lvuser/PathRightStartToRightScale.csv", "/home/lvuser/PathRightScaleBackUp.csv"));
+
+		SmartDashboard::PutData("PathLeftStartToRightScale", new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToRightScale.csv", "/home/lvuser/PathRightScaleBackUp.csv"));
+		SmartDashboard::PutData("PathRightStartToLeftScale", new AutoScaleCommandGroup("/home/lvuser/PathRightStartToLeftScale.csv", "/home/lvuser/PathLeftScaleBackUp.csv"));
+
+		SmartDashboard::PutData("PathLeftStartToLeftSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathLeftStartToLeftSwitch.csv", true));
+		SmartDashboard::PutData("PathRightStartToRightSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathRightStartToRightSwitch.csv", true));
+
+		SmartDashboard::PutData("PathLeftScaleToLeftCube1", new AutoCubeCommandGroup("home/lvuser/PathLeftScaleToLeftCube1.csv"));
+		SmartDashboard::PutData("PathLeftScaleToRightCube1", new AutoCubeCommandGroup("home/lvuser/PathLeftScaleToRightCube1.csv"));
+
+
+		SmartDashboard::PutData("PathLeftCube1ToLeftSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToLeftSwitch.csv", false));
+
+
+		SmartDashboard::PutData(new AutoRoutineLeftStartLeftScaleLeftCube1LeftSwitchCommandGroup);
+		SmartDashboard::PutData(new AutoRoutineLeftStartLeftScaleRightCube1RightSwitchCommandGroup);
+		SmartDashboard::PutData(new AutoRoutineRightStartRightScaleLeftCube1LeftSwitchCommandGroup);
+		SmartDashboard::PutData(new AutoRoutineRightStartRightScaleRightCube1RightSwitchCommandGroup);
+
 //		SmartDashboard::PutData(new AutoRoutineCommandGroup());
-		SmartDashboard::PutData("not zero observer", new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
+		SmartDashboard::PutData("Zero Pose Left Start", new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
+		SmartDashboard::PutData("Zero Pose Right Start", new ObserverResetPosCommand(RigidTransform2D(Translation2D(324 - 46.4, 19.5), Rotation2D::fromDegrees(0))));
 		SmartDashboard::PutData(new ArmZeroCommandGroup());
-		SmartDashboard::PutData("zero observer", new ObserverResetPosCommand(RigidTransform2D(Translation2D(0, 0), Rotation2D::fromDegrees(0))));
+		SmartDashboard::PutData("Zero Pose", new ObserverResetPosCommand(RigidTransform2D(Translation2D(0, 0), Rotation2D::fromDegrees(0))));
+//		SmartDashboard::PutData("Zero Pose Left Scale", new ObserverResetPosCommand(RigidTransform2D(Translation2D(83, 20), Rotation2D::fromDegrees(10))));
+
 	}
 
 	/**
@@ -215,7 +241,7 @@ private:
 	void AutoTasksFunction(){
 		AutoTasks = new std::map<int, Command*>();
 
-		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoScale1CommandGroup("PathLeftStartToLeftScale.csv");
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup("PathLeftStartToLeftScale.csv", "/home/lvuser/PathLeftScaleBackUp.csv");
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 

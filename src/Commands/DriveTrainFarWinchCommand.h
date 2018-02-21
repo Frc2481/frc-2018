@@ -18,10 +18,13 @@ public:
 	virtual ~DriveTrainFarWinchCommand(){}
 
 	void Initialize() {
-		m_driveTrain->SetFarWinchSpeed(.2);
+		m_driveTrain->SetFarWinchSpeed(0.8);
 	}
 	void End() {
 		m_driveTrain->SetFarWinchSpeed(0);
+	}
+	void Interrupted() {
+		End();
 	}
 	bool IsFinished() {
 		return false;

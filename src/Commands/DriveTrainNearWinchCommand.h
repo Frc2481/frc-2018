@@ -18,10 +18,13 @@ public:
 	virtual ~DriveTrainNearWinchCommand(){}
 
 	void Initialize() {
-		m_driveTrain->SetNearWinchSpeed(.2);
+		m_driveTrain->SetNearWinchSpeed(0.8);
 	}
 	void End() {
 		m_driveTrain->SetNearWinchSpeed(0);
+	}
+	void Interrupted() {
+		End();
 	}
 	bool IsFinished() {
 		return false;
