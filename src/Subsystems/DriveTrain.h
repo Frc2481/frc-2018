@@ -10,6 +10,7 @@
 
 #include "Commands/Subsystem.h"
 #include "Solenoid.h"
+#include "DoubleSolenoid.h"
 #include "utils/Rotation2D.h"
 #include "utils/Translation2D.h"
 #include "Subsystems/Observer.h"
@@ -27,6 +28,8 @@ private:
 	SwerveModule *m_blWheel;
 	Solenoid *m_shifter;
 
+	DoubleSolenoid *m_pto;
+
 	AHRS* m_imu;
 	bool m_isFieldCentric;
 //	bool m_isForward;
@@ -37,7 +40,7 @@ private:
 
 //	Rotation2D m_headingCorrectionOffset;
 
-	float m_heading;
+//	float m_heading;
 //	bool m_headingCorrection;
 	float m_roll;
 	float m_pitch;
@@ -62,6 +65,10 @@ private:
 
 	double m_oldTimestamp;
 
+	bool m_isPtoEngaged;
+
+	bool m_first;
+
 public:
 	enum SwerveModuleType {
 		FRONT_LEFT_MODULE,
@@ -80,7 +87,7 @@ public:
 	float GetRoll() const;
 	float GetPitch() const;
 	void Stop();
-//	void SetFieldCentric(bool fieldCentric);
+	void SetFieldCentric(bool fieldCentric);
 //	void SetForward(bool forward);
 	void ZeroGyro();
 //	void PeriodicUpdate();
@@ -95,7 +102,7 @@ public:
 //	void SetGyroCorrectionOffset(Rotation2D &offset);
 //	bool IsHeadingCorrection() const;
 
-	void ResetRobotPose();
+	void ResetRobotPose(RigidTransform2D pose);
 
 	virtual void Periodic();
 
@@ -104,6 +111,14 @@ public:
 	DriveController* GetDriveController();
 
 	Observer* GetObserver();
+
+	void EngagePTO();
+	void DisengagePTO();
+	void SetNearWinchSpeed(double speed); //left
+	void SetFarWinchSpeed(double speed); //right
+	bool IsPtoEngaged();
+
+	void SetOpenLoopSteer(double speed);
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

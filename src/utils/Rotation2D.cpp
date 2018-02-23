@@ -64,8 +64,8 @@ double Rotation2D::getSin() const{
 }
 
 double Rotation2D::getTan() const {
-	if (m_cos < kEpsilon) {
-		if (m_sin >= 0.0) {
+	if (fabs(m_cos) < kEpsilon) {
+		if (fabs(m_sin) >= 0.0) {
 			return std::numeric_limits<double>::infinity();
 		}
 		else {

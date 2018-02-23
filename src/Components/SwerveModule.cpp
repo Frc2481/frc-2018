@@ -25,8 +25,10 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID,
 	m_driveMotor = new TalonSRX(driveID);
 	m_driveEncoder = new GreyhillEncoder(m_driveMotor, ss.str(),
 			RobotParameters::k_ticksPerEncoderRev,
-			RobotParameters::k_encoderRevPerWheelRev,
-			RobotParameters::k_inchesPerWheelRev);
+			RobotParameters::k_inchesPerWheelRev,
+			RobotParameters::k_encoderRevPerWheelRevLowGear,
+			RobotParameters::k_encoderRevPerWheelRevHighGear
+			);
 
 	m_isCloseLoopControl = false;
 	m_angleOptimized = false;
@@ -111,6 +113,10 @@ void SwerveModule::SetOpenLoopSpeed(double speed) {
 	m_driveMotor->Set(ControlMode::PercentOutput, speed);
 	m_isMoving = fabs(speed) > .05;
 	m_isCloseLoopControl = false;
+}
+
+void SwerveModule::SetOpenLoopSteer(double speed) {
+	m_steerMotor->Set(ControlMode::PercentOutput, speed);
 }
 
 double SwerveModule::GetSpeed()const {

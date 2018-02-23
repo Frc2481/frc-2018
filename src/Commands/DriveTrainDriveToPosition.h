@@ -16,6 +16,9 @@ class DriveTrainDriveToPosition : public CommandBase {
 private:
 	DriveController* m_driveController;
 	int m_onTargetCounter;
+	double m_xPos;
+	double m_yPos;
+	double m_yaw;
 
 public:
 	DriveTrainDriveToPosition() {
@@ -25,10 +28,6 @@ public:
 		SmartDashboard::PutNumber("target x position", 0);
 		SmartDashboard::PutNumber("target y position", 0);
 		SmartDashboard::PutNumber("target heading", 0);
-
-		SmartDashboard::PutNumber("x control signal", 0);
-		SmartDashboard::PutNumber("y control signal", 0);
-		SmartDashboard::PutNumber("yaw control signal", 0);
 		m_onTargetCounter = 0;
 	}
 
@@ -36,13 +35,12 @@ public:
 	}
 
 	void Initialize() {
-		double xPos = SmartDashboard::GetNumber("target x position", 0);
-		double yPos = SmartDashboard::GetNumber("target y position", 0);
-		double yaw = SmartDashboard::GetNumber("target heading", 0);
+		m_xPos = SmartDashboard::GetNumber("target x position", 0);
+		m_yPos = SmartDashboard::GetNumber("target y position", 0);
+		m_yaw = SmartDashboard::GetNumber("target heading", 0);
 
-		m_driveController->SetFieldTarget(RigidTransform2D(Translation2D(xPos, yPos), Rotation2D::fromDegrees(yaw)));
+		m_driveController->SetFieldTarget(RigidTransform2D(Translation2D(m_xPos, m_yPos), Rotation2D::fromDegrees(m_yaw)));
 		m_driveController->EnableController();
-		m_onTargetCounter = 0;
 	}
 
 	void Execute() {
@@ -50,10 +48,6 @@ public:
 		m_driveTrain->Drive(driveSignal.getTranslation().getX(),
 							driveSignal.getTranslation().getY(),
 							driveSignal.getRotation().getDegrees());
-
-		SmartDashboard::PutNumber("x control signal", driveSignal.getTranslation().getX());
-		SmartDashboard::PutNumber("y control signal", driveSignal.getTranslation().getY());
-		SmartDashboard::PutNumber("yaw control signal", driveSignal.getRotation().getDegrees());
 	}
 
 	void Interrupted() {
@@ -61,13 +55,19 @@ public:
 	}
 
 	bool IsFinished() {
-		return fabs(m_driveController->GetControllerError().getTranslation().norm()) < RobotParameters::kTolerancePos &&
-			   fabs(m_driveController->GetControllerError().getRotation().getDegrees()) < RobotParameters::kToleranceHeading;
+
+		RigidTransform2D lastPoint = RigidTransform2D(Translation2D(m_xPos, m_yPos), Rotation2D::fromDegrees(m_yaw));
+		RigidTransform2D robotPose = m_driveTrain->GetObserver()->GetLastRobotPose();
+
+		Translation2D errorTranslation = lastPoint.getTranslation().translateBy(robotPose.getTranslation().inverse());
+		Rotation2D errorRotation = lastPoint.getRotation().rotateBy(robotPose.getRotation().inverse());
+
+		return (fabs(errorTranslation.norm()) < RobotParameters::kTolerancePos) &&
+			   (fabs(errorRotation.getDegrees()) < RobotParameters::kToleranceHeading);
 	}
 
 	void End() {
 		m_driveTrain->Drive(0, 0, 0);
-		SmartDashboard::PutNumber("Drive to Position Duration", TimeSinceInitialized());
 	}
 };
 

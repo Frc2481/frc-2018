@@ -40,6 +40,7 @@ public:
 	bool IsSteerOnTarget() const;
 
 	void SetOpenLoopSpeed(double speed);
+	void SetOpenLoopSteer(double speed);
 	double GetSpeed() const;
 	void SetCloseLoopDriveDistance(Translation2D distance);
 	void DisableCloseLoopDrive();

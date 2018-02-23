@@ -56,10 +56,11 @@ public:
 		RigidTransform2D lastPoint = m_path.rbegin()->second;
 		RigidTransform2D robotPose = m_driveTrain->GetObserver()->GetLastRobotPose();
 
-		RigidTransform2D errorPose = lastPoint.transformBy(robotPose.inverse());
+		Translation2D errorTranslation = lastPoint.getTranslation().translateBy(robotPose.getTranslation().inverse());
+		Rotation2D errorRotation = lastPoint.getRotation().rotateBy(robotPose.getRotation().inverse());
 
-		return fabs(errorPose.getTranslation().norm()) < RobotParameters::kTolerancePos &&
-			   fabs(errorPose.getRotation().getDegrees()) < RobotParameters::kToleranceHeading;
+		return (fabs(errorTranslation.norm()) < RobotParameters::kTolerancePos) &&
+			   (fabs(errorRotation.getDegrees()) < RobotParameters::kToleranceHeading);
 	}
 
 	void End() {
