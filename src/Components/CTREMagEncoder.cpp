@@ -85,7 +85,7 @@ void CTREMagEncoder::SetEncoderRaw(int ticks) {
 }
 
 bool CTREMagEncoder::IsConnected() {
-	return false;
+	return m_talon->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0;
 }
 
 bool CTREMagEncoder::IsCalibrated() {
