@@ -239,18 +239,52 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
 
     % add time to final path
     finalPath(:, 4) = time;
-
-%     % plot path
-%     close all
-%     figure
-%     plot(waypoints(:, 1), waypoints(:, 2), 'bo-')
-%     % quiver(waypoints(:, 1), waypoints(:, 2), cosd(waypoints(:, 3) + 90), sind(waypoints(:, 3) + 90), 'b');
-%     hold on
-%     plot(tempPath(:, 1), tempPath(:, 2), 'gx-')
-%     plot(finalPath(:, 1), finalPath(:, 2), 'rx-')
-%     % quiver(finalPath(:, 1), finalPath(:, 2), cosd(finalPath(:, 3) + 90), sind(finalPath(:, 3) + 90), 'r');
-%     hold off
-%     axis([0 324 0 648])
+    
+        
+    % draw field
+    fieldDim = 12 * [27, 54];
+    fieldDraw = [0, 0;
+                 fieldDim(1), 0;
+                 fieldDim;
+                 0, fieldDim(2);
+                 0, 0];
+    
+    % draw switch
+    switchDraw = [85.25, 140;
+                  fieldDim(1) - 85.25, 140;
+                  fieldDim(1) - 85.25, 196;
+                  85.25, 196;
+                  85.25, 140];
+    
+    % draw scale
+    scaleDraw = [71.57, 299.65;
+                 fieldDim(1) - 71.57, 299.65;
+                 fieldDim(1) - 71.57, 348.35;
+                 71.57, 348.35;
+                 71.57, 299.65];
+    
+    % draw platform
+    platformDraw = [95.25, 261.47;
+                    fieldDim(1) - 95.25, 261.47;
+                    fieldDim(1) - 95.25, 386.53;
+                    95.25, 386.53;
+                    95.25, 261.47];
+    
+    % plot path
+    close all
+    figure
+    plot(waypoints(:, 1), waypoints(:, 2), 'bo-')
+    % quiver(waypoints(:, 1), waypoints(:, 2), cosd(waypoints(:, 3) + 90), sind(waypoints(:, 3) + 90), 'b');
+    hold on
+    plot(tempPath(:, 1), tempPath(:, 2), 'gx-')
+    plot(finalPath(:, 1), finalPath(:, 2), 'rx-')
+    % quiver(finalPath(:, 1), finalPath(:, 2), cosd(finalPath(:, 3) + 90), sind(finalPath(:, 3) + 90), 'r');
+    plot(fieldDraw(:, 1), fieldDraw(:, 2), 'b')
+    plot(switchDraw(:, 1), switchDraw(:, 2), 'b')
+    plot(scaleDraw(:, 1), scaleDraw(:, 2), 'b')
+    plot(platformDraw(:, 1), platformDraw(:, 2), 'b')
+    hold off
+    axis([-5 700 -5 700])
 
     % write final path to .csv file
     csvwrite(csvFilename, finalPath);
