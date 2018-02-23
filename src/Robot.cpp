@@ -27,7 +27,7 @@
 #include "Subsystems/Observer.h"
 #include "Commands/ArmZeroCommandGroup.h"
 #include "Commands/DriveTrainZeroGyroCommand.h"
-
+#include "Commands/ArmClearStickyFaults.h"
 
 enum Autos {
 	POS_LEFT = 1,
@@ -124,6 +124,9 @@ private:
 		SmartDashboard::PutData(new ArmZeroCommandGroup());
 		SmartDashboard::PutData("zero observer", new ObserverResetPosCommand(RigidTransform2D(Translation2D(0, 0), Rotation2D::fromDegrees(0))));
 		SmartDashboard::PutData(new DriveTrainZeroGyroCommand());
+
+		SmartDashboard::PutData(new ArmClearStickyFaults());
+
 	}
 
 	/**
