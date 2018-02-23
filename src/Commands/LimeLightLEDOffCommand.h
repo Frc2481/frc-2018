@@ -8,7 +8,7 @@ public:
 	TurnLEDOffCommand() : InstantCommand ("TurnLEDOffCommand") {
 	}
 
-	void Initialize(){
+	void Initialize() {
 		CommandBase::m_limeLight->TurnOffLED();
 	}
 };

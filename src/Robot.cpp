@@ -81,6 +81,9 @@ private:
 		SmartDashboard::PutData("Drive Path", new DriveTrainFollowPath("/home/lvuser/robotPath.csv"));
 
 		SmartDashboard::PutData("Shift Up", new DriveTrainShiftCommand());
+
+		CommandBase::m_limeLight->ActivatePowerCubePipeline();
+
 		SmartDashboard::PutData("TestDrivePathGeneratorCommand", new TestDrivePathGeneratorCommand());
 
 		SmartDashboard::PutData("DriveTrainEngagePtoCommand", new DriveTrainEngagePtoCommand());
@@ -126,7 +129,6 @@ private:
 		SmartDashboard::PutData(new DriveTrainZeroGyroCommand());
 
 		SmartDashboard::PutData(new ArmClearStickyFaults());
-
 	}
 
 	/**

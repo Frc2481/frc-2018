@@ -8,7 +8,7 @@
 #include "WPILib.h"
 #include <Subsystems/LimeLight.h>
 
-LimeLight::LimeLight() {
+LimeLight::LimeLight() : Subsystem("LimeLight") {
 	// TODO Auto-generated constructor stub
 }
 
@@ -16,69 +16,97 @@ LimeLight::~LimeLight() {
 	// TODO Auto-generated destructor stub
 }
 
-//double LimeLight::GetValues() {
-////	return targetOffsetAngle_Horizontal = table->GetNumber("tx");
-//}
-
-//double LimeLight::EstimateDistance() {
-//}
-
-float LimeLight::targetOffsetAngle_Horizontal() {
-	std::shared_ptr<NetworkTable> table =   NetworkTable::GetTable("limelight");
-	table->GetNumber("tx", 0);
+double LimeLight::getPowerCubeTargetValid() {
+	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
+	return table->GetNumber("tv", 0);
 }
 
-float LimeLight::targetOffsetAngle_Vertical() {
-	std::shared_ptr<NetworkTable> table =   NetworkTable::GetTable("limelight");
-	table->GetNumber("ty", 0);
+double LimeLight::getPowerCubeTargetOffsetAngleHorizontal() {
+	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
+//	printf("x = %f\n", table->GetNumber("tx", 0));
+	return table->GetNumber("tx", 0);
 }
 
-float LimeLight::targetArea() {
-	std::shared_ptr<NetworkTable> table =   NetworkTable::GetTable("limelight");
-	table->GetNumber("ta", 0);
+double LimeLight::getPowerCubeTargetOffsetAngleVertical() {
+	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
+//	printf("y = %f\n", table->GetNumber("ty", 0));
+	return table->GetNumber("ty", 0);
 }
 
-float LimeLight::targetSkew() {
-	std::shared_ptr<NetworkTable> table =   NetworkTable::GetTable("limelight");
-	table->GetNumber("ty", 0);
+double LimeLight::getPowerCubeTargetArea() {
+	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
+	return table->GetNumber("ta", 0);
 }
 
-void LimeLight::TurnOnLED(){
+double LimeLight::getPowerCubeTargetSkew() {
+	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
+	return table->GetNumber("ts", 0);
+}
+
+void LimeLight::TurnOnLED() {
 	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
 	table->PutNumber("ledMode", 0);
 }
 
-void LimeLight::TurnOffLED(){
+void LimeLight::TurnOffLED() {
 	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
 	table->PutNumber("ledMode", 1);
 }
 
-void LimeLight::BlinkLight(){
+void LimeLight::BlinkLED() {
 	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
 	table->PutNumber("ledMode", 2);
 }
 
-void LimeLight::ActivateRedScale(){
+void LimeLight::ActivatePowerCubePipeline() {
 	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
 	table->PutNumber("pipeline", 0);
 }
 
-void LimeLight::ActivateBlueScale(){
-	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
-	table->PutNumber("pipeline", 1);
+void LimeLight::CalculatePowerCubePose() {
+	// Calculations in Robot Frame
+	// +x = robot right
+	// +y = robot forward
+	// +z = robot up
+	// +yaw = CCW, zero is robot forward
+
+	Rotation2D yawCube = Rotation2D::fromDegrees(getPowerCubeTargetOffsetAngleHorizontal() + RobotParameters::cameraOffsetYaw);
+	double yCube = (RobotParameters::cameraOffsetZ - RobotParameters::cubeHeight/2.0) / tan((-getPowerCubeTargetOffsetAngleVertical() - RobotParameters::cameraOffsetPitch) * M_PI / 180.0) + RobotParameters::cameraOffsetY;
+	double xCube = RobotParameters::cameraOffsetX + (yCube - RobotParameters::cameraOffsetY) * tan(yawCube.getRadians());
+
+	Translation2D cubePos = Translation2D(xCube, yCube);
+
+	SetPowerCubePose(RigidTransform2D(cubePos, yawCube));
+
+	SmartDashboard::PutNumber("x Cube", xCube);
+	SmartDashboard::PutNumber("y Cube", yCube);
+	SmartDashboard::PutNumber("yaw Cube", yawCube.getDegrees());
 }
 
-void LimeLight::PowerCubePipeline(){
-	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
-	table->PutNumber("pipeline", 2);
+void LimeLight::SetPowerCubePose(RigidTransform2D cubePose) {
+	m_powerCubePose = cubePose;
 }
 
-void LimeLight::ActivateFencePipeline(){
-	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
-	table->PutNumber("pipeline", 3);
+RigidTransform2D LimeLight::GetPowerCubePose() {
+	return m_powerCubePose;
 }
-//std::shared_ptr<NetworkTable> table =   NetworkTable::GetTable("limelight");
-//float targetOffsetAngle_Horizontal = table->GetNumber("tx");
-//float targetOffsetAngle_Vertical = table->GetNumber("ty");
-//float targetArea = table->GetNumber("ta");
-//float targetSkew = table->GetNumber("ts");
+
+//void LimeLight::ActivateRedScalePipeline() {
+//	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
+//	table->PutNumber("pipeline", 1);
+//}
+
+//void LimeLight::ActivateBlueScalePipeline() {
+//	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
+//	table->PutNumber("pipeline", 2);
+//}
+
+//void LimeLight::ActivateFencePipeline() {
+//	std::shared_ptr<NetworkTable> table = NetworkTable::GetTable("limelight");
+//	table->PutNumber("pipeline", 3);
+//}
+
+void LimeLight::Periodic() {
+	CalculatePowerCubePose();
+}
+
