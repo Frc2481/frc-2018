@@ -21,6 +21,7 @@
 #include "Commands/ArmBaseCommand.h"
 #include "Subsystems/Arm.h"
 #include "Commands/ArmPosMirrorCommand.h"
+#include "Commands/DriveTrainSetFieldCentricCommand.h"
 
 #include "Commands/DriveTrainNearWinchCommand.h"
 #include "Commands/DriveTrainFarWinchCommand.h"
@@ -64,8 +65,9 @@ OI::OI() {
 	m_shifterButton = new JoystickButton(m_driverStick, XB_RIGHT_BUMPER);
 	m_shifterButton->WhileHeld(new DriveTrainShiftCommand());
 
-//	m_fieldCentricButton = new JoystickButton(m_driverStick, XB_LEFT_BUMPER);
-//	m_fieldCentricButton->WhileHeld(new DriveTrainFieldCentricCommand());
+	m_fieldCentricButton = new JoystickButton(m_driverStick, XB_LEFT_BUMPER);
+	m_fieldCentricButton->WhenPressed(new DriveTrainSetFieldCentricCommand(true));
+	m_fieldCentricButton->WhenReleased(new DriveTrainSetFieldCentricCommand(false));
 
 	m_intakeCubeButton = new AnalogJoystickButton(m_driverStick, XB_RIGHT_TRIGGER, 0.5);
 	m_intakeCubeButton->WhenPressed(new IntakeAcquireCubeCommandGroup());

@@ -8,8 +8,8 @@ public:
 	LimeLightLEDBlinkCommand() : InstantCommand("LimeLightLEDBlinkCommand"){
 	}
 
-	void Initialize(){
-		CommandBase :: m_limeLight->BlinkLight();
+	void Initialize() {
+		CommandBase::m_limeLight->BlinkLED();
 	}
 };
 

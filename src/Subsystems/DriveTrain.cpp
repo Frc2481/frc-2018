@@ -75,6 +75,8 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_first = true;
 
 	DisengagePTO();
+
+	Shift(false);
 }
 
 DriveTrain::~DriveTrain() {
@@ -112,7 +114,7 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 //	SmartDashboard::PutNumber("xVel", translation.getX());
 //	SmartDashboard::PutNumber("yVel", translation.getY());
 
-//	Rotation2D gyroAngle = GetHeading();
+	Rotation2D gyroAngle = GetHeading();
 
 //	if (m_headingCorrection) {
 //		gyroAngle.rotateBy(m_headingCorrectionOffset);
@@ -121,8 +123,7 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 //	yawRate *= -1;
 
 	if (m_isFieldCentric) {
-//		m_heading = gyroAngle.getDegrees();
-//		translation.rotateBy(gyroAngle);
+		translation = translation.rotateBy(gyroAngle.inverse());
 		yawRate *= 0.1;
 	}
 	else {
@@ -219,7 +220,7 @@ SwerveModule* DriveTrain::GetModule(DriveTrain::SwerveModuleType module) const{
 }
 
 Rotation2D DriveTrain::GetHeading() const{
-	return Rotation2D::fromDegrees(-m_imu->GetFusedHeading());
+	return Rotation2D::fromDegrees(-m_imu->GetYaw());
 }
 
 void DriveTrain::Stop() {
@@ -339,6 +340,11 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
 	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
 
+	SmartDashboard::PutNumber("FL steer encoder connected", m_flWheel->GetSteerEncoder()->IsConnected());
+	SmartDashboard::PutNumber("FR steer encoder connected", m_frWheel->GetSteerEncoder()->IsConnected());
+	SmartDashboard::PutNumber("BL steer encoder connected", m_blWheel->GetSteerEncoder()->IsConnected());
+	SmartDashboard::PutNumber("BR steer encoder connected", m_brWheel->GetSteerEncoder()->IsConnected());
+
 //	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
@@ -370,7 +376,7 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("timestamp", timeStamp);
 	SmartDashboard::PutNumber("delta timestamp", deltaTimestamp);
 
-
+	SmartDashboard::PutNumber("gyro angle", GetHeading().getDegrees());
 }
 
 // This Method must be called when when all 8 swerve modules are on.

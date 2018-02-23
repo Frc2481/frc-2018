@@ -50,9 +50,10 @@ public:
 	double ConvertInchesToEncTicks(double inches);
 	double ConvertEncTicksToInches(double ticks);
 	double GetLastCommandedSetpoint();
-	double SetExtentionMotionScaling(double scale);
+	void SetExtentionMotionScaling(double scale);
 	void SetIntakePos(int intakePos);
 	int GetIntakePos();
+	void ClearStickyFaults();
 
 };
 

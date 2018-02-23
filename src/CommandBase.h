@@ -7,6 +7,7 @@
 #include "OI.h"
 #include "WPILib.h"
 #include "Subsystems/Intake.h"
+#include "Subsystems/LimeLight.h"
 #include "Subsystems/Arm.h"
 
 /**
@@ -26,6 +27,7 @@ public:
 	static std::unique_ptr<Arm> m_arm;
 	static std::unique_ptr<Compressor> m_compressor;
 	static std::unique_ptr<OI> oi;
+	static std::unique_ptr<LimeLight> m_limeLight;
 
 	static bool m_pause;
 };

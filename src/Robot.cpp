@@ -30,6 +30,8 @@
 #include "Commands/AutoRoutineLeftStartLeftScaleRightCube1RightSwitchCommandGroup.h"
 #include "Commands/AutoRoutineRightStartRightScaleLeftCube1LeftSwitchCommandGroup.h"
 #include "Commands/AutoRoutineRightStartRightScaleRightCube1RightSwitchCommandGroup.h"
+#include "Commands/DriveTrainZeroGyroCommand.h"
+#include "Commands/ArmClearStickyFaults.h"
 
 enum Autos {
 	POS_LEFT = 1,
@@ -83,6 +85,9 @@ private:
 		SmartDashboard::PutData("Drive Path", new DriveTrainFollowPath("/home/lvuser/robotPath.csv"));
 
 		SmartDashboard::PutData("Shift Up", new DriveTrainShiftCommand());
+
+		CommandBase::m_limeLight->ActivatePowerCubePipeline();
+
 		SmartDashboard::PutData("TestDrivePathGeneratorCommand", new TestDrivePathGeneratorCommand());
 
 		SmartDashboard::PutData("DriveTrainEngagePtoCommand", new DriveTrainEngagePtoCommand());
@@ -145,9 +150,13 @@ private:
 		SmartDashboard::PutData("Zero Pose Left Start", new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
 		SmartDashboard::PutData("Zero Pose Right Start", new ObserverResetPosCommand(RigidTransform2D(Translation2D(324 - 46.4, 19.5), Rotation2D::fromDegrees(0))));
 		SmartDashboard::PutData(new ArmZeroCommandGroup());
+
 		SmartDashboard::PutData("Zero Pose", new ObserverResetPosCommand(RigidTransform2D(Translation2D(0, 0), Rotation2D::fromDegrees(0))));
 //		SmartDashboard::PutData("Zero Pose Left Scale", new ObserverResetPosCommand(RigidTransform2D(Translation2D(83, 20), Rotation2D::fromDegrees(10))));
 
+		SmartDashboard::PutData(new DriveTrainZeroGyroCommand());
+
+		SmartDashboard::PutData(new ArmClearStickyFaults());
 	}
 
 	/**

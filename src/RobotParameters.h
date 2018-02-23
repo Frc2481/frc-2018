@@ -102,31 +102,13 @@ public:
 	static constexpr double k_left90 = -90;
 	static constexpr double k_rightFrameConstrained = 58; //calculated: 49, changed to be optimal
 	static constexpr double k_leftFrameConstrained = -66; //-55
-
-	static constexpr int k_intake1FrontAngle = 120;
-	static constexpr int k_intake2FrontAngle = 104;
-	static constexpr int k_intake3FrontAngle = 83;
-
-	static constexpr int k_intake1BackAngle = -119;
-	static constexpr int k_intake2BackAngle = -101;
-	static constexpr int k_intake3BackAngle = -83;
-
-	static constexpr int k_switchFrontAngle = 91;
-	static constexpr int k_switch2FrontAngle = 65;
-	static constexpr int k_scaleLowFrontAngle = 39;
-	static constexpr int k_scaleLow2FrontAngle = 28;
-	static constexpr int k_scaleMidFrontAngle = 25;
-	static constexpr int k_scaleMid2FrontAngle = 23;
-	static constexpr int k_scaleHighFrontAngle = 17;
-	static constexpr int k_scaleHigh2FrontAngle = 16;
-
-	static constexpr int k_switchBackAngle = -86;
-	static constexpr int k_switch2BackAngle = -65;
-	static constexpr int k_scaleLowBackAngle = -39;
-	static constexpr int k_scaleLow2BackAngle = -28;
-	static constexpr int k_scaleMidBackAngle = -25;
-	static constexpr int k_scaleMid2BackAngle = -23;
-	static constexpr int k_scaleHighBackAngle = -17;
-	static constexpr int k_scaleHigh2BackAngle = -16;
+  
+  static constexpr double cameraOffsetX = 0;
+	static constexpr double cameraOffsetY = 0;
+	static constexpr double cameraOffsetZ = 28.75;
+	static constexpr double cameraOffsetRoll = 0;
+	static constexpr double cameraOffsetPitch = -4.31;
+	static constexpr double cameraOffsetYaw = 0;
+	static constexpr double cubeHeight = 12.0;
 };
 #endif

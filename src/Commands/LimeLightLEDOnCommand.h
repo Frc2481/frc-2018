@@ -8,7 +8,7 @@ public:
 	TurnLEDOnCommand() : InstantCommand ("TurnLEDOnCommand"){
 	}
 
-	void Initialize(){
+	void Initialize() {
 		CommandBase::m_limeLight->TurnOnLED();
 	}
 };

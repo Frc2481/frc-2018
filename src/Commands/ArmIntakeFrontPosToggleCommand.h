@@ -27,10 +27,11 @@ public:
 	}
 	virtual ~ArmIntakeFrontPosToggleCommand() {}
 	void Initialize() {
-		if(fabs(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() - RobotParameters::k_intake1FrontAngle) < .0001) {
+		double pivotAngle = CommandBase::m_arm->GetDesiredPivotAngle().getDegrees();
+		if(fabs(pivotAngle - ArmToIntakeFront::k_pivotAngle) < .0001) {
 			m_armIntake2Front->Start();
 		}
-		else if(fabs(CommandBase::m_arm->GetDesiredPivotAngle().getDegrees() - RobotParameters::k_intake2FrontAngle) < .0001) {
+		else if(fabs(pivotAngle - ArmToIntake2Front::k_pivotAngle) < .0001) {
 			m_armIntake3Front->Start();
 		}
 		else {
