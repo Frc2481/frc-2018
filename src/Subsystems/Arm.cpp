@@ -226,9 +226,9 @@ void Arm::Periodic() {
 	SmartDashboard::PutBoolean("extension reset master", masterExtensionFaults.ResetDuringEn);
 	SmartDashboard::PutBoolean("extension reset slave", slaveExtensionFaults.ResetDuringEn);
 
-	SmartDashboard::PutBoolean("extension limit switch", masterExtensionFaults.ReverseLimitSwitch);
-	SmartDashboard::PutBoolean("pivot limit switch forward", pivotFaults.ForwardLimitSwitch);
-	SmartDashboard::PutBoolean("pivot limit switch reverse", pivotFaults.ReverseLimitSwitch);
+	SmartDashboard::PutBoolean("extension limit switch", m_extenderMaster->GetSensorCollection().IsRevLimitSwitchClosed());
+	SmartDashboard::PutBoolean("pivot limit switch forward", m_pivot->GetSensorCollection().IsFwdLimitSwitchClosed());
+	SmartDashboard::PutBoolean("pivot limit switch reverse", m_pivot->GetSensorCollection().IsRevLimitSwitchClosed());
 	SmartDashboard::PutBoolean("extension encoder connected", m_extenderMaster->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
 	SmartDashboard::PutBoolean("pivot encoder connected", m_pivot->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
 
