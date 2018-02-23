@@ -23,10 +23,14 @@
 #include "Commands/ArmPosMirrorCommand.h"
 #include "Commands/DriveTrainSetFieldCentricCommand.h"
 
+#include "Commands/DriveTrainNearWinchCommand.h"
+#include "Commands/DriveTrainFarWinchCommand.h"
+
 OI::OI() {
 	// Process operator interface input here.
 	m_driverStick = new Joystick2481(0);
 	m_operatorStick = new Joystick2481(1);
+	m_climbStick = new Joystick2481(2);
 
 //driver
 //	m_aDriverButton = new JoystickButton(m_driverStick, XB_A_BUTTON);
@@ -195,13 +199,19 @@ OI::OI() {
 	m_armToHighScaleBack->WhenPressed(new ArmToHighScaleBack(""));
 
 	m_nextPos = new POVJoystickButton(m_operatorStick, 0, XB_DPAD_TOP);
-	m_nextPos->WhenPressed(new ArmTogglePosUpCommand());
+//	m_nextPos->WhenPressed(new ArmTogglePosUpCommand());
 
 	m_lastPos = new POVJoystickButton(m_operatorStick, 0, XB_DPAD_BOTTOM);
-	m_lastPos->WhenPressed(new ArmTogglePosDownCommand());
+//	m_lastPos->WhenPressed(new ArmTogglePosDownCommand());
 
 	m_mirrorArmPos = new ComboButton(m_rightOpBumper, m_leftOpBumper, true);
 //	m_mirrorArmPos->WhenPressed(new ArmPosMirrorCommand());
+
+	m_innerWinch = new JoystickButton(m_climbStick, XB_A_BUTTON);
+	m_innerWinch->WhileHeld(new DriveTrainNearWinchCommand());
+
+	m_outerWinch = new JoystickButton(m_climbStick, XB_B_BUTTON);
+	m_outerWinch->WhileHeld(new DriveTrainFarWinchCommand());
 }
 
 Joystick2481* OI::GetDriverStick() {
