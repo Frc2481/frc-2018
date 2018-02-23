@@ -53,6 +53,7 @@ public:
 	void SetExtentionMotionScaling(double scale);
 	void SetIntakePos(int intakePos);
 	int GetIntakePos();
+	void ClearStickyFaults();
 
 };
 

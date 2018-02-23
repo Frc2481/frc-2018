@@ -192,6 +192,16 @@ void Arm::Periodic() {
 
 	SetExtensionPosition(GetAllowedExtensionPos());
 
+	Faults masterExtensionFaults;
+	m_extenderMaster->GetFaults(masterExtensionFaults);
+	masterExtensionFaults.ResetDuringEn;
+
+	Faults slaveExtensionFaults;
+	m_extenderSlave->GetFaults(slaveExtensionFaults);
+	slaveExtensionFaults.ResetDuringEn;
+
+	Faults pivotFaults;
+	m_pivot->GetFaults(pivotFaults);
 
 //	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
 //	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)));
@@ -213,6 +223,15 @@ void Arm::Periodic() {
 	SmartDashboard::PutNumber("Arm Extension Position", GetExtensionPosition());
 //
 //	SmartDashboard::PutNumber("extender distance ticks", m_extenderMaster->GetSelectedSensorPosition(0));
+	SmartDashboard::PutBoolean("extension reset master", masterExtensionFaults.ResetDuringEn);
+	SmartDashboard::PutBoolean("extension reset slave", slaveExtensionFaults.ResetDuringEn);
+
+	SmartDashboard::PutBoolean("extension limit switch", masterExtensionFaults.ReverseLimitSwitch);
+	SmartDashboard::PutBoolean("pivot limit switch forward", pivotFaults.ForwardLimitSwitch);
+	SmartDashboard::PutBoolean("pivot limit switch reverse", pivotFaults.ReverseLimitSwitch);
+	SmartDashboard::PutBoolean("extension encoder connected", m_extenderMaster->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
+	SmartDashboard::PutBoolean("pivot encoder connected", m_pivot->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
+
 }
 
 void Arm::SetPivotAngle(Rotation2D angle) {
@@ -256,4 +275,10 @@ void Arm::SetExtentionMotionScaling(double scale) {
 	m_scale = scale;
 	m_extenderMaster->ConfigMotionCruiseVelocity(RobotParameters::k_extenderVelocity * m_scale, 0);
 	m_extenderMaster->ConfigMotionAcceleration(RobotParameters::k_extenderAcceleration * m_scale, 0);
+}
+
+void Arm::ClearStickyFaults() {
+	m_extenderMaster->ClearStickyFaults(0);
+	m_extenderSlave->ClearStickyFaults(0);
+	m_pivot->ClearStickyFaults(0);
 }
