@@ -23,16 +23,16 @@ public:
 
 	void Initialize() {
 		RigidTransform2D pose = m_driveTrain->GetObserver()->GetRobotPos(RobotController::GetFPGATime());
-		m_upToDown = pose.getTranslation().getX() < m_yPos;
+		m_upToDown = pose.getTranslation().getY() < m_yPos;
 	}
 
 	bool IsFinished() {
 		RigidTransform2D pose = m_driveTrain->GetObserver()->GetRobotPos(RobotController::GetFPGATime());
 		if(m_upToDown) {
-			return pose.getTranslation().getX() > m_yPos;
+			return pose.getTranslation().getY() > m_yPos;
 		}
 		else {
-			return pose.getTranslation().getX() < m_yPos;
+			return pose.getTranslation().getY() < m_yPos;
 		}
 	}
 };
