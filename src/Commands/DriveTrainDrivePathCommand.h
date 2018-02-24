@@ -17,6 +17,7 @@
 class DriveTrainDrivePathCommand : public CommandBase {
 private:
 	DriveController* m_driveController;
+	bool m_skip;
 
 protected:
 	Path2D m_path;
@@ -25,12 +26,22 @@ public:
 	DriveTrainDrivePathCommand() {
 		Requires(m_driveTrain.get());
 		m_driveController = m_driveTrain->GetDriveController();
+		m_skip = false;
 	}
 
 	~DriveTrainDrivePathCommand() {
 	}
 
 	void Initialize() {
+		m_skip = false;
+		if(m_path.size() == 0) {
+			CommandGroup* parent = GetGroup();
+			if(parent != NULL) {
+				parent->Cancel();
+				m_skip = true;
+				return;
+			}
+		}
 		m_driveController->EnableController();
 	}
 
@@ -59,8 +70,8 @@ public:
 		Translation2D errorTranslation = lastPoint.getTranslation().translateBy(robotPose.getTranslation().inverse());
 		Rotation2D errorRotation = lastPoint.getRotation().rotateBy(robotPose.getRotation().inverse());
 
-		return (fabs(errorTranslation.norm()) < RobotParameters::kTolerancePos) &&
-			   (fabs(errorRotation.getDegrees()) < RobotParameters::kToleranceHeading);
+		return ((fabs(errorTranslation.norm()) < RobotParameters::kTolerancePos) &&
+			   (fabs(errorRotation.getDegrees()) < RobotParameters::kToleranceHeading)) || m_skip;
 	}
 
 	void End() {
