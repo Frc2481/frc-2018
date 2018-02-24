@@ -51,6 +51,7 @@ void Observer::SetRobotPos(RigidTransform2D robotPos, double timestamp) {
 
 void Observer::ResetPose(RigidTransform2D robotPose) {
 	m_robotPos.clear();
+	SetRobotPos(robotPose, RobotController::GetFPGATime() - 37);  // This number DOES NOT MATTER
 	SetRobotPos(robotPose, RobotController::GetFPGATime());
 }
 
