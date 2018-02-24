@@ -9,6 +9,7 @@
 #include "Subsystems/Intake.h"
 #include "Subsystems/LimeLight.h"
 #include "Subsystems/Arm.h"
+#include "utils/PathManager.h"
 
 /**
  * The base for all commands. All atomic commands should subclass CommandBase.
@@ -28,6 +29,7 @@ public:
 	static std::unique_ptr<Compressor> m_compressor;
 	static std::unique_ptr<OI> oi;
 	static std::unique_ptr<LimeLight> m_limeLight;
+	static std::unique_ptr<PathManager> m_pathManager;
 
 	static bool m_pause;
 };

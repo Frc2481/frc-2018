@@ -12,7 +12,7 @@
 #include "CommandBase.h"
 #include "../PIDController2481.h"
 #include <utils/InterpolatingMap.h>
-#include <Components/PathLoader.h>
+#include <utils/PathLoader.h>
 
 class DriveTrainDrivePathCommand : public CommandBase {
 private:
