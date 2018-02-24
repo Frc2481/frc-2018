@@ -60,7 +60,7 @@ public:
 
 	static constexpr double kpYaw = 0.01;
 	static constexpr double kiYaw = 0.001;
-	static constexpr double kdYaw = 0;
+	static constexpr double kdYaw = 0.01;
 	static constexpr double kfYaw = 0;
 	static constexpr double kIZoneYaw = 5.0;
 
@@ -81,7 +81,7 @@ public:
 
 	static constexpr double k_pivotP = 3;
 	static constexpr double k_pivotI = 0;
-	static constexpr double k_pivotD = 30;
+	static constexpr double k_pivotD = 400;
 	static constexpr double k_pivotF = 2.046; //3
 
 	static constexpr double k_pivotVelocity = 900;
@@ -103,7 +103,7 @@ public:
 	static constexpr double k_rightFrameConstrained = 58; //calculated: 49, changed to be optimal
 	static constexpr double k_leftFrameConstrained = -66; //-55
   
-  static constexpr double cameraOffsetX = 0;
+	static constexpr double cameraOffsetX = 0;
 	static constexpr double cameraOffsetY = 0;
 	static constexpr double cameraOffsetZ = 28.75;
 	static constexpr double cameraOffsetRoll = 0;
