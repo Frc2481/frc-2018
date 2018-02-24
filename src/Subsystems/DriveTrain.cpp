@@ -377,6 +377,8 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("delta timestamp", deltaTimestamp);
 
 	SmartDashboard::PutNumber("gyro angle", GetHeading().getDegrees());
+
+	SmartDashboard::PutBoolean("Paths present", !CommandBase::m_pathManager->HasMissingPath());
 }
 
 // This Method must be called when when all 8 swerve modules are on.

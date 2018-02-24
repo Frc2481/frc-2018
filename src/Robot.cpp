@@ -4,6 +4,7 @@
 #include "WPILib.h"
 #include <Commands/Command.h>
 #include <Commands/DriveTrainFollowPath.h>
+#include <Commands/ReloadNewPathsCommand.h>
 #include <Commands/Scheduler.h>
 #include <TimedRobot.h>
 #include <LiveWindow/LiveWindow.h>
@@ -32,6 +33,7 @@
 #include "Commands/AutoRoutineRightStartRightScaleRightCube1RightSwitchCommandGroup.h"
 #include "Commands/DriveTrainZeroGyroCommand.h"
 #include "Commands/ArmClearStickyFaults.h"
+#include "Commands/TestArmDuringPathCommandGroup.h"
 
 enum Autos {
 	POS_LEFT = 1,
@@ -134,8 +136,8 @@ private:
 		SmartDashboard::PutData("PathLeftStartToLeftSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathLeftStartToLeftSwitch.csv", true));
 		SmartDashboard::PutData("PathRightStartToRightSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathRightStartToRightSwitch.csv", true));
 
-		SmartDashboard::PutData("PathLeftScaleToLeftCube1", new AutoCubeCommandGroup("home/lvuser/PathLeftScaleToLeftCube1.csv"));
-		SmartDashboard::PutData("PathLeftScaleToRightCube1", new AutoCubeCommandGroup("home/lvuser/PathLeftScaleToRightCube1.csv"));
+		SmartDashboard::PutData("PathLeftScaleToLeftCube1", new AutoCubeCommandGroup("/home/lvuser/PathLeftScaleToLeftCube1.csv"));
+		SmartDashboard::PutData("PathLeftScaleToRightCube1", new AutoCubeCommandGroup("/home/lvuser/PathLeftScaleToRightCube1.csv"));
 
 
 		SmartDashboard::PutData("PathLeftCube1ToLeftSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToLeftSwitch.csv", false));
@@ -157,6 +159,8 @@ private:
 		SmartDashboard::PutData(new DriveTrainZeroGyroCommand());
 
 		SmartDashboard::PutData(new ArmClearStickyFaults());
+
+		SmartDashboard::PutData(new ReloadNewPathsCommand());
 	}
 
 	/**
@@ -251,7 +255,6 @@ private:
 		AutoTasks = new std::map<int, Command*>();
 
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv", "/home/lvuser/PathLeftScaleBackUp.csv");
-
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToLeftSwitch.csv", false);
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 
@@ -264,8 +267,8 @@ private:
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
 
 
-		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
-		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv", "/home/lvuser/PathLeftScaleBackUp.csv");
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToRightSwitch.csv", false);
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
 
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
@@ -277,8 +280,8 @@ private:
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
 
 
-		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoCommand();
-		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToRightScale.csv", "/home/lvuser/PathRightScaleBackUp.csv");
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToLeftSwitch.csv", false);
 		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 
 		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE2] = new AutoCommand();
@@ -290,8 +293,8 @@ private:
 		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
 
 
-		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
-		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToRightScale.csv", "/home/lvuser/PathRightScaleBackUp.csv");
+		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToLeftSwitch.csv", false);
 		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
 
 		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
@@ -303,8 +306,8 @@ private:
 		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
 
 
-		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoCommand();
-		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup("/home/lvuser/PathRightStartToLeftScale.csv", "/home/lvuser/PathRightScaleBackUp.csv");
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathRightCube1ToLeftSwitch.csv", false);
 		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 
 		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE2] = new AutoCommand();
@@ -316,8 +319,8 @@ private:
 		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
 
 
-		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
-		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoScaleCommandGroup("/home/lvuser/PathRightStartToLeftScale.csv", "/home/lvuser/PathLeftScaleBackUp.csv");
+		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathRightCube1ToRightSwitch.csv", false);
 		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
 
 		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE2] = new AutoCommand();
@@ -329,8 +332,8 @@ private:
 		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
 
 
-		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoCommand();
-		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup("/home/lvuser/PathRightStartToRightScale.csv", "/home/lvuser/PathRightScaleBackUp.csv");
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathRightCube1ToLeftSwitch.csv", false);
 		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 
 		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE2] = new AutoCommand();
@@ -342,8 +345,8 @@ private:
 		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
 
 
-		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoCommand();
-		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoScaleCommandGroup("/home/lvuser/PathRightStartToRightScale.csv", "/home/lvuser/PathRightScaleBackUp.csv");
+		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathRightCube1ToRightSwitch.csv", false);
 		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
 
 		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE2] = new AutoCommand();

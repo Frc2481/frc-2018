@@ -5,7 +5,7 @@
  *      Author: Team2481
  */
 
-#include <Components/PathLoader.h>
+#include <utils/PathLoader.h>
 #include <sstream>
 
 PathLoader::PathLoader(Path2D& path) : m_path(path) {

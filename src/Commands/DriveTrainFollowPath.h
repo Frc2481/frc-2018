@@ -13,8 +13,7 @@
 class DriveTrainFollowPath : public DriveTrainDrivePathCommand {
 public:
 	DriveTrainFollowPath(std::string path) : DriveTrainDrivePathCommand() {
-		PathLoader loader(m_path);
-		loader.LoadPath(path);
+		m_path = m_pathManager->GetPath(path);
 	}
 };
 
