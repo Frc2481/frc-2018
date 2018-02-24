@@ -207,11 +207,16 @@ OI::OI() {
 	m_mirrorArmPos = new ComboButton(m_rightOpBumper, m_leftOpBumper, true);
 //	m_mirrorArmPos->WhenPressed(new ArmPosMirrorCommand());
 
+
+//climb controller
 	m_innerWinch = new JoystickButton(m_climbStick, XB_A_BUTTON);
 	m_innerWinch->WhileHeld(new DriveTrainNearWinchCommand());
 
 	m_outerWinch = new JoystickButton(m_climbStick, XB_B_BUTTON);
 	m_outerWinch->WhileHeld(new DriveTrainFarWinchCommand());
+
+	m_extensionOpenLoop = new JoystickButton(m_climbStick, XB_RIGHT_BUMPER);
+	m_extensionOpenLoop->WhileHeld(new ArmExtendCommand());
 }
 
 Joystick2481* OI::GetDriverStick() {

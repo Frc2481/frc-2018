@@ -250,8 +250,9 @@ private:
 	void AutoTasksFunction(){
 		AutoTasks = new std::map<int, Command*>();
 
-		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup("PathLeftStartToLeftScale.csv", "/home/lvuser/PathLeftScaleBackUp.csv");
-		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv", "/home/lvuser/PathLeftScaleBackUp.csv");
+
+		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToLeftSwitch.csv", false);
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
 
 		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE2] = new AutoCommand();

@@ -203,21 +203,30 @@ void Arm::Periodic() {
 	Faults pivotFaults;
 	m_pivot->GetFaults(pivotFaults);
 
-//	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
-//	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)));
+	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
+	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)));
 	SmartDashboard::PutNumber("extension master current", m_extenderMaster->GetOutputCurrent());
 	SmartDashboard::PutNumber("extension slave current", m_extenderSlave->GetOutputCurrent());
-//	SmartDashboard::PutNumber("extension error", m_extenderMaster->GetClosedLoopError(0));
-//	SmartDashboard::PutNumber("active trajectory position extender", m_extenderMaster->GetActiveTrajectoryPosition());
-//	SmartDashboard::PutNumber("active trajectory velocity extender", m_extenderMaster->GetActiveTrajectoryVelocity());
-//	SmartDashboard::PutNumber("applied motor output extender", m_extenderMaster->GetMotorOutputVoltage());
+	SmartDashboard::PutNumber("extension error", m_extenderMaster->GetClosedLoopError(0));
+
+	if(m_extenderMaster->GetControlMode() == ControlMode::MotionMagic) {
+		SmartDashboard::PutNumber("active trajectory position extender",
+				ConvertEncTicksToInches(m_extenderMaster->GetActiveTrajectoryPosition()));
+		SmartDashboard::PutNumber("active trajectory velocity extender", m_extenderMaster->GetActiveTrajectoryVelocity());
+	}
+
+	SmartDashboard::PutNumber("applied motor output extender", m_extenderMaster->GetMotorOutputVoltage());
 //
 	SmartDashboard::PutNumber("pivot speed", m_pivot->GetSelectedSensorVelocity(0));
 	SmartDashboard::PutNumber("pivot angle", GetPivotAngle().getDegrees());
+	SmartDashboard::PutNumber("pivot ticks", m_pivot->GetSelectedSensorPosition(0));
 	SmartDashboard::PutNumber("pivot current", m_pivot->GetOutputCurrent());
 	SmartDashboard::PutNumber("pivot error", m_pivot->GetClosedLoopError(0));
-	SmartDashboard::PutNumber("active trajectory position pivot", m_pivot->GetActiveTrajectoryPosition());
-	SmartDashboard::PutNumber("active trajectory velocity pivot", m_pivot->GetActiveTrajectoryVelocity());
+
+	if(m_pivot->GetControlMode() == ControlMode::MotionMagic) {
+		SmartDashboard::PutNumber("active trajectory position pivot", m_pivot->GetActiveTrajectoryPosition());
+		SmartDashboard::PutNumber("active trajectory velocity pivot", m_pivot->GetActiveTrajectoryVelocity());
+	}
 	SmartDashboard::PutNumber("applied motor output pivot", m_pivot->GetMotorOutputVoltage());
 
 	SmartDashboard::PutNumber("Arm Extension Position", GetExtensionPosition());

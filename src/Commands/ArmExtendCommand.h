@@ -19,7 +19,7 @@ public:
 	virtual ~ArmExtendCommand(){}
 
 	void Initialize() {
-		m_arm->SetExtensionOpenLoop(.4);
+		m_arm->SetExtensionOpenLoop(1);
 	}
 	bool IsFinished() {
 		return false;
