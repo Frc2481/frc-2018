@@ -43,7 +43,10 @@ public:
 		}
 		return m_debounce > 5;
 	}
-	void End() {}
+	void End() {
+		SmartDashboard::PutNumber("arm movement time", TimeSinceInitialized());
+	}
+
 	void Interrupted() {
 		End();
 	}
