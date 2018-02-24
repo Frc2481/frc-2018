@@ -11,6 +11,8 @@
 #include "Commands/CommandGroup.h"
 #include "ArmBaseCommand.h"
 
+//doesn't work
+
 //use at start of all autos
 
 class ArmStowAtEndOfAutoCommandGroup : public CommandGroup{
