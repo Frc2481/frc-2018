@@ -85,6 +85,7 @@ public:
 
 	Button* m_outerWinch;
 	Button* m_innerWinch;
+	Button* m_extensionOpenLoop;
 };
 
 #endif  // OI_H
