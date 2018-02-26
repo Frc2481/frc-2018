@@ -39,15 +39,15 @@ public:
 	static RigidTransform2D fromVelocity(Delta delta);
 
 	RigidTransform2D transformBy(const RigidTransform2D &other);
-	Translation2D getTranslation()const;
-	Rotation2D getRotation()const;
+	Translation2D& getTranslation();
+	Rotation2D& getRotation();
 
 	void setTranslation(const Translation2D &translation);
 	void setRotation(const Rotation2D &rotation);
 
 	RigidTransform2D inverse();
 
-	virtual RigidTransform2D interpolate(const RigidTransform2D &other, double x) const ;
+	virtual RigidTransform2D interpolate(const RigidTransform2D &other, double x) const;
 
 private:
 	Translation2D m_translation;

@@ -55,12 +55,12 @@ RigidTransform2D RigidTransform2D::fromVelocity(Delta delta) {
 		 Rotation2D(cosTheta, sinTheta, false));
 }
 
-Translation2D RigidTransform2D::getTranslation() const
+Translation2D& RigidTransform2D::getTranslation()
 {
 	return m_translation;
 }
 
-Rotation2D RigidTransform2D::getRotation()const
+Rotation2D& RigidTransform2D::getRotation()
 {
 	return m_rotation;
 }
@@ -75,8 +75,8 @@ void RigidTransform2D::setRotation(const Rotation2D &rotation) {
 
 RigidTransform2D RigidTransform2D::transformBy(const RigidTransform2D &other)
 {
-	return RigidTransform2D(m_translation.translateBy(other.getTranslation().rotateBy(m_rotation)),
-		m_rotation.rotateBy(other.getRotation()));
+	return RigidTransform2D(m_translation.translateBy(other.m_translation.rotateBy(m_rotation)),
+		m_rotation.rotateBy(other.m_rotation));
 }
 
 RigidTransform2D RigidTransform2D::inverse() {
@@ -91,7 +91,7 @@ RigidTransform2D RigidTransform2D::interpolate(const RigidTransform2D &other, do
 	else if (x >= 1) {
 		return RigidTransform2D(other);
 	}
-	return RigidTransform2D(m_translation.interpolate(other.getTranslation(), x), m_rotation.interpolate(other.getRotation(), x));
+	return RigidTransform2D(m_translation.interpolate(other.m_translation, x), m_rotation.interpolate(other.m_rotation, x));
 }
 
 double RigidTransform2D::Delta::GetX() {

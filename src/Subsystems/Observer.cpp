@@ -11,7 +11,7 @@
 #include <algorithm>
 #include "WPILib.h"
 
-Observer::Observer() {
+Observer::Observer() : m_robotPos(5){
 
 }
 
@@ -19,9 +19,9 @@ Observer::~Observer() {
 	// TODO Auto-generated destructor stub
 }
 
-void Observer::UpdateRobotPoseObservation(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
-	RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity,
-	Rotation2D brAngle, RigidTransform2D::Delta brVelocity, double timestamp, Rotation2D deltaGyroYaw) {
+void Observer::UpdateRobotPoseObservation(Rotation2D& flAngle, RigidTransform2D::Delta& flVelocity, Rotation2D& frAngle,
+	RigidTransform2D::Delta& frVelocity, Rotation2D& blAngle, RigidTransform2D::Delta& blVelocity,
+	Rotation2D& brAngle, RigidTransform2D::Delta& brVelocity, double timestamp, Rotation2D& deltaGyroYaw) {
 	RigidTransform2D::Delta deltaRobotPos = Kinematics::SwerveForwardKinematics(flAngle, flVelocity, frAngle, frVelocity, blAngle, blVelocity, brAngle, brVelocity);
 
 	RigidTransform2D oldRobotPos = GetLastRobotPose();
