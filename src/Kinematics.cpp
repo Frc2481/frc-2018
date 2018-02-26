@@ -60,8 +60,8 @@ void Kinematics::SwerveInverseKinematics(Translation2D &velocity, double yawRate
 	}
 }
 
-RigidTransform2D::Delta Kinematics::SwerveForwardKinematics(Rotation2D flAngle, RigidTransform2D::Delta flVelocity, Rotation2D frAngle,
-		RigidTransform2D::Delta frVelocity, Rotation2D blAngle, RigidTransform2D::Delta blVelocity, Rotation2D brAngle, RigidTransform2D::Delta brVelocity) {
+RigidTransform2D::Delta Kinematics::SwerveForwardKinematics(Rotation2D& flAngle, RigidTransform2D::Delta& flVelocity, Rotation2D& frAngle,
+		RigidTransform2D::Delta& frVelocity, Rotation2D& blAngle, RigidTransform2D::Delta& blVelocity, Rotation2D& brAngle, RigidTransform2D::Delta& brVelocity) {
 	// +x = robot right
 	// +y = robot forward
 	// +yaw = CCW, zero is robot forward
