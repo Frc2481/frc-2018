@@ -15,7 +15,6 @@ GreyhillEncoder::GreyhillEncoder(TalonSRX* talon, const std::string& name, int t
 	: m_talon(talon), m_name(name), m_ticksPerRev(ticksPerRev), m_inchesPerWheelRev(inchesPerWheelRev),
 	  m_encoderRevPerWheelRevLowGear(encoderRevPerWheelRevLowGear), m_encoderRevPerWheelRevHighGear(encoderRevPerWheelRevHighGear) {
 
-	m_talon->GetSelectedSensorPosition(QuadEncoder);
 	m_talon->SetStatusFramePeriod(Status_2_Feedback0, 10, 0);
 }
 
@@ -38,8 +37,14 @@ Translation2D GreyhillEncoder::GetDistance() const {
 	return GetRawDistance().translateBy(m_offset.inverse());
 }
 
-int GreyhillEncoder::GetEncoderTicks() const {
-	return m_talon->GetSelectedSensorPosition(0);
+int GreyhillEncoder::GetEncoderTicks(bool cached) const {
+	int ticks = m_cachedTicks;
+
+	if (cached == false) {
+		ticks = m_talon->GetSelectedSensorPosition(0);
+	}
+
+	return ticks;
 }
 
 void GreyhillEncoder::SetEncoderTicks(int ticks, int timeOut) {
@@ -92,4 +97,8 @@ double GreyhillEncoder::ConvertEncoderTicksToEncoderRotations(int ticks) const {
 
 void GreyhillEncoder::ResetDistance() {
 	m_offset = GetRawDistance();
+}
+
+void GreyhillEncoder::Periodic() {
+	m_cachedTicks = GetEncoderTicks(false);
 }

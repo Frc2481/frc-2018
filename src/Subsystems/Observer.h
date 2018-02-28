@@ -34,8 +34,8 @@ public:
 private:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_robotPos;
 	Rotation2D m_oldGyroYaw;
-	const double kFwdKinematicsWeight = 0.1;
-	const double kGyroWeight = 0.9;
+	const double kFwdKinematicsWeight = 0;
+	const double kGyroWeight = 1;
 };
 
 #endif /* SRC_SUBSYSTEMS_OBSERVER_H_ */

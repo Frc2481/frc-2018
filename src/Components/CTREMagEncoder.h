@@ -19,13 +19,16 @@ private:
 	std::string m_name;
 	std::string m_calibrationKey;
 	Rotation2D m_offset;
+	Rotation2D m_cachedAngle;
+	int m_cachedTicks;
 public:
+	void Periodic();
 	CTREMagEncoder(TalonSRX *talon, const std::string &name);
 	virtual ~CTREMagEncoder();
 	Rotation2D GetRawAngle() const;
-	Rotation2D GetAngle() const;
+	const Rotation2D& GetAngle(bool cached=true);
 	int GetRotations() const;
-	int GetEncoderTicks(bool overflow = false) const;
+	int GetEncoderTicks(bool overflow = false, bool cached = true) const;
 	void Calibrate();
 	int ConvertAngleToSetpoint(Rotation2D targetAngle);
 	int ConvertAngleToEncoderTicks(Rotation2D angle);

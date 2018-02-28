@@ -23,6 +23,7 @@ class GreyhillEncoder {
 	double m_inchesPerWheelRev;
 	double m_encoderRevPerWheelRevLowGear;
 	double m_encoderRevPerWheelRevHighGear;
+	int m_cachedTicks;
 
 public:
 	GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerEncoderRev, double inchesPerWheelRev,
@@ -31,7 +32,7 @@ public:
 	Translation2D GetRawDistance() const;
 	Translation2D GetDistance() const;
 	double GetEncoderSpeed() const;
-	int GetEncoderTicks() const;
+	int GetEncoderTicks(bool cached = true) const;
 	double ConvertEncoderRotationsToWheelRotations(double rotations) const;
 	double ConvertWheelRotationsToEncoderRotations(double rotations) const;
 	double ConvertWheelRotationsToDistance(double rotations) const;
@@ -40,6 +41,7 @@ public:
 	double ConvertEncoderTicksToEncoderRotations(int ticks) const;
 	void SetEncoderTicks(int ticks, int timeOut = 0);
 	void ResetDistance();
+	void Periodic();
 };
 
 #endif /* SRC_GREYHILLENCODER_H_ */

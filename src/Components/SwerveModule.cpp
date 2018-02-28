@@ -191,3 +191,8 @@ double SwerveModule::GetSteerCurrent() const {
 double SwerveModule::GetDriveCurrent() const {
 	return m_driveMotor->GetOutputCurrent();
 }
+
+void SwerveModule::Periodic() {
+	m_steerEncoder->Periodic();
+	m_driveEncoder->Periodic();
+}

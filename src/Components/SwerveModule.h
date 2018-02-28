@@ -59,6 +59,7 @@ public:
 	GreyhillEncoder* GetDriveEncoder();
 	double GetSteerCurrent() const;
 	double GetDriveCurrent() const;
+	void Periodic();
 };
 
 #endif /* SRC_SWERVEMODULE_H_ */

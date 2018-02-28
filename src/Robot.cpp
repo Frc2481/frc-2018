@@ -81,6 +81,7 @@ private:
 	std::map<int, Command*> *AutoTasks;
 
 	void RobotInit() {
+		SetPeriod(.015); //100hz
 		CommandBase::init();
 		frc::SmartDashboard::PutData("Auto Modes", &chooser);
 
