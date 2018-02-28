@@ -61,13 +61,13 @@ double ArmExtension::MinExtension(Rotation2D &pivotAngle) {
 }
 
 double ArmExtension::Constrain(double extension, Rotation2D pivotAngle) {
-	SmartDashboard::PutNumber("extension constrain1", extension);
+//	SmartDashboard::PutNumber("extension constrain1", extension);
 	extension = std::max(MinExtension(pivotAngle), extension);
 	extension = std::min(MaxExtension(pivotAngle), extension);
 	extension = std::max(extension, 0.0); //temp testing
-	SmartDashboard::PutNumber("extension constrain2", extension);
-	SmartDashboard::PutNumber("min extension", MinExtension(pivotAngle));
-	SmartDashboard::PutNumber("max extension", MaxExtension(pivotAngle));
-	SmartDashboard::PutNumber("constrained pivot angle", pivotAngle.getDegrees());
+//	SmartDashboard::PutNumber("extension constrain2", extension);
+//	SmartDashboard::PutNumber("min extension", MinExtension(pivotAngle));
+//	SmartDashboard::PutNumber("max extension", MaxExtension(pivotAngle));
+//	SmartDashboard::PutNumber("constrained pivot angle", pivotAngle.getDegrees());
 	return extension;
 }

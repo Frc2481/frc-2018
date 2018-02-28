@@ -13,7 +13,7 @@
 class ReloadNewPathsCommand : public InstantCommand {
 public:
 	ReloadNewPathsCommand() : InstantCommand("ReloadNewPathsCommand") {
-
+		SetRunWhenDisabled(true);
 	}
 	virtual ~ReloadNewPathsCommand(){}
 

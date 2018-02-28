@@ -8,23 +8,22 @@
 #ifndef SRC_COMMANDS_AUTOSCALECOMMANDGROUP_H_
 #define SRC_COMMANDS_AUTOSCALECOMMANDGROUP_H_
 
+#include <Commands/DriveTrainFollowPath.h>
 #include "CommandBase.h"
 #include "Commands/IntakeReleaseCubeCommandGroup.h"
 #include "Commands/ObserverResetPosCommand.h"
 #include "Commands/ArmExtentionMotionScaling.h"
 #include "Commands/ArmBaseCommand.h"
-#include "Commands/DriveTrainFollowPath.h"
 
 class AutoScaleCommandGroup : public CommandGroup{
 public:
-	AutoScaleCommandGroup(std::string path, std::string pathBackUp) : CommandGroup("AutoScaleCommandGroup"){
+	AutoScaleCommandGroup(std::string path) : CommandGroup("AutoScaleCommandGroup"){
 		AddSequential(new ArmExtentionMotionScaling(0.3));
-		AddParallel(new ArmToHighScaleFront(""));
+		AddParallel(new ArmToMidScaleFront(""));
 		AddSequential(new DriveTrainFollowPath(path));
 		AddSequential(new IntakeReleaseCubeCommandGroup(0.5));
-		AddSequential(new DriveTrainFollowPath(pathBackUp));
 		AddSequential(new ArmExtentionMotionScaling(1.0));
-		AddSequential(new ArmToStow(""));
+//		AddSequential(new ArmToStow(""));
 	}
 };
 

@@ -52,15 +52,15 @@ public:
 	static constexpr double k_steerI = 0;
 	static constexpr double k_steerD = 40;
 
-	static constexpr double kpPos = 0.03; //0.01; //0.007;
+	static constexpr double kpPos = 0.02; //0.01; //0.007;
 	static constexpr double kiPos = 0;
 	static constexpr double kdPos = 0;
 	static constexpr double kfPos = 0; //0.007;
 	static constexpr double kIZonePos = 0;
 
-	static constexpr double kpYaw = 0.01;
-	static constexpr double kiYaw = 0.001;
-	static constexpr double kdYaw = 0.01;
+	static constexpr double kpYaw = 0.02;
+	static constexpr double kiYaw = 0.0;
+	static constexpr double kdYaw = 0;
 	static constexpr double kfYaw = 0;
 	static constexpr double kIZoneYaw = 5.0;
 

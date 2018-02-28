@@ -20,6 +20,7 @@ public:
 	}
 
 	void Initialize() {
+		CommandBase::m_driveTrain->ZeroGyro();
 		CommandBase::m_driveTrain->ResetRobotPose(m_pose);
 	}
 };
