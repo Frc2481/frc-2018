@@ -340,21 +340,21 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
 	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
 
-	SmartDashboard::PutNumber("FL steer encoder connected", m_flWheel->GetSteerEncoder()->IsConnected());
-	SmartDashboard::PutNumber("FR steer encoder connected", m_frWheel->GetSteerEncoder()->IsConnected());
-	SmartDashboard::PutNumber("BL steer encoder connected", m_blWheel->GetSteerEncoder()->IsConnected());
-	SmartDashboard::PutNumber("BR steer encoder connected", m_brWheel->GetSteerEncoder()->IsConnected());
+//	SmartDashboard::PutNumber("FL steer encoder connected", m_flWheel->GetSteerEncoder()->IsConnected());
+//	SmartDashboard::PutNumber("FR steer encoder connected", m_frWheel->GetSteerEncoder()->IsConnected());
+//	SmartDashboard::PutNumber("BL steer encoder connected", m_blWheel->GetSteerEncoder()->IsConnected());
+//	SmartDashboard::PutNumber("BR steer encoder connected", m_brWheel->GetSteerEncoder()->IsConnected());
 
 //	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
 //
-//	SmartDashboard::PutNumber("FL distance", m_flWheel->GetDistance().getX());
-//	SmartDashboard::PutNumber("FR distance", m_frWheel->GetDistance().getX());
-//	SmartDashboard::PutNumber("BL distance", m_blWheel->GetDistance().getX());
-//	SmartDashboard::PutNumber("BR distance", m_brWheel->GetDistance().getX());
-//
+//	SmartDashboard::PutNumber("FL distance", fabs(m_flWheel->GetDistance().getX()));
+//	SmartDashboard::PutNumber("FR distance", fabs(m_frWheel->GetDistance().getX()));
+//	SmartDashboard::PutNumber("BL distance", fabs(m_blWheel->GetDistance().getX()));
+//	SmartDashboard::PutNumber("BR distance", fabs(m_brWheel->GetDistance().getX()));
+////
 //	SmartDashboard::PutNumber("FL Speed", m_flWheel->GetSpeed());
 //	SmartDashboard::PutNumber("FR Speed", m_frWheel->GetSpeed());
 //	SmartDashboard::PutNumber("BL Speed", m_blWheel->GetSpeed());
@@ -370,15 +370,21 @@ void DriveTrain::Periodic() {
 //	SmartDashboard::PutNumber("BL encTicks", m_blWheel->GetDriveEncoder()->GetEncoderTicks());
 //	SmartDashboard::PutNumber("BR encTicks", m_brWheel->GetDriveEncoder()->GetEncoderTicks());
 
+//	SmartDashboard::PutNumber("FL encoder delta", fabs(deltaFlVelocity.GetDx()));
+//	SmartDashboard::PutNumber("FR encoder delta", fabs(deltaFrVelocity.GetDx()));
+//	SmartDashboard::PutNumber("BL encoder delta", fabs(deltaBlVelocity.GetDx()));
+//	SmartDashboard::PutNumber("BR encoder delta", fabs(deltaBrVelocity.GetDx()));
+//	SmartDashboard::PutNumber("delta time", deltaTimestamp);
 
 //	SmartDashboard::PutNumber("isShifted", IsShifted());
 
-	SmartDashboard::PutNumber("timestamp", timeStamp);
-	SmartDashboard::PutNumber("delta timestamp", deltaTimestamp);
+//	SmartDashboard::PutNumber("timestamp", timeStamp);
+//	SmartDashboard::PutNumber("delta timestamp", deltaTimestamp);
 
 	SmartDashboard::PutNumber("gyro angle", GetHeading().getDegrees());
 
 	SmartDashboard::PutBoolean("Paths present", !CommandBase::m_pathManager->HasMissingPath());
+
 }
 
 // This Method must be called when when all 8 swerve modules are on.

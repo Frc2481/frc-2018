@@ -15,24 +15,31 @@ class ArmRetractWhenExtendedCommand : public CommandBase {
 private:
 	bool m_skip;
 	int m_desiredPivot;
+	int m_extensionThreshold;
 public:
 	ArmRetractWhenExtendedCommand(int desiredPivot) : CommandBase("ArmRetractWhenExtendedCommand") {
 		m_desiredPivot = desiredPivot;
-		m_skip = false;
+
+		m_extensionThreshold = 20;
 	}
 	virtual ~ArmRetractWhenExtendedCommand(){}
 
 	void Initialize() {
 		//front high zone
+		m_skip = false;
+		m_extensionThreshold = 20;
+
+		double currentAngle = m_arm->GetPivotAngle().getDegrees();
+
 		//skip retract arm if desired & current pivot extension in same zone
-		if (m_arm->GetPivotAngle().getDegrees() <  39 &&
-			m_arm->GetPivotAngle().getDegrees() >  0 &&
+		if (currentAngle <  39 &&
+			currentAngle >  0 &&
 			m_desiredPivot < 39 &&
 			m_desiredPivot > 0) {
 				m_skip = true;
 		}
-		else if (m_arm->GetPivotAngle().getDegrees() >  -39 &&
-				 m_arm->GetPivotAngle().getDegrees() <  0 &&
+		else if (currentAngle >  -39 &&
+				 currentAngle <  0 &&
 				 m_desiredPivot > -39 &&
 				 m_desiredPivot < 0) {
 				m_skip = true;
@@ -40,10 +47,18 @@ public:
 		else {
 			m_arm->SetDesiredExtension(0);
 		}
+
+		//for long arm movements, don't require arm full retract when pivot
+		if(currentAngle > -90 && currentAngle < 0 && m_desiredPivot > 90 && m_desiredPivot < 180) {
+			m_extensionThreshold = 30;
+		}
+		else if(currentAngle < 90 && currentAngle > 0 && m_desiredPivot < -90 && m_desiredPivot > -180) {
+			m_extensionThreshold = 30;
+		}
 	}
 
 	bool IsFinished() {
-		return (m_arm->GetExtensionPosition() < 10) || (m_skip == true);
+		return (m_arm->GetExtensionPosition() < m_extensionThreshold) || (m_skip == true);
 	}
 };
 

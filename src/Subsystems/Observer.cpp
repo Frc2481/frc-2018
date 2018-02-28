@@ -35,10 +35,10 @@ void Observer::UpdateRobotPoseObservation(Rotation2D& flAngle, RigidTransform2D:
 	RigidTransform2D robotPos(newRobotTranslation, newRobotAngle);
 	SetRobotPos(robotPos, timestamp);
 
-	SmartDashboard::PutNumber("delta robot angle gyro", deltaGyroYaw.getDegrees());
-	SmartDashboard::PutNumber("delta robot angle kinematics", deltaRobotPos.GetTheta() * 180 / M_PI);
-	SmartDashboard::PutNumber("delta robot x kinematics", deltaRobotPos.GetX());
-	SmartDashboard::PutNumber("delta robot y kinematics", deltaRobotPos.GetY());
+//	SmartDashboard::PutNumber("delta robot angle gyro", deltaGyroYaw.getDegrees());
+//	SmartDashboard::PutNumber("delta robot angle kinematics", deltaRobotPos.GetTheta() * 180 / M_PI);
+//	SmartDashboard::PutNumber("delta robot x kinematics", deltaRobotPos.GetX());
+//	SmartDashboard::PutNumber("delta robot y kinematics", deltaRobotPos.GetY());
 }
 
 RigidTransform2D Observer::GetRobotPos(double timestamp) {

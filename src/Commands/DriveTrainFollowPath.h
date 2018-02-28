@@ -63,8 +63,6 @@ public:
 		SmartDashboard::PutNumber("PathY",targetPos.getTranslation().getY());
 		SmartDashboard::PutNumber("PathYaw",targetPos.getRotation().getDegrees());
 
-		printf("%f %f\n", TimeSinceInitialized(), targetPos.getTranslation().getY());
-
 		RigidTransform2D driveSignal = m_driveController->GetDriveControlSignal();
 		m_driveTrain->Drive(driveSignal.getTranslation().getX(),
 							driveSignal.getTranslation().getY(),
@@ -83,7 +81,9 @@ public:
 		Rotation2D errorRotation = lastPoint.getRotation().rotateBy(robotPose.getRotation().inverse());
 
 		return ((fabs(errorTranslation.norm()) < RobotParameters::kTolerancePos) &&
-			   (fabs(errorRotation.getDegrees()) < RobotParameters::kToleranceHeading)) || m_skip;
+			      (fabs(errorRotation.getDegrees()) < RobotParameters::kToleranceHeading)) ||
+				    (m_path.rbegin()->first.m_value + 2 < TimeSinceInitialized()) ||
+				    m_skip;
 	}
 
 	void End() {

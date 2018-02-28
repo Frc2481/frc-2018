@@ -35,7 +35,7 @@ public:
 		SmartDashboard::PutNumber("get allowed extension pos", m_arm->GetAllowedExtensionPos());
 	}
 	bool IsFinished() {
-		if(CommandBase::m_arm->IsPivotOnTarget()) {
+		if(CommandBase::m_arm->IsPivotOnTarget() && CommandBase::m_arm->IsExtensionOnTarget()) {
 			m_debounce++;
 		}
 		else {
@@ -73,8 +73,8 @@ typedef ArmBaseCommandGroup<1, -101> ArmToIntake2Back;
 typedef ArmBaseCommandGroup<0, 83> ArmToIntake3Front;
 typedef ArmBaseCommandGroup<0, -83> ArmToIntake3Back;
 
-typedef ArmBaseCommandGroup<0, 91> ArmToSwitchFront;
-typedef ArmBaseCommandGroup<0, -86> ArmToSwitchBack;
+typedef ArmBaseCommandGroup<0, 71> ArmToSwitchFront;
+typedef ArmBaseCommandGroup<0, -66> ArmToSwitchBack;
 
 typedef ArmBaseCommandGroup<0, 66> ArmToSwitch2Front;
 typedef ArmBaseCommandGroup<0, -66> ArmToSwitch2Back;

@@ -21,14 +21,14 @@ public:
 //		AddSequential(new IntakeClampCloseCommand());
 //		AddSequential(new ArmToStow(""));
 //		AddSequential(task1); //fix
-		AddSequential(new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv", "/home/lvuser/PathLeftScaleBackUp.csv"));
+		AddSequential(new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv"));
 
 		AddSequential(new DriveTrainFollowPath("home/lvuser/PathLeftScaleToLeftCube1.csv"));
 //		AddSequential(new ArmToIntakeBack(""));
 //		AddSequential(new IntakeAcquireCubeCommandGroup());
 //		AddSequential(task2); //fix
 //
-		AddSequential(new DriveTrainFollowPath("home/lvuser/PathLeftCube1ToLeftScale.csv"));
+//		AddSequential(new DriveTrainFollowPath("home/lvuser/PathLeftCube1ToLeftScale.csv"));
 //		AddSequential(new ArmToIntakeBack(""));
 //		AddSequential(new IntakeAcquireCubeCommandGroup());
 //		AddSequential(task3); //fix

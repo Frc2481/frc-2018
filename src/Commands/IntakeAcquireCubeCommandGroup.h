@@ -20,7 +20,7 @@ public:
 		AddSequential(new IntakeHasCubeCommand());
 		AddSequential(new IntakeRollerOffCommand());
 		AddSequential(new IntakeClampCloseCommand());
-		AddSequential(new ArmToStow(""));
+//		AddSequential(new ArmToStow(""));
 	}
 };
 #endif  // IntakeAcquireCubeCommandGroup_H

@@ -47,7 +47,7 @@ void GreyhillEncoder::SetEncoderTicks(int ticks, int timeOut) {
 }
 
 double GreyhillEncoder::GetEncoderSpeed() const {
-	return m_talon->GetSelectedSensorVelocity(0);
+	return ConvertWheelRotationsToDistance(ConvertEncoderRotationsToWheelRotations(ConvertEncoderTicksToEncoderRotations(m_talon->GetSelectedSensorVelocity(0)))) * 10;
 }
 
 double GreyhillEncoder::ConvertEncoderRotationsToWheelRotations(double rotations) const {
