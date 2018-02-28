@@ -81,9 +81,9 @@ public:
 		Rotation2D errorRotation = lastPoint.getRotation().rotateBy(robotPose.getRotation().inverse());
 
 		return ((fabs(errorTranslation.norm()) < RobotParameters::kTolerancePos) &&
-			   (fabs(errorRotation.getDegrees()) < RobotParameters::kToleranceHeading)) ||
-				(m_path.rbegin()->first.m_value + 2 < TimeSinceInitialized()) ||
-				m_skip;
+			      (fabs(errorRotation.getDegrees()) < RobotParameters::kToleranceHeading)) ||
+				    (m_path.rbegin()->first.m_value + 2 < TimeSinceInitialized()) ||
+				    m_skip;
 	}
 
 	void End() {

@@ -40,6 +40,7 @@ void PathManager::ReloadPaths() {
 	m_missingPath = false;
 	for(auto pathPair : m_paths) {
 		Path2D& path = pathPair.second;
+		path.clear();
 		PathLoader pathLoader(path);
 		pathLoader.LoadPath(pathPair.first);
 
