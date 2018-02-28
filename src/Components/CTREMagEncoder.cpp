@@ -32,16 +32,23 @@ Rotation2D CTREMagEncoder::GetRawAngle() const {
 
 }
 
-Rotation2D CTREMagEncoder::GetAngle() const {
-	return m_offset.rotateBy(GetRawAngle());
+const Rotation2D& CTREMagEncoder::GetAngle(bool cached) {
+	if (!cached) {
+		m_cachedAngle = m_offset.rotateBy(GetRawAngle());
+	}
+	return m_cachedAngle;
 }
 
 int CTREMagEncoder::GetRotations() const {
 	return GetEncoderTicks(true) / 4096;
 }
 
-int CTREMagEncoder::GetEncoderTicks(bool overflow) const {
-	int ticks = m_talon->GetSelectedSensorPosition(0);
+int CTREMagEncoder::GetEncoderTicks(bool overflow, bool cached) const {
+	int ticks = m_cachedTicks;
+
+	if (cached == false) {
+		ticks = m_talon->GetSelectedSensorPosition(0);
+	}
 
 	if (!overflow) {
 		ticks &= 0xFFF;
@@ -89,4 +96,9 @@ bool CTREMagEncoder::IsConnected() {
 
 bool CTREMagEncoder::IsCalibrated() {
 	return fabs(m_offset.getDegrees()) > 0;
+}
+
+void CTREMagEncoder::Periodic() {
+	m_cachedTicks = GetEncoderTicks(true, false);
+	m_cachedAngle = GetAngle(false);
 }

@@ -257,6 +257,12 @@ void DriveTrain::ResetRobotPose(RigidTransform2D pose) {
 }
 
 void DriveTrain::Periodic() {
+
+	m_flWheel->Periodic();
+	m_frWheel->Periodic();
+	m_blWheel->Periodic();
+	m_brWheel->Periodic();
+
 	if(m_first) {
 		m_first = false;
 		m_oldFlAngle = m_flWheel->GetAngle();
