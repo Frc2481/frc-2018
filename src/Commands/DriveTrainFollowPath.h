@@ -38,14 +38,15 @@ public:
 
 	void Initialize() {
 		m_skip = false;
-		if(m_path.size() == 0) {
-			CommandGroup* parent = GetGroup();
-			if(parent != NULL) {
-				parent->Cancel();
-				m_skip = true;
-				return;
-			}
-		}
+//		if(m_path.size() == 0) {
+//			CommandGroup* parent = GetGroup();
+//			if(parent != NULL) {
+//				printf("skip follow path \n");
+//				parent->Cancel();
+//				m_skip = true;
+//				return;
+//			}
+//		}
 		m_driveController->EnableController();
 
 		printf("running path start pos x", m_path.begin()->second.getTranslation().getX());

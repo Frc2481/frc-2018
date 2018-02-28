@@ -137,14 +137,14 @@ private:
 		SmartDashboard::PutData("PathLeftStartToRightScale", new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToRightScale.csv"));
 		SmartDashboard::PutData("PathRightStartToLeftScale", new AutoScaleCommandGroup("/home/lvuser/PathRightStartToLeftScale.csv"));
 
-		SmartDashboard::PutData("PathLeftStartToLeftSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathLeftStartToSwitch.csv", true, -1, 160));
+		SmartDashboard::PutData("PathLeftStartToLeftSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathLeftStartToLeftSwitch.csv", true, -1, 160));
 		SmartDashboard::PutData("PathRightStartToRightSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathRightStartToRightSwitch.csv", true));
 
 		SmartDashboard::PutData("PathLeftScaleToLeftCube1", new AutoCubeCommandGroup("/home/lvuser/PathLeftScaleToLeftCube1.csv", -1, -1));
 		SmartDashboard::PutData("PathLeftScaleToRightCube1", new AutoCubeCommandGroup("/home/lvuser/PathLeftScaleToRightCube1.csv", -1, -1));
 
 
-		SmartDashboard::PutData("PathLeftCube1ToLeftSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToSwitch.csv", false));
+		SmartDashboard::PutData("PathLeftCube1ToSwitch", new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToSwitch.csv", false));
 
 
 		SmartDashboard::PutData(new AutoRoutineLeftStartLeftScaleLeftCube1SwitchCommandGroup);
@@ -174,6 +174,11 @@ private:
 
 
 		SmartDashboard::PutData("log observer", new LogObserverCommand());
+
+		SmartDashboard::PutData(Scheduler::GetInstance());
+		SmartDashboard::PutData(CommandBase::m_arm.get());
+		SmartDashboard::PutData(CommandBase::m_driveTrain.get());
+		SmartDashboard::PutData(CommandBase::m_intake.get());
 	}
 
 	/**

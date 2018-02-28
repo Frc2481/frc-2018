@@ -25,6 +25,7 @@
 
 #include "Commands/DriveTrainNearWinchCommand.h"
 #include "Commands/DriveTrainFarWinchCommand.h"
+#include "Commands/ArmToIntakePos3Command.h"
 
 OI::OI() {
 	// Process operator interface input here.
@@ -59,9 +60,6 @@ OI::OI() {
 
 
 //driver
-//	m_shifterButton = new JoystickButton(m_driverStick, XB_RIGHT_BUMPER);
-//	m_shifterButton->WhileHeld(new DriveTrainShiftCommand());
-
 	m_shifterButton = new JoystickButton(m_driverStick, XB_RIGHT_BUMPER);
 	m_shifterButton->WhileHeld(new DriveTrainShiftCommand());
 
@@ -76,38 +74,14 @@ OI::OI() {
 //	m_climberButton->ToggleWhenPressed(new ClimberExtendCommand()); //figure out to toggle
 //	m_climberButton->ToggleWhenPressed(new CLimberRetractCommand()); //figure out to toggle
 
-
-
-
-//	m_armToIntakeFront = new JoystickButton(m_driverStick, XB_A_BUTTON);
-//	m_armToIntakeFront->WhenPressed(new ArmToIntakeFront(""));
-//
-//	m_armToIntakeBack = new JoystickButton(m_driverStick, XB_X_BUTTON);
-//	m_armToIntakeBack->WhenPressed(new ArmToIntakeBack(""));
-//
-//	m_releaseCubeButton = new JoystickButton(m_driverStick, XB_B_BUTTON);
-//	m_releaseCubeButton->WhileHeld(new IntakeReleaseCubeCommandGroup());
-//	m_releaseCubeButton->WhenReleased(new IntakeRollerOffCommand());
-//
-//	m_stowButton = new JoystickButton(m_driverStick, XB_Y_BUTTON);
-//	m_stowButton->WhenPressed(new ArmToStow(""));
-
-
-
-//	m_armToIntakeFront = new ComboButton(m_aDriverButton, m_leftDriverBumper, false);
-//	m_armToIntakeFront->WhenPressed(new ArmToIntakeFront(""));
-
 	m_armToIntakeFront = new JoystickButton(m_driverStick, XB_A_BUTTON);
 	m_armToIntakeFront->WhenPressed(new ArmIntakeFrontPosToggleCommand());
 
 	m_armToIntakeBack = new JoystickButton(m_driverStick, XB_X_BUTTON);
 	m_armToIntakeBack->WhenPressed(new ArmIntakeBackPosToggleCommand());
 
-//	m_armToIntake2Front = new ComboButton(m_aDriverButton, m_leftDriverBumper, true);
-//	m_armToIntake2Front->WhenPressed(new ArmToIntake2Front(""));
-//
-//	m_armToIntake2Back = new ComboButton(m_xDriverButton, m_leftDriverBumper, true);
-//	m_armToIntake2Back->WhenPressed(new ArmToIntake2Back(""));
+//	m_stowButtonDriver = new JoystickButton(m_driverStick, XB_Y_BUTTON);
+//	m_stowButtonDriver->WhenPressed(new ArmToStow(""));
 
 	m_releaseSlowCubeButton = new JoystickButton(m_driverStick, XB_B_BUTTON);
 	m_releaseSlowCubeButton->WhileHeld(new IntakeReleaseCubeCommandGroup(0.5));
@@ -117,9 +91,8 @@ OI::OI() {
 	m_releaseFastCubeButton->WhileHeld(new IntakeReleaseCubeCommandGroup(1));
 	m_releaseFastCubeButton->WhenReleased(new IntakeRollerOffCommand());
 
-//	m_stowButton = new JoystickButton(m_driverStick, XB_Y_BUTTON);
-//	m_stowButton->WhenPressed(new ArmToStow(""));
-
+//	m_intake3PosButton =new JoystickButton(m_driverStick, XB_B_BUTTON);
+//	m_intake3PosButton->WhenPressed(new ArmToIntakePos3Command());
 
 
 
@@ -163,8 +136,8 @@ OI::OI() {
 	m_releaseButton = new AnalogJoystickButton(m_operatorStick, XB_LEFT_TRIGGER, 0.5);
 	m_releaseButton->WhenPressed(new IntakeReleaseCubeCommandGroup(1.0));
 
-	m_stowButton = new ComboButton(m_rightOpBumper, m_leftOpBumper, false);
-	m_stowButton->WhenPressed(new ArmToStow(""));
+	m_stowButtonOp = new ComboButton(m_rightOpBumper, m_leftOpBumper, false);
+	m_stowButtonOp->WhenPressed(new ArmToStow(""));
 
 	m_deployRampsPTOButton = new ComboButton(m_startButton, m_backButton, true);
 //	m_deployRampsPTOButton->WhenPressed(new COMMAND);

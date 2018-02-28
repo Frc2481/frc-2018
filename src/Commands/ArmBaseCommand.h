@@ -18,8 +18,8 @@
 template <int EXT, int PIVOT_ANGLE>
 class ArmBaseCommand : public CommandBase{
 private:
-	int m_debounce;
-
+	bool m_pivotOnTarget;
+	bool m_extensionOnTarget;
 public:
 	ArmBaseCommand(std::string name) : CommandBase(name) {
 		Requires(m_arm.get());
@@ -28,21 +28,23 @@ public:
 	void Initialize() {
 		m_arm->SetDesiredExtension(EXT);
 		m_arm->SetPivotAngle(Rotation2D::fromDegrees(PIVOT_ANGLE));
-		m_debounce = 0;
+		m_pivotOnTarget = false;
+		m_extensionOnTarget = false;
 	}
 	void Execute() {
 		m_arm->SetExtensionPosition(m_arm->GetAllowedExtensionPos());
 		SmartDashboard::PutNumber("get allowed extension pos", m_arm->GetAllowedExtensionPos());
 	}
 	bool IsFinished() {
-		if(CommandBase::m_arm->IsPivotOnTarget() && CommandBase::m_arm->IsExtensionOnTarget()) {
-			m_debounce++;
+		if(CommandBase::m_arm->IsPivotOnTarget()) {
+			m_pivotOnTarget = true;
 		}
-		else {
-			m_debounce = 0;
+		if(CommandBase::m_arm->IsExtensionOnTarget()) {
+			m_extensionOnTarget = true;
 		}
-		return m_debounce > 5;
+		return m_pivotOnTarget && m_extensionOnTarget;
 	}
+
 	void End() {
 		SmartDashboard::PutNumber("arm movement time", TimeSinceInitialized());
 	}

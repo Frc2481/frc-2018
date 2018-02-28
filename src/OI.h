@@ -51,7 +51,8 @@ public:
 	Button* m_armToIntake2Back;
 	Button* m_releaseSlowCubeButton;
 	Button* m_releaseFastCubeButton;
-	Button* m_stowButton;
+	Button* m_stowButtonDriver;
+	Button* m_intake3PosButton;
 
 //for testing
 	AnalogJoystickButton* m_intakeCubeManualButton;
@@ -86,6 +87,8 @@ public:
 	Button* m_outerWinch;
 	Button* m_innerWinch;
 	Button* m_extensionOpenLoop;
+
+	Button* m_stowButtonOp;
 };
 
 #endif  // OI_H

@@ -13,6 +13,7 @@
 #include "AutoCubeCommandGroup.h"
 #include "AutoSwitchCommandGroup.h"
 #include "AutoScaleCommandGroup.h"
+#include "DriveTrainDriveCommand.h"
 
 class AutoRoutineLeftStartLeftScaleLeftCube1SwitchCommandGroup : public CommandGroup{
 public:
@@ -21,6 +22,8 @@ public:
 		AddSequential(new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv"));
 		AddSequential(new AutoCubeCommandGroup("home/lvuser/PathLeftScaleToLeftCube1.csv", -1, -1));
 		AddSequential(new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToSwitch.csv", false, -1, 228));
+//		AddSequential(new AutoSwitchCommandGroup("", false, -1, 228));
+
 	}
 };
 

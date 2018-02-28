@@ -31,12 +31,15 @@ public:
 		AddSequential(new IntakeRollerLoadCommand(1));
 
 		AddSequential(new DriveTrainWaitForFieldXorYCommandGroup(x, y));
-		AddSequential(new ArmToIntakeBack(""));
+		AddParallel(new ArmToIntakeBack(""));
 
 		AddSequential(new IntakeHasCubeCommand());
+		AddSequential(new PrintCommand("Has Cube"));
 		AddSequential(new IntakeRollerOffCommand());
 		AddSequential(new IntakeClampCloseCommand());
+		AddSequential(new PrintCommand("Clamp"));
 		AddSequential(new DriveTrainStopCommand());
+		AddSequential(new PrintCommand("StopDrive"));
 	}
 };
 

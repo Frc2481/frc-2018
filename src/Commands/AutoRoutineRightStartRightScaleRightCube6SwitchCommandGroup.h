@@ -16,7 +16,7 @@ public:
 		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(277.6, 19.5), Rotation2D::fromDegrees(0))));
 		AddSequential(new AutoScaleCommandGroup("/home/lvuser/PathRightStartToRightScale.csv"));
 		AddSequential(new AutoCubeCommandGroup("home/lvuser/PathRightScaleToRightCube6.csv", -1, -1));
-		AddSequential(new AutoSwitchCommandGroup("/home/lvuser/PathRightCube6ToSwitch.csv", false));
+		AddSequential(new AutoSwitchCommandGroup("/home/lvuser/PathRightCube6ToSwitch.csv", false, -1, 228));
 	}
 };
 
