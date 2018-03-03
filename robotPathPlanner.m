@@ -96,7 +96,7 @@ rightScale = [fieldDim(1) - leftScale(1) + 2, leftScale(2), -leftScale(3), leftS
 leftCube1 = [85.3 + 6.5 + 6, 196 + 6.5 + (robotDim(2) / 2) + 8, 0, 0];
 leftSwitchBack1 = [leftCube1(1), leftCube1(2) - 20, 0, 0];
 
-leftCube4 = [178, leftCube1(2), 0, 0];
+leftCube4 = [180, leftCube1(2), 0, 0];
 
 leftCube6 = [fieldDim(1) - leftCube1(1) + 14, leftCube1(2) + 1, -leftCube1(3), leftCube1(4)];
 leftSwitchBack6 = [leftCube6(1), leftCube6(2) - 20, 0, 0];
@@ -134,115 +134,115 @@ maxAccel = maxSpeed * 0.9;
 sampleRate = 50;
 csvFilename = 'PathLeftSwitchToLeftCube4.csv';
 waypoints = [leftSwitchSide;
-             leftSwitchSide(1) - 25, leftCube4(2) + 25, -60, 15;
-             leftCube4(1) + 5, leftCube4(2) + 15, leftCube4(3), 2;
+             leftSwitchSide(1) - 25, leftCube4(2) + 15, -60, 10;
+             leftCube4(1) + 5, leftCube4(2) + 20, leftCube4(3), 2;
              leftCube4];
 generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
-% left switch to left cube 4
-maxSpeed = 100 * 0.95 * 1.0;
-maxAccel = maxSpeed * 0.9;
-sampleRate = 50;
-csvFilename = 'PathLeftCube4ToRightScale.csv';
-waypoints = [leftCube4;
-             leftCube4(1), leftCube4(2) + 10, 0, 2;
-             rightScale(1) + 15, leftCube4(2) + 5, 0, 10;
-             rightScale];
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
-% left scale to left cube 1
-maxSpeed = 100 * 0.95 * 1.0;
-maxAccel = maxSpeed * 1.5;
-csvFilename = 'PathLeftScaleToLeftCube1.csv';
-waypoints = [leftScale;
-             leftScale(1), leftCube1(2) + 10, 0, 2;
-             leftCube1(1), leftCube1(2) + 10, 0, 2;
-             leftCube1];
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
-% left cube 1 to switch
-maxSpeed = 100 * 0.95 * 10.0;
-maxAccel = maxSpeed * 10.0;
-sampleRate = 50;
-csvFilename = 'PathLeftCube1ToSwitch.csv';
-waypoints = [leftCube1;
-             leftSwitchBack1];
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
-% left scale to left cube 6
-maxSpeed = 100 * 0.95 * 1.0;
-maxAccel = maxSpeed * 0.9;
-sampleRate = 50;
-csvFilename = 'PathLeftScaleToLeftCube6.csv';
-waypoints = [leftScale;
-             leftScale(1) - 10, leftCube6(2) + 10, 0, 2;
-             leftCube6(1) + 10, leftCube6(2) + 20, 0, 2;
-             leftCube6];
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
-% left cube 6 to switch
-maxSpeed = 100 * 0.95 * 10.0;
-maxAccel = maxSpeed * 10.0;
-sampleRate = 50;
-csvFilename = 'PathLeftCube6ToSwitch.csv';
-waypoints = [leftCube6;
-             leftSwitchBack6];
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
-% left start to right scale
-maxSpeed = 100 * 0.95 * 0.9;
-maxAccel = maxSpeed * 0.9;
-sampleRate = 50;
-csvFilename = 'PathLeftStartToRightScale.csv';
-waypoints = [leftStart;
-             leftStart(1), laneBtwnSwitchScale(2) + 10, 0, 15;
-             rightScale(1), laneBtwnSwitchScale(2) - 10, 0, 10;
-             rightScale];
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
-% right scale to left cube 6
-maxSpeed = 100 * 0.95 * 1.0;
-maxAccel = maxSpeed * 1.5;
-csvFilename = 'PathRightScaleToLeftCube6.csv';
-waypoints = [rightScale;
-             rightScale(1), leftCube62(2) + 10, 0, 2;
-             leftCube62(1), leftCube62(2) + 10, 0, 2;
-             leftCube62];
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
-% left cube 6 to switch 2
-maxSpeed = 100 * 0.95 * 10.0;
-maxAccel = maxSpeed * 10.0;
-sampleRate = 50;
-csvFilename = 'PathLeftCube6ToSwitch2.csv';
-waypoints = [leftCube62;
-             leftSwitchBack62];
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
-% right paths
-maxSpeed = 100 * 0.95 * 1.0;
-maxAccel = maxSpeed * 0.9;
-sampleRate = 50;
-waypoints = [0, 0, 0, 0;
-             0, 100, 90, 0];
-csvFilename = 'PathRightStartToRightScale.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-csvFilename = 'PathRightStartToRightSwitch.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-csvFilename = 'PathRightScaleToRightCube1.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-csvFilename = 'PathRightCube1ToSwitch.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-csvFilename = 'PathRightScaleToRightCube6.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-csvFilename = 'PathRightCube6ToSwitch.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-csvFilename = 'PathRightStartToLeftScale.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-csvFilename = 'PathLeftScaleToRightCube6.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-csvFilename = 'PathRightSwitchToRightCube4.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-csvFilename = 'PathRightCube4ToLeftScale.csv';
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-
+% 
+% % left switch to left cube 4
+% maxSpeed = 100 * 0.95 * 1.0;
+% maxAccel = maxSpeed * 0.9;
+% sampleRate = 50;
+% csvFilename = 'PathLeftCube4ToRightScale.csv';
+% waypoints = [leftCube4;
+%              leftCube4(1), leftCube4(2) + 10, 0, 2;
+%              rightScale(1) + 15, leftCube4(2) + 5, 0, 10;
+%              rightScale];
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% 
+% % left scale to left cube 1
+% maxSpeed = 100 * 0.95 * 1.0;
+% maxAccel = maxSpeed * 1.5;
+% csvFilename = 'PathLeftScaleToLeftCube1.csv';
+% waypoints = [leftScale;
+%              leftScale(1), leftCube1(2) + 10, 0, 2;
+%              leftCube1(1), leftCube1(2) + 10, 0, 2;
+%              leftCube1];
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% 
+% % left cube 1 to switch
+% maxSpeed = 100 * 0.95 * 10.0;
+% maxAccel = maxSpeed * 10.0;
+% sampleRate = 50;
+% csvFilename = 'PathLeftCube1ToSwitch.csv';
+% waypoints = [leftCube1;
+%              leftSwitchBack1];
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% 
+% % left scale to left cube 6
+% maxSpeed = 100 * 0.95 * 1.0;
+% maxAccel = maxSpeed * 0.9;
+% sampleRate = 50;
+% csvFilename = 'PathLeftScaleToLeftCube6.csv';
+% waypoints = [leftScale;
+%              leftScale(1) - 10, leftCube6(2) + 10, 0, 2;
+%              leftCube6(1) + 10, leftCube6(2) + 20, 0, 2;
+%              leftCube6];
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% 
+% % left cube 6 to switch
+% maxSpeed = 100 * 0.95 * 10.0;
+% maxAccel = maxSpeed * 10.0;
+% sampleRate = 50;
+% csvFilename = 'PathLeftCube6ToSwitch.csv';
+% waypoints = [leftCube6;
+%              leftSwitchBack6];
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% 
+% % left start to right scale
+% maxSpeed = 100 * 0.95 * 0.9;
+% maxAccel = maxSpeed * 0.9;
+% sampleRate = 50;
+% csvFilename = 'PathLeftStartToRightScale.csv';
+% waypoints = [leftStart;
+%              leftStart(1), laneBtwnSwitchScale(2) + 10, 0, 15;
+%              rightScale(1), laneBtwnSwitchScale(2) - 10, 0, 10;
+%              rightScale];
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% 
+% % right scale to left cube 6
+% maxSpeed = 100 * 0.95 * 1.0;
+% maxAccel = maxSpeed * 1.5;
+% csvFilename = 'PathRightScaleToLeftCube6.csv';
+% waypoints = [rightScale;
+%              rightScale(1), leftCube62(2) + 10, 0, 2;
+%              leftCube62(1), leftCube62(2) + 10, 0, 2;
+%              leftCube62];
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% 
+% % left cube 6 to switch 2
+% maxSpeed = 100 * 0.95 * 10.0;
+% maxAccel = maxSpeed * 10.0;
+% sampleRate = 50;
+% csvFilename = 'PathLeftCube6ToSwitch2.csv';
+% waypoints = [leftCube62;
+%              leftSwitchBack62];
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% 
+% % right paths
+% maxSpeed = 100 * 0.95 * 1.0;
+% maxAccel = maxSpeed * 0.9;
+% sampleRate = 50;
+% waypoints = [0, 0, 0, 0;
+%              0, 100, 90, 0];
+% csvFilename = 'PathRightStartToRightScale.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% csvFilename = 'PathRightStartToRightSwitch.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% csvFilename = 'PathRightScaleToRightCube1.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% csvFilename = 'PathRightCube1ToSwitch.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% csvFilename = 'PathRightScaleToRightCube6.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% csvFilename = 'PathRightCube6ToSwitch.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% csvFilename = 'PathRightStartToLeftScale.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% csvFilename = 'PathLeftScaleToRightCube6.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% csvFilename = 'PathRightSwitchToRightCube4.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% csvFilename = 'PathRightCube4ToLeftScale.csv';
+% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% 
