@@ -346,11 +346,12 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
 	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
 
-//	SmartDashboard::PutNumber("FL steer encoder connected", m_flWheel->GetSteerEncoder()->IsConnected());
-//	SmartDashboard::PutNumber("FR steer encoder connected", m_frWheel->GetSteerEncoder()->IsConnected());
-//	SmartDashboard::PutNumber("BL steer encoder connected", m_blWheel->GetSteerEncoder()->IsConnected());
-//	SmartDashboard::PutNumber("BR steer encoder connected", m_brWheel->GetSteerEncoder()->IsConnected());
-
+	if(DriverStation::GetInstance().IsDisabled()) {
+		SmartDashboard::PutBoolean("FL steer encoder connected", m_flWheel->GetSteerEncoder()->IsConnected());
+		SmartDashboard::PutBoolean("FR steer encoder connected", m_frWheel->GetSteerEncoder()->IsConnected());
+		SmartDashboard::PutBoolean("BL steer encoder connected", m_blWheel->GetSteerEncoder()->IsConnected());
+		SmartDashboard::PutBoolean("BR steer encoder connected", m_brWheel->GetSteerEncoder()->IsConnected());
+	}
 //	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());

@@ -54,9 +54,19 @@ Arm::Arm() : Subsystem("Arm"){
 	m_scale = 1.0;
 
 	m_extenderMaster->SetStatusFramePeriod(Status_2_Feedback0_, 10, 0);
-	m_extenderMaster->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
+	m_extenderMaster->SetStatusFramePeriod(Status_10_MotionMagic, 100, 0);
 
 	m_extenderMaster->ConfigAllowableClosedloopError(0, 0, 0);
+
+	m_extenderMaster->ConfigPeakCurrentDuration(0, 0);
+	m_extenderMaster->ConfigContinuousCurrentLimit(30, 0);
+	m_extenderMaster->EnableCurrentLimit(true);
+	m_extenderMaster->ConfigPeakCurrentLimit(0, 0);
+
+	m_extenderSlave->ConfigPeakCurrentDuration(0, 0);
+	m_extenderSlave->ConfigContinuousCurrentLimit(30, 0);
+	m_extenderSlave->EnableCurrentLimit(true);
+	m_extenderSlave->ConfigPeakCurrentLimit(0, 0);
 
 	m_extenderSlave->SetInverted(true);
 	m_extenderSlave->Set(ControlMode::Follower, 15);
@@ -83,6 +93,17 @@ Arm::Arm() : Subsystem("Arm"){
 	m_pivot->ConfigForwardSoftLimitThreshold(5740, 0);
 	m_pivot->ConfigReverseSoftLimitEnable(true, 0);
 	m_pivot->ConfigReverseSoftLimitThreshold(-5530, 0);
+
+	m_pivot->ConfigForwardLimitSwitchSource(LimitSwitchSource_FeedbackConnector, LimitSwitchNormal_NormallyOpen, 0);
+	m_pivot->ConfigReverseLimitSwitchSource(LimitSwitchSource_FeedbackConnector, LimitSwitchNormal_NormallyOpen, 0);
+
+	m_pivot->ConfigSetParameter(ParamEnum::eClearPosOnLimitF, 0, 0, 0, 0);
+	m_pivot->ConfigSetParameter(ParamEnum::eClearPosOnLimitR, 0, 0, 0, 0);
+
+	m_pivot->ConfigContinuousCurrentLimit(25, 0);
+	m_pivot->ConfigPeakCurrentLimit(0, 0);
+	m_pivot->ConfigPeakCurrentDuration(0, 0);
+	m_pivot->EnableCurrentLimit(true);
 
 	m_pivot->SetNeutralMode(Brake);
 
@@ -163,7 +184,12 @@ double Arm::GetExtensionPosition() {
 }
 
 void Arm::ZeroExtension() {
-	m_extenderMaster->SetSelectedSensorPosition(0, 0, 10);
+	for(int i = 0; i < 5; i++) {
+		ErrorCode error = m_extenderMaster->SetSelectedSensorPosition(0, 0, 10);
+		if(error == OK) {
+			break;
+		}
+	}
 	m_isExtensionZeroed = true;
 }
 
@@ -194,11 +220,9 @@ void Arm::Periodic() {
 
 	Faults masterExtensionFaults;
 	m_extenderMaster->GetFaults(masterExtensionFaults);
-	masterExtensionFaults.ResetDuringEn;
 
 	Faults slaveExtensionFaults;
 	m_extenderSlave->GetFaults(slaveExtensionFaults);
-	slaveExtensionFaults.ResetDuringEn;
 
 	Faults pivotFaults;
 	m_pivot->GetFaults(pivotFaults);
@@ -232,15 +256,19 @@ void Arm::Periodic() {
 //	SmartDashboard::PutNumber("Arm Extension Position", GetExtensionPosition());
 //
 //	SmartDashboard::PutNumber("extender distance ticks", m_extenderMaster->GetSelectedSensorPosition(0));
-	SmartDashboard::PutBoolean("extension reset master", masterExtensionFaults.ResetDuringEn);
-	SmartDashboard::PutBoolean("extension reset slave", slaveExtensionFaults.ResetDuringEn);
+	SmartDashboard::PutBoolean("extension reset master", !masterExtensionFaults.ResetDuringEn);
+	SmartDashboard::PutBoolean("extension reset slave", !slaveExtensionFaults.ResetDuringEn);
+	SmartDashboard::PutBoolean("pivot reset", !pivotFaults.ResetDuringEn);
 
 //	SmartDashboard::PutBoolean("extension limit switch", m_extenderMaster->GetSensorCollection().IsRevLimitSwitchClosed());
 //	SmartDashboard::PutBoolean("pivot limit switch forward", m_pivot->GetSensorCollection().IsFwdLimitSwitchClosed());
 //	SmartDashboard::PutBoolean("pivot limit switch reverse", m_pivot->GetSensorCollection().IsRevLimitSwitchClosed());
-//	SmartDashboard::PutBoolean("extension encoder connected", m_extenderMaster->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
-//	SmartDashboard::PutBoolean("pivot encoder connected", m_pivot->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
-
+	if(DriverStation::GetInstance().IsDisabled()) {
+		SmartDashboard::PutBoolean("extension encoder connected", m_extenderMaster->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
+		SmartDashboard::PutBoolean("pivot encoder connected", m_pivot->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
+		SmartDashboard::PutBoolean("pivot zeroed", m_isPivotZeroed);
+		SmartDashboard::PutBoolean("extension zeroed", m_isExtensionZeroed);
+	}
 }
 
 void Arm::SetPivotAngle(Rotation2D angle) {
@@ -256,7 +284,12 @@ Rotation2D Arm::GetPivotAngle() {
 }
 
 void Arm::ZeroPivot() {
-	m_pivot->SetSelectedSensorPosition(0, 0, 10);
+	for(int i = 0; i < 5; i++) {
+		ErrorCode error = m_pivot->SetSelectedSensorPosition(0, 0, 10);
+		if(error == OK) {
+			break;
+		}
+	}
 	m_isPivotZeroed = true;
 }
 
