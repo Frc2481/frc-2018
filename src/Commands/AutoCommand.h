@@ -15,7 +15,7 @@ public:
 	AutoCommand() : CommandBase("AutoCommand"){}
 	virtual ~AutoCommand(){}
 	bool IsFinished() {
-		return false;
+		return true;
 	}
 };
 

@@ -22,6 +22,7 @@ private:
 	TalonSRX* m_pivot;
 	bool m_prevExtensionTravellingDown;
 	double m_desiredExtensionSetpoint;
+	double m_extensionSetpoint;
 	ArmExtension m_armConstraints;
 	Rotation2D m_pivotAngle;
 	double m_scale;

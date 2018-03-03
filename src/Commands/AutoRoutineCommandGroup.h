@@ -18,16 +18,19 @@ public:
 		AddSequential(startPos);
 		AddSequential(new IntakeClampCloseCommand());
 		if(task1 != nullptr) {
+			AddSequential(new PrintCommand("Task 1 Start"));
 			AddSequential(task1);
-			printf("task1");
+			AddSequential(new PrintCommand("Task 1 Finished"));
 		}
 		if(task2 != nullptr) {
+			AddSequential(new PrintCommand("Task 2 Start"));
 			AddSequential(task2);
-			printf("task2");
+			AddSequential(new PrintCommand("Task 2 Finished"));
 		}
 		if(task3 != nullptr) {
+			AddSequential(new PrintCommand("Task 3 Start"));
 			AddSequential(task3);
-			printf("task3");
+			AddSequential(new PrintCommand("Task 3 Finished"));
 		}
 		AddSequential(new ArmToStow(""));
 	}

@@ -61,8 +61,11 @@ public:
 	static const int k_pivotAngle = PIVOT_ANGLE;
 
 	ArmBaseCommandGroup(std::string name) : CommandGroup(name) {
-		AddSequential(new ArmRetractWhenExtendedCommand(PIVOT_ANGLE));
-		AddSequential(new ArmBaseCommand<EXT, PIVOT_ANGLE>(""));
+		AddSequential(new PrintCommand("Arm Start Base Command Group"));
+		AddSequential(new ArmRetractWhenExtendedCommand(PIVOT_ANGLE), 1.5);
+		AddSequential(new PrintCommand("Arm Mid Base Command Group"));
+		AddSequential(new ArmBaseCommand<EXT, PIVOT_ANGLE>(""), 1.5);
+		AddSequential(new PrintCommand("Arm End Base Command Group"));
 	}
 };
 

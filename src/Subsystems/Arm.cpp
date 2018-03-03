@@ -154,6 +154,7 @@ Arm::~Arm() {
 void Arm::SetExtensionPosition(double position) {
 	if((m_isExtensionZeroed == true) && (m_isPivotZeroed == true)) {
 		position = ConvertInchesToEncTicks(position);
+		m_extensionSetpoint = position;
 		m_extenderMaster->Set(ControlMode::MotionMagic, position);
 
 		SmartDashboard::PutNumber("set position extension", position);
@@ -198,7 +199,7 @@ void Arm::SetExtensionOpenLoop(double speed) {
 }
 
 bool Arm::IsExtensionOnTarget() {
-	return fabs(GetExtensionPosition() - m_desiredExtensionSetpoint) < 1;
+	return fabs(GetExtensionPosition() - m_extensionSetpoint) < 2;
 }
 
 void Arm::SetPivotOpenLoop(double speed) {
@@ -206,7 +207,7 @@ void Arm::SetPivotOpenLoop(double speed) {
 }
 
 bool Arm::IsPivotOnTarget() {
-	return fabs(m_pivotAngle.getDegrees() - GetPivotAngle().getDegrees()) < 3.0;
+	return fabs(m_pivotAngle.getDegrees() - GetPivotAngle().getDegrees()) < 5.0;
 }
 
 void Arm::SetPivotAccel(int accel) {

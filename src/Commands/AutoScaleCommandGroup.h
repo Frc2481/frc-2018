@@ -20,10 +20,19 @@ class AutoScaleCommandGroup : public CommandGroup{
 public:
 	AutoScaleCommandGroup(std::string path) : CommandGroup("AutoScaleCommandGroup"){
 		AddSequential(new ArmExtentionMotionScaling(0.3));
-		AddParallel(new ARM(""));
+		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
+
+		AddParallel(new ARM(""), 1.5);
+		AddSequential(new PrintCommand("ARM"));
+
 		AddSequential(new DriveTrainFollowPath(path));
-		AddParallel(new IntakeReleaseCubeCommandGroup(0.5));
+		AddSequential(new PrintCommand("FollwPath"));
+
+		AddParallel(new IntakeReleaseCubeCommandGroup(0.5), 1.0);
+		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
+
 		AddSequential(new ArmExtentionMotionScaling(1.0));
+		AddSequential(new PrintCommand("ArmExtentionMotionScaling"));
 //		AddSequential(new ArmToStow(""));
 	}
 };
