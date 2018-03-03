@@ -461,14 +461,14 @@ void DriveTrain::DisengagePTO() {
 
 void DriveTrain::SetNearWinchSpeed(double speed) {
 	//back & front left physically linked, have to be run opposite direction
-	m_flWheel->Set(speed, m_flWheel->GetAngle());
-	m_blWheel->Set(-speed, m_blWheel->GetAngle());
+	m_frWheel->Set(speed, m_frWheel->GetAngle());
+	m_brWheel->Set(-speed, m_brWheel->GetAngle());
 }
 
 void DriveTrain::SetFarWinchSpeed(double speed) {
 	//back & front right physically linked, have to be run opposite direction
-	m_frWheel->Set(speed, m_frWheel->GetAngle());
-	m_brWheel->Set(-speed, m_brWheel->GetAngle());
+	m_flWheel->Set(speed, m_flWheel->GetAngle());
+	m_blWheel->Set(-speed, m_blWheel->GetAngle());
 }
 
 bool DriveTrain::IsPtoEngaged() {

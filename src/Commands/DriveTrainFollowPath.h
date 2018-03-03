@@ -49,11 +49,11 @@ public:
 //		}
 		m_driveController->EnableController();
 
-		printf("running path start pos x", m_path.begin()->second.getTranslation().getX());
-		printf("running path start pos y", m_path.begin()->second.getTranslation().getY());
+		printf("running path start pos x %f\n", m_path.begin()->second.getTranslation().getX());
+		printf("running path start pos y %f\n", m_path.begin()->second.getTranslation().getY());
 
-		printf("running path end pos x", m_path.end()->second.getTranslation().getX());
-		printf("running path end pos y", m_path.end()->second.getTranslation().getY());
+		printf("running path end pos x %f\n", m_path.end()->second.getTranslation().getX());
+		printf("running path end pos y %f\n", m_path.end()->second.getTranslation().getY());
 	}
 
 	void Execute() {
