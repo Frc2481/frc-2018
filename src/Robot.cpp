@@ -40,6 +40,10 @@
 #include "Commands/AutoCubeAndScaleCommandGroup.h"
 #include "Commands/AutoStartSwitchCommandGroup.h"
 
+#include "Commands/Autos/AutoLLL.h"
+#include "Commands/Autos/AutoLLR.h"
+#include "Commands/AutoTest3CubeFromSwitchCommandGroup.h"
+
 enum Autos {
 	POS_LEFT = 1,
 	POS_CENTER = 2,
@@ -138,7 +142,11 @@ private:
 		CommandBase::m_driveTrain->GetObserver()->ResetPose(RigidTransform2D(Translation2D(46.4, 19.5),
 																		  Rotation2D::fromDegrees(0)));
 
+		SmartDashboard::PutData("Auto3Cube", new AutoTest3CubeFromSwitchCommandGroup());
 
+		SmartDashboard::PutData("Auto LLR", new AutoLLR());
+
+		SmartDashboard::PutData("Auto LLL", new AutoLLL());
 //		SmartDashboard::PutData(new AutoRoutineLeftStartLeftScaleLeftCube1SwitchCommandGroup);
 //		SmartDashboard::PutData(new AutoRoutineLeftStartLeftScaleLeftCube6SwitchCommandGroup);
 //		SmartDashboard::PutData(new AutoRoutineRightStartRightScaleRightCube6SwitchCommandGroup);
@@ -188,6 +196,9 @@ private:
 	 */
 	void DisabledInit() override {
 
+		CommandBase::m_intake->CloseClamp();
+		CommandBase::m_intake->RollerOff();
+
 	}
 
 	void DisabledPeriodic() override {
@@ -207,6 +218,8 @@ private:
 	 */
 	void AutonomousInit() override {
 //		std::string autoSelected = frc::SmartDashboard::GetString("Auto Selector", "Default");
+
+		m_fieldConfig.Initialize();
 
 		Autos baseAutoMode = static_cast<Autos>(
 								m_posChooser->GetSelected() |
