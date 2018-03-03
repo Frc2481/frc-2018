@@ -66,6 +66,9 @@ public:
 	}
 };
 
+typedef ArmBaseCommandGroup<2, 112> ArmToExchangeFront;
+typedef ArmBaseCommandGroup<2, -112> ArmToExchangeBack;
+
 typedef ArmBaseCommandGroup<4, 120> ArmToIntakeFront;
 typedef ArmBaseCommandGroup<4, -119> ArmToIntakeBack;
 
@@ -81,8 +84,8 @@ typedef ArmBaseCommandGroup<0, -66> ArmToSwitchBack;
 typedef ArmBaseCommandGroup<0, 66> ArmToSwitch2Front;
 typedef ArmBaseCommandGroup<0, -66> ArmToSwitch2Back;
 
-typedef ArmBaseCommandGroup<8, 39> ArmToLowScaleFront; //15, 44
-typedef ArmBaseCommandGroup<8, -39> ArmToLowScaleBack; // 11, -45
+typedef ArmBaseCommandGroup<9, 35> ArmToLowScaleFront; //15, 44
+typedef ArmBaseCommandGroup<9, -35> ArmToLowScaleBack; // 11, -45
 
 typedef ArmBaseCommandGroup<8, 28> ArmToLowScale2Front;
 typedef ArmBaseCommandGroup<8, -28> ArmToLowScale2Back;

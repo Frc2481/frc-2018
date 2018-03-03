@@ -44,7 +44,7 @@ public:
 
 	static constexpr double k_inchesPerWheelRev = 3.95 * 3.14159265; // pi * diameter
 	static constexpr double k_robotLength = 27.0;
-	static constexpr double k_robotWidth = 22.25;
+	static constexpr double k_robotWidth = 22.375;
 	static constexpr double k_speedP = 1;
 	static constexpr double k_speedI = 0.0005;
 	static constexpr double k_speedD = 10;

@@ -10,21 +10,33 @@
 
 #include "CommandBase.h"
 #include "Subsystems/Arm.h"
+#include "Commands/ArmBaseCommand.h"
+#include "../XboxController.h"
+#include "Components/Joystick2481.h"
 
-class ArmPivotDownCommand : public InstantCommand{
+class ArmPivotDownCommand : public CommandBase{
 public:
-	ArmPivotDownCommand() : InstantCommand("ArmPivotDownCommand"){}
+	ArmPivotDownCommand() : CommandBase("ArmPivotDownCommand"){
+		Requires(m_arm.get());
+	}
 	virtual ~ArmPivotDownCommand(){}
 
-	void Initialize() {
-		if((CommandBase::m_arm->GetPivotAngle().getDegrees() > 0) &&
-				(CommandBase::m_arm->GetPivotAngle().getDegrees() >= 120)) {
-			CommandBase::m_arm->SetPivotAngle(Rotation2D::fromDegrees(CommandBase::m_arm->GetPivotAngle().getDegrees() - 2));
+	void Initialize() {}
+
+	void Execute() {
+		double increment = oi->GetOperatorStick()->GetRawAxis(XB_RIGHT_Y_AXIS) * 0.5;
+		double currentPivotAngle = m_arm->GetDesiredPivotAngle().getDegrees();
+
+		if(currentPivotAngle > 0) {
+			m_arm->SetPivotAngle(Rotation2D::fromDegrees(std::min(currentPivotAngle + increment, (double)ArmToIntakeFront::k_pivotAngle)));
 		}
-		else if((CommandBase::m_arm->GetPivotAngle().getDegrees() <= 0) &&
-				(CommandBase::m_arm->GetPivotAngle().getDegrees() <= -118)){
-			CommandBase::m_arm->SetPivotAngle(Rotation2D::fromDegrees(CommandBase::m_arm->GetPivotAngle().getDegrees() + 2));
+		else {
+			m_arm->SetPivotAngle(Rotation2D::fromDegrees(std::max(currentPivotAngle - increment, (double)ArmToIntakeBack::k_pivotAngle)));
 		}
+	}
+
+	bool IsFinished() {
+		return false;
 	}
 };
 

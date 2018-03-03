@@ -20,7 +20,7 @@ public:
 		Requires(CommandBase::m_intake.get());
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerUnloadCommand(speed));
-		AddSequential(new WaitCommand(.5));
+		AddSequential(new WaitCommand(1));
 		AddSequential(new IntakeRollerOffCommand());
 	}
 };

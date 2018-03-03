@@ -24,10 +24,10 @@ public:
 //		AddSequential(new ArmExtentionMotionScaling(0.3));
 		AddSequential(new PrintCommand("StartSwitch"));
 		if(isFrontIntakeRelease) {
-			AddSequential(new ArmToSwitchFront(""));
+			AddSequential(new ArmToSwitchFront(""), 1.0);
 		}
 		else {
-			AddSequential(new ArmToSwitchBack(""));
+			AddSequential(new ArmToSwitchBack(""), 1.0);
 		}
 		if(path.empty()) {
 			AddSequential(new DriveTrainDriveCommand(0, -1, 0, 0.5));
@@ -40,8 +40,6 @@ public:
 		AddSequential(new WaitCommand(0.5));
 		AddSequential(new ArmWaitForPivotOnTargetCommand());
 		AddSequential(new IntakeReleaseCubeCommandGroup(0.7));
-//		AddSequential(new ArmExtentionMotionScaling(1.0));
-		AddSequential(new ArmToStow(""));
 	}
 
 	void Initialize() {

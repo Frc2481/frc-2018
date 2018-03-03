@@ -15,13 +15,14 @@
 #include "Commands/ArmExtentionMotionScaling.h"
 #include "Commands/ArmBaseCommand.h"
 
+template<class ARM>
 class AutoScaleCommandGroup : public CommandGroup{
 public:
 	AutoScaleCommandGroup(std::string path) : CommandGroup("AutoScaleCommandGroup"){
 		AddSequential(new ArmExtentionMotionScaling(0.3));
-		AddParallel(new ArmToMidScaleFront(""));
+		AddParallel(new ARM(""));
 		AddSequential(new DriveTrainFollowPath(path));
-		AddSequential(new IntakeReleaseCubeCommandGroup(0.5));
+		AddParallel(new IntakeReleaseCubeCommandGroup(0.5));
 		AddSequential(new ArmExtentionMotionScaling(1.0));
 //		AddSequential(new ArmToStow(""));
 	}
