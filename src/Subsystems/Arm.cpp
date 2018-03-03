@@ -199,7 +199,7 @@ void Arm::SetExtensionOpenLoop(double speed) {
 }
 
 bool Arm::IsExtensionOnTarget() {
-	return fabs(GetExtensionPosition() - m_extensionSetpoint) < 2;
+	return fabs(GetExtensionPosition() - m_extensionSetpoint) < 1.0;
 }
 
 void Arm::SetPivotOpenLoop(double speed) {
@@ -207,7 +207,7 @@ void Arm::SetPivotOpenLoop(double speed) {
 }
 
 bool Arm::IsPivotOnTarget() {
-	return fabs(m_pivotAngle.getDegrees() - GetPivotAngle().getDegrees()) < 5.0;
+	return fabs(m_pivotAngle.getDegrees() - GetPivotAngle().getDegrees()) < 3.0;
 }
 
 void Arm::SetPivotAccel(int accel) {
