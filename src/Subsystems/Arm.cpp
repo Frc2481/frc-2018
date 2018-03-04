@@ -184,9 +184,9 @@ double Arm::GetExtensionPosition() {
 	return ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0));
 }
 
-void Arm::ZeroExtension() {
+void Arm::ZeroExtension(int pos) {
 	for(int i = 0; i < 5; i++) {
-		ErrorCode error = m_extenderMaster->SetSelectedSensorPosition(0, 0, 10);
+		ErrorCode error = m_extenderMaster->SetSelectedSensorPosition(pos, 0, 10);
 		if(error == OK) {
 			break;
 		}
@@ -217,16 +217,39 @@ void Arm::SetPivotAccel(int accel) {
 void Arm::Periodic() {
 	//use a slower rate of deacceleration to counteract gravity when coming down
 
+	if (DriverStation::GetInstance().IsDisabled()) {
+
+		if (m_isExtensionZeroed == false && m_extenderMaster->GetSensorCollection().IsRevLimitSwitchClosed()) {
+			ZeroExtension();
+		}
+
+		if (m_isPivotZeroed == false && m_pivot->GetSensorCollection().IsFwdLimitSwitchClosed()) {
+			// Zero pivot with offset.
+			ZeroPivot(5476);
+
+		} else if (m_isPivotZeroed == false && m_pivot->GetSensorCollection().IsRevLimitSwitchClosed()) {
+			// Zero pivot with offset.
+			ZeroPivot(-5500);
+		}
+	}
+
 	SetExtensionPosition(GetAllowedExtensionPos());
 
-	Faults masterExtensionFaults;
-	m_extenderMaster->GetFaults(masterExtensionFaults);
+	StickyFaults masterExtensionFaults;
+	m_extenderMaster->GetStickyFaults(masterExtensionFaults);
 
-	Faults slaveExtensionFaults;
-	m_extenderSlave->GetFaults(slaveExtensionFaults);
+	StickyFaults slaveExtensionFaults;
+	m_extenderSlave->GetStickyFaults(slaveExtensionFaults);
 
-	Faults pivotFaults;
-	m_pivot->GetFaults(pivotFaults);
+	StickyFaults pivotFaults;
+	m_pivot->GetStickyFaults(pivotFaults);
+
+	// Save the extension and pivot.  Don't get fouls.
+	if (pivotFaults.ResetDuringEn == true) {
+		m_desiredExtensionSetpoint = 0;
+		SetExtensionPosition(m_desiredExtensionSetpoint);
+		m_isPivotZeroed = m_isExtensionZeroed = false;
+	}
 
 //	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
 	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)));
@@ -284,9 +307,9 @@ Rotation2D Arm::GetPivotAngle() {
 	return Rotation2D::fromDegrees(m_pivot->GetSelectedSensorPosition(0) / RobotParameters::k_encoderTicksPerPivotDegree);
 }
 
-void Arm::ZeroPivot() {
+void Arm::ZeroPivot(int pos) {
 	for(int i = 0; i < 5; i++) {
-		ErrorCode error = m_pivot->SetSelectedSensorPosition(0, 0, 10);
+		ErrorCode error = m_pivot->SetSelectedSensorPosition(pos, 0, 10);
 		if(error == OK) {
 			break;
 		}

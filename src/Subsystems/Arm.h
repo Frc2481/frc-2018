@@ -37,14 +37,14 @@ public:
 	double GetDesiredExtension();
 	double GetExtensionPosition();
 	bool IsExtensionOnTarget();
-	void ZeroExtension();
+	void ZeroExtension(int pos = 0);
 	void SetExtensionOpenLoop(double speed);
 	void SetPivotOpenLoop(double speed);
 	void SetPivotAngle(Rotation2D angle);
 	bool IsPivotOnTarget();
 	Rotation2D GetPivotAngle();
 	Rotation2D GetDesiredPivotAngle();
-	void ZeroPivot();
+	void ZeroPivot(int pos = 0);
 	void SetPivotAccel(int accel);
 	virtual void Periodic();
 	double GetAllowedExtensionPos();
