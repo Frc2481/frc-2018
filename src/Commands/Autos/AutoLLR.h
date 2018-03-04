@@ -16,7 +16,7 @@ public:
 		//cube 1 to switch
 		AddParallel(new ArmToSwitchFront(""), 1.0);
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathLeftStartToLeftCube4.csv"));
-		AddSequential(new DriveTrainWaitForFieldXorYCommandGroup(-1, 140));
+		AddSequential(new DriveTrainWaitForFieldXorYCommandGroup(-1, 135));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerUnloadCommand(0.7));
 		AddSequential(new WaitCommand(0.5));

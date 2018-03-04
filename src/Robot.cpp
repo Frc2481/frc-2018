@@ -42,7 +42,10 @@
 
 #include "Commands/Autos/AutoLLL.h"
 #include "Commands/Autos/AutoLLR.h"
+#include "Commands/Autos/AutoLRR.h"
 #include "Commands/AutoTest3CubeFromSwitchCommandGroup.h"
+
+#include "Commands/Autos/AutoLRL.h"
 
 enum Autos {
 	POS_LEFT = 1,
@@ -84,6 +87,9 @@ private:
 	SendableChooser<Autos>* m_firstCubeChooser;
 	SendableChooser<Autos>* m_secondCubeChooser;
 	SendableChooser<Autos>* m_thirdCubeChooser;
+
+//new auto chooser
+	SendableChooser<Autos>* m_numberOfCubes;
 
 	FieldConfiguration m_fieldConfig;
 
@@ -132,10 +138,17 @@ private:
 		m_thirdCubeChooser->AddObject("Scale3", SCALE3);
 		m_thirdCubeChooser->AddObject("Switch3", SWITCH3);
 
+//new auto chooser
+//		m_numberOfCubes = new SendableChooser<Autos>();
+//		m_numberOfCubes->AddDefault("3 cubes", 3CUBES);
+
 		SmartDashboard::PutData("Start Pos", m_posChooser);
 		SmartDashboard::PutData("First Cube", m_firstCubeChooser);
 		SmartDashboard::PutData("Second Cube", m_secondCubeChooser);
 		SmartDashboard::PutData("Third Cube", m_thirdCubeChooser);
+
+//new auto chooser
+//		SmartDashboard::PutData("# cubes", m_numOfCubes);
 
 //		CommandBase::m_driveTrain->GetObserver()->ResetPose();
 
@@ -147,6 +160,8 @@ private:
 		SmartDashboard::PutData("Auto LLR", new AutoLLR());
 
 		SmartDashboard::PutData("Auto LLL", new AutoLLL());
+
+		SmartDashboard::PutData("Auto LRR", new AutoLRR());
 //		SmartDashboard::PutData(new AutoRoutineLeftStartLeftScaleLeftCube1SwitchCommandGroup);
 //		SmartDashboard::PutData(new AutoRoutineLeftStartLeftScaleLeftCube6SwitchCommandGroup);
 //		SmartDashboard::PutData(new AutoRoutineRightStartRightScaleRightCube6SwitchCommandGroup);
@@ -246,7 +261,9 @@ private:
 		Autos autoTask3 = static_cast<Autos>(baseAutoMode | m_thirdCubeChooser->GetSelected());
 		Command* task3 = AutoTasks->at(autoTask3);
 
-		autonomousCommand = std::unique_ptr<Command>(new AutoRoutineCommandGroup(startCommand, task1, task2, task3));
+//		autonomousCommand = std::unique_ptr<Command>(new AutoRoutineCommandGroup(startCommand, task1, task2, task3));
+
+		autonomousCommand = std::unique_ptr<Command>(new AutoLRL());
 
 		if(autonomousCommand.get() != nullptr) {
 			autonomousCommand->Start();
@@ -425,6 +442,7 @@ private:
 	frc::SendableChooser<frc::Command*> firstCube;
 	frc::SendableChooser<frc::Command*> secondCube;
 	frc::SendableChooser<frc::Command*> thirdCube;
+//	frc::SendableChooser<frc::Command*> numberOfCubes;
 };
 
 START_ROBOT_CLASS(Robot)

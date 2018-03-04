@@ -18,6 +18,7 @@ class DriveTrainFollowPath : public CommandBase {
 private:
 	DriveController* m_driveController;
 	bool m_skip;
+	std::string m_filePath;
 
 protected:
 	Path2D& m_path;
@@ -27,6 +28,7 @@ public:
 		Requires(m_driveTrain.get());
 		m_driveController = m_driveTrain->GetDriveController();
 		m_skip = false;
+		m_filePath = path;
 
 		SmartDashboard::PutNumber("PathX", 0);
 		SmartDashboard::PutNumber("PathY", 0);
@@ -49,15 +51,22 @@ public:
 //		}
 		m_driveController->EnableController();
 
-		printf("running path start pos x %f\n", m_path.begin()->second.getTranslation().getX());
-		printf("running path start pos y %f\n", m_path.begin()->second.getTranslation().getY());
-
-		printf("running path end pos x %f\n", m_path.end()->second.getTranslation().getX());
-		printf("running path end pos y %f\n", m_path.end()->second.getTranslation().getY());
+		printf("running path %s start (%f %f %f) end (%f %f %f)\n",
+				m_filePath.c_str(),
+				m_path.begin()->second.getTranslation().getX(),
+				m_path.begin()->second.getTranslation().getY(),
+				m_path.begin()->second.getRotation().getDegrees(),
+				m_path.end()->second.getTranslation().getX(),
+				m_path.end()->second.getTranslation().getY(),
+				m_path.end()->second.getRotation().getDegrees());
 	}
 
 	void Execute() {
-		RigidTransform2D targetPos = m_path.getInterpolated(InterpolatingDouble(TimeSinceInitialized()));
+		// Adding .25 to the time....Nolan can't figure out how to turn FeedForward so we have to use pure feedback.
+		// by doing this the path following is awesome and trails the path by about 2 feet.  To avoid waiting for the
+		// path to get 2 feet ahead of the current location we just start all the paths 0.25 seconds in because it works
+		// and makes 3 cube autos great again.  This gives us a YUGE benefit!!!
+		RigidTransform2D targetPos = m_path.getInterpolated(InterpolatingDouble(TimeSinceInitialized())); // + 0.4));
 		m_driveController->SetFieldTarget(targetPos);
 
 		SmartDashboard::PutNumber("PathX",targetPos.getTranslation().getX());

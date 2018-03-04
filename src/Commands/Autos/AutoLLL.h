@@ -20,7 +20,7 @@ public:
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 
 		AddSequential(new DriveTrainFollowPath("/home/lvuser/PathLeftStartToLeftScale.csv"));
-		AddSequential(new PrintCommand("FollwPath"));
+		AddSequential(new PrintCommand("FollowPath"));
 
 		AddParallel(new IntakeReleaseCubeCommandGroup(0.5), 1.0);
 		AddSequential(new WaitCommand(0.5));
@@ -76,8 +76,12 @@ public:
 		AddParallel(new IntakeReleaseCubeCommandGroup(0.5), 1.0);
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
 
+		AddSequential(new WaitCommand(0.5));
+
 		AddSequential(new ArmExtentionMotionScaling(1.0));
 		AddSequential(new PrintCommand("ArmExtentionMotionScaling"));
+
+		AddSequential(new ArmToStow(""));
 	}
 
 	virtual ~AutoLLL() {

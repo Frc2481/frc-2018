@@ -23,7 +23,7 @@ public:
 	}
 
 	void Execute() {
-		double triggerPos = oi->GetOperatorStick()->GetRawAxis(XB_LEFT_TRIGGER);
+		double triggerPos = oi->GetOperatorStick()->GetRawAxis(XB_LEFT_TRIGGER); // Left = Abigail, Right = Abigail
 		if(triggerPos > 0) {
 			m_intake->RollerUnload(triggerPos + .5);
 		}
