@@ -15,14 +15,14 @@ public:
 	AutoLLR() : CommandGroup("AutoLLR") {
 		//cube 1 to switch
 		AddParallel(new ArmToSwitchFront(""), 1.0);
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathLeftStartToLeftSwitch.csv"));
-		AddSequential(new DriveTrainWaitForFieldXorYCommandGroup(-1, 160));
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathLeftStartToLeftCube4.csv"));
+		AddSequential(new DriveTrainWaitForFieldXorYCommandGroup(-1, 140));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerUnloadCommand(0.7));
 		AddSequential(new WaitCommand(0.5));
 
 		//cube 4
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathLeftSwitchToLeftCube4.csv"));
+//		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathLeftSwitchToLeftCube4.csv"));
 		AddParallel(new ArmToSwitchBack(""), 1);
 
 //		AddParallel(new IntakeAcquireCubeCommandGroup());
@@ -42,7 +42,7 @@ public:
 		AddSequential(new PrintCommand("StopDrive"));
 
 //scale 1
-		AddSequential(new ArmExtentionMotionScaling(0.3));
+		AddSequential(new ArmExtentionMotionScaling(0.4));
 		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
 
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
@@ -51,7 +51,7 @@ public:
 		AddSequential(new DriveTrainFollowPath("/home/lvuser/PathLeftCube4ToRightScale.csv"));
 		AddSequential(new PrintCommand("FollowPath"));
 
-		AddParallel(new IntakeReleaseCubeCommandGroup(0.5), 1.0);
+		AddParallel(new IntakeReleaseCubeCommandGroup(1.0), 1.0);
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
 
 		AddSequential(new ArmExtentionMotionScaling(1.0));
@@ -74,7 +74,7 @@ public:
 		AddSequential(new PrintCommand("StopDrive"));
 
 //scale 2
-		AddSequential(new ArmExtentionMotionScaling(0.3));
+		AddSequential(new ArmExtentionMotionScaling(0.7));
 		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
 
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
@@ -83,8 +83,10 @@ public:
 		AddSequential(new DriveTrainFollowPath("/home/lvuser/PathLeftCube6ToRightScale.csv"));
 		AddSequential(new PrintCommand("FollowPath"));
 
-		AddParallel(new IntakeReleaseCubeCommandGroup(0.5), 1.0);
+		AddParallel(new IntakeReleaseCubeCommandGroup(0.4), 1.0);
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
+
+		AddSequential(new WaitCommand(1));
 
 		AddSequential(new ArmExtentionMotionScaling(1.0));
 		AddSequential(new PrintCommand("ArmExtentionMotionScaling"));

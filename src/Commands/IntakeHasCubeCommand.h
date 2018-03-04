@@ -25,7 +25,6 @@ public:
 //			m_debounceCounter = 0;
 //		}
 //		return m_debounceCounter > 2;
-		printf("Has Cube %d\n", m_intake->HasCube());
 		return m_intake->HasCube();
 	}
 };

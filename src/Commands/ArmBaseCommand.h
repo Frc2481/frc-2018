@@ -73,7 +73,7 @@ typedef ArmBaseCommandGroup<2, 112> ArmToExchangeFront;
 typedef ArmBaseCommandGroup<2, -112> ArmToExchangeBack;
 
 typedef ArmBaseCommandGroup<4, 120> ArmToIntakeFront;
-typedef ArmBaseCommandGroup<4, -119> ArmToIntakeBack;
+typedef ArmBaseCommandGroup<4, -121> ArmToIntakeBack;
 
 typedef ArmBaseCommandGroup<1, 104> ArmToIntake2Front;
 typedef ArmBaseCommandGroup<1, -101> ArmToIntake2Back;
