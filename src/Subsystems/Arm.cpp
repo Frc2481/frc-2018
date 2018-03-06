@@ -14,6 +14,9 @@
 #include "Commands/ArmBaseCommand.h"
 
 Arm::Arm() : Subsystem("Arm"){
+
+	m_calLed = new DigitalOutput(0);
+
 	m_extenderMaster = new TalonSRX(EXTENDER_MASTER);
 	m_extenderSlave = new TalonSRX(EXTENDER_SLAVE);
 
@@ -121,30 +124,6 @@ Arm::Arm() : Subsystem("Arm"){
 
 	m_isPivotZeroed = false;
 	m_isExtensionZeroed = false;
-
-	SmartDashboard::PutData(new ArmExtensionEncoderZeroCommand());
-//	SmartDashboard::PutData(new ArmToExtendedThresholdCommand());
-//	SmartDashboard::PutData(new ArmToRetractedThresholdCommand());
-	SmartDashboard::PutData(new ArmPivotEncoderZeroCommand());
-//	SmartDashboard::PutData(new ArmPivotToCenterCommand());
-//	SmartDashboard::PutData(new ArmPivotTo90Command());
-//	SmartDashboard::PutData(new ArmPivotToNeg90Command());
-//
-//
-//	SmartDashboard::PutData(new ArmTo90Front("ArmTo90Front"));
-//	SmartDashboard::PutData(new ArmTo90Back("ArmTo90Back"));
-//	SmartDashboard::PutData(new ArmToIntakeFront("ArmToIntakeFront"));
-//	SmartDashboard::PutData(new ArmToIntakeBack("ArmToIntakeBack"));
-//	SmartDashboard::PutData(new ArmToMidScaleFront("ArmToMidScaleFront"));
-//	SmartDashboard::PutData(new ArmToMidScaleBack("ArmToMidScaleBack"));
-//
-//	SmartDashboard::PutData(new ArmToLowScaleFront("ArmToLowScaleFront"));
-//	SmartDashboard::PutData(new ArmToStow("ArmToStow"));
-//
-//	SmartDashboard::PutData(new ArmToHighScaleFront("ArmToHighScaleFront"));
-//	SmartDashboard::PutData(new ArmToHighScaleBack("ArmToHighScaleBack"));
-
-
 }
 
 Arm::~Arm() {
@@ -219,7 +198,7 @@ void Arm::Periodic() {
 
 	if (DriverStation::GetInstance().IsDisabled()) {
 
-		if (m_isExtensionZeroed == false && m_extenderMaster->GetSensorCollection().IsRevLimitSwitchClosed()) {
+		if (m_isExtensionZeroed == false && m_extenderMaster->GetSensorCollection().IsFwdLimitSwitchClosed()) {
 			ZeroExtension();
 		}
 
@@ -229,9 +208,11 @@ void Arm::Periodic() {
 
 		} else if (m_isPivotZeroed == false && m_pivot->GetSensorCollection().IsRevLimitSwitchClosed()) {
 			// Zero pivot with offset.
-			ZeroPivot(-5500);
+			ZeroPivot(-5429);
 		}
 	}
+
+	m_calLed->Set(m_isPivotZeroed && m_isExtensionZeroed);
 
 	SetExtensionPosition(GetAllowedExtensionPos());
 
