@@ -28,6 +28,7 @@
 #include "Commands/DriveTrainNearWinchCommand.h"
 #include "Commands/DriveTrainFarWinchCommand.h"
 #include "Commands/ArmToIntakePos3Command.h"
+#include "Commands/DriveTrainZeroGyroCommand.h"
 
 OI::OI() {
 	// Process operator interface input here.
@@ -92,8 +93,11 @@ OI::OI() {
 //	m_releaseFastCubeButton->WhileHeld(new IntakeReleaseCubeCommandGroup(1));
 //	m_releaseFastCubeButton->WhenReleased(new IntakeRollerOffCommand());
 
-	m_intake3PosButton =new JoystickButton(m_driverStick, XB_B_BUTTON);
+	m_intake3PosButton = new JoystickButton(m_driverStick, XB_B_BUTTON);
 	m_intake3PosButton->WhenPressed(new ArmToIntakePos3Command());
+
+	m_driveTrainZeroGyro = new JoystickButton(m_driverStick, XB_START_BUTTON);
+	m_driveTrainZeroGyro->WhenPressed(new DriveTrainZeroGyroCommand());
 
 
 //operator

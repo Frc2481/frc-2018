@@ -124,7 +124,7 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 
 	if (m_isFieldCentric) {
 		translation = translation.rotateBy(gyroAngle.inverse());
-		yawRate *= 0.1;
+		yawRate *= 0.05;
 	}
 	else {
 		  //limit yawRate speed while not in field centric

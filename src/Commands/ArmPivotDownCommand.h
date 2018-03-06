@@ -24,19 +24,29 @@ public:
 	void Initialize() {}
 
 	void Execute() {
-		double increment = oi->GetOperatorStick()->GetRawAxis(XB_RIGHT_Y_AXIS) * 0.5;
-		double currentPivotAngle = m_arm->GetDesiredPivotAngle().getDegrees();
+		if (m_arm->IsPivotZeroed()) {
+			double increment = oi->GetOperatorStick()->GetRawAxis(XB_RIGHT_Y_AXIS) * 0.5;
+			double currentPivotAngle = m_arm->GetDesiredPivotAngle().getDegrees();
 
-		if(currentPivotAngle > 0) {
-			m_arm->SetPivotAngle(Rotation2D::fromDegrees(std::min(currentPivotAngle + increment, (double)ArmToIntakeFront::k_pivotAngle)));
-		}
-		else {
-			m_arm->SetPivotAngle(Rotation2D::fromDegrees(std::max(currentPivotAngle - increment, (double)ArmToIntakeBack::k_pivotAngle)));
+			if(currentPivotAngle > 0) {
+				m_arm->SetPivotAngle(Rotation2D::fromDegrees(std::min(currentPivotAngle + increment, (double)ArmToIntakeFront::k_pivotAngle)));
+			}
+			else {
+				m_arm->SetPivotAngle(Rotation2D::fromDegrees(std::max(currentPivotAngle - increment, (double)ArmToIntakeBack::k_pivotAngle)));
+			}
+		} else {
+			m_arm->SetPivotOpenLoop(oi->GetOperatorStick()->GetRawAxis(XB_RIGHT_Y_AXIS) * 0.25);
 		}
 	}
 
 	bool IsFinished() {
 		return false;
+	}
+
+	void Interrupted() {
+		if (m_arm->IsPivotZeroed() == false) {
+			m_arm->SetPivotOpenLoop(0);
+		}
 	}
 };
 

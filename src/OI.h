@@ -40,6 +40,7 @@ public:
 	Button* m_armToIntakeBack;
 	Button* m_stowButtonDriver;
 	Button* m_intake3PosButton;
+	Button* m_driveTrainZeroGyro;
 
 //for testing
 //	AnalogJoystickButton* m_intakeCubeManualButton;

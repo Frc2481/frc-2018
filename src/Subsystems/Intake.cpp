@@ -7,7 +7,6 @@
 
 #include <Subsystems/Intake.h>
 #include "RobotMap.h"
-#include "Commands/IntakeAcquireCubeCommandGroup.h"
 
 Intake::Intake() : Subsystem("Intake") {
 	m_rollerMotorLeft = new TalonSRX(INTAKE_LEFT_MOTOR);
@@ -28,10 +27,6 @@ Intake::Intake() : Subsystem("Intake") {
 //	m_rollerMotorLeft->ConfigPeakCurrentDuration(0, 0);
 
 	SmartDashboard::PutNumber("intake current threshold", 0);
-
-	SmartDashboard::PutData(new IntakeAcquireCubeCommandGroup());
-	SmartDashboard::PutData(new IntakeClampOpenCommand());
-
 }
 
 Intake::~Intake() {

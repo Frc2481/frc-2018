@@ -30,6 +30,8 @@ private:
 	bool m_isPivotZeroed;
 	bool m_isExtensionZeroed;
 
+	bool m_armLegal;
+
 public:
 	Arm();
 	virtual ~Arm();
@@ -56,6 +58,7 @@ public:
 	void SetIntakePos(int intakePos);
 	int GetIntakePos();
 	void ClearStickyFaults();
+	bool IsPivotZeroed();
 
 };
 

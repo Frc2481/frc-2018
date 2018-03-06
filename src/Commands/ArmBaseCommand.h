@@ -100,7 +100,7 @@ typedef ArmBaseCommandGroup<30, 23> ArmToMidScale2Front;
 typedef ArmBaseCommandGroup<30, -23> ArmToMidScale2Back;
 
 typedef ArmBaseCommandGroup<36, 17> ArmToHighScaleFront; //<36, 22>
-typedef ArmBaseCommandGroup<36, -17> ArmToHighScaleBack; //<36, -22>
+typedef ArmBaseCommandGroup<36, -22> ArmToHighScaleBack; //<36, -22>
 
 typedef ArmBaseCommandGroup<36, 16> ArmToHighScale2Front;
 typedef ArmBaseCommandGroup<36, -16> ArmToHighScale2Back;

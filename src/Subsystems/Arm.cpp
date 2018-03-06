@@ -95,7 +95,7 @@ Arm::Arm() : Subsystem("Arm"){
 	m_pivot->ConfigForwardSoftLimitEnable(true, 0);
 	m_pivot->ConfigForwardSoftLimitThreshold(5740, 0);
 	m_pivot->ConfigReverseSoftLimitEnable(true, 0);
-	m_pivot->ConfigReverseSoftLimitThreshold(-5530, 0);
+	m_pivot->ConfigReverseSoftLimitThreshold(-5650, 0);
 
 	m_pivot->ConfigForwardLimitSwitchSource(LimitSwitchSource_FeedbackConnector, LimitSwitchNormal_NormallyOpen, 0);
 	m_pivot->ConfigReverseLimitSwitchSource(LimitSwitchSource_FeedbackConnector, LimitSwitchNormal_NormallyOpen, 0);
@@ -124,6 +124,7 @@ Arm::Arm() : Subsystem("Arm"){
 
 	m_isPivotZeroed = false;
 	m_isExtensionZeroed = false;
+	m_armLegal = true;
 }
 
 Arm::~Arm() {
@@ -196,7 +197,7 @@ void Arm::SetPivotAccel(int accel) {
 void Arm::Periodic() {
 	//use a slower rate of deacceleration to counteract gravity when coming down
 
-	if (DriverStation::GetInstance().IsDisabled()) {
+//	if (DriverStation::GetInstance().IsDisabled()) {
 
 		if (m_isExtensionZeroed == false && m_extenderMaster->GetSensorCollection().IsFwdLimitSwitchClosed()) {
 			ZeroExtension();
@@ -210,7 +211,7 @@ void Arm::Periodic() {
 			// Zero pivot with offset.
 			ZeroPivot(-5429);
 		}
-	}
+//	}
 
 	m_calLed->Set(m_isPivotZeroed && m_isExtensionZeroed);
 
@@ -226,10 +227,12 @@ void Arm::Periodic() {
 	m_pivot->GetStickyFaults(pivotFaults);
 
 	// Save the extension and pivot.  Don't get fouls.
-	if (pivotFaults.ResetDuringEn == true) {
+	if (pivotFaults.ResetDuringEn == true && m_isPivotZeroed) {
 		m_desiredExtensionSetpoint = 0;
 		SetExtensionPosition(m_desiredExtensionSetpoint);
-		m_isPivotZeroed = m_isExtensionZeroed = false;
+		m_isPivotZeroed = false;
+	} else {
+		SetExtensionPosition(GetAllowedExtensionPos());
 	}
 
 //	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
@@ -238,6 +241,17 @@ void Arm::Periodic() {
 	SmartDashboard::PutNumber("extension slave current", m_extenderSlave->GetOutputCurrent());
 //	SmartDashboard::PutNumber("extension error", m_extenderMaster->GetClosedLoopError(0));
 
+	bool armLegal = ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)) < GetAllowedExtensionPos();
+
+	SmartDashboard::PutBoolean("arm legal", armLegal);
+
+	if(m_armLegal && !armLegal) {
+		double allowedExt = GetAllowedExtensionPos();
+		double actualExt = GetExtensionPosition();
+		double errorExt = allowedExt - actualExt;
+		printf("allowed: %f, actual: %f, setpoint: %f, error: %f\n", allowedExt, actualExt, m_extensionSetpoint, errorExt);
+	}
+	m_armLegal = armLegal;
 //	if(m_extenderMaster->GetControlMode() == ControlMode::MotionMagic) {
 //		SmartDashboard::PutNumber("active trajectory position extender",
 //				ConvertEncTicksToInches(m_extenderMaster->GetActiveTrajectoryPosition()));
@@ -268,12 +282,10 @@ void Arm::Periodic() {
 //	SmartDashboard::PutBoolean("extension limit switch", m_extenderMaster->GetSensorCollection().IsRevLimitSwitchClosed());
 //	SmartDashboard::PutBoolean("pivot limit switch forward", m_pivot->GetSensorCollection().IsFwdLimitSwitchClosed());
 //	SmartDashboard::PutBoolean("pivot limit switch reverse", m_pivot->GetSensorCollection().IsRevLimitSwitchClosed());
-	if(DriverStation::GetInstance().IsDisabled()) {
-		SmartDashboard::PutBoolean("extension encoder connected", m_extenderMaster->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
-		SmartDashboard::PutBoolean("pivot encoder connected", m_pivot->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
-		SmartDashboard::PutBoolean("pivot zeroed", m_isPivotZeroed);
-		SmartDashboard::PutBoolean("extension zeroed", m_isExtensionZeroed);
-	}
+	SmartDashboard::PutBoolean("extension encoder connected", m_extenderMaster->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
+	SmartDashboard::PutBoolean("pivot encoder connected", m_pivot->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
+	SmartDashboard::PutBoolean("pivot zeroed", m_isPivotZeroed);
+	SmartDashboard::PutBoolean("extension zeroed", m_isExtensionZeroed);
 }
 
 void Arm::SetPivotAngle(Rotation2D angle) {
@@ -296,6 +308,7 @@ void Arm::ZeroPivot(int pos) {
 		}
 	}
 	m_isPivotZeroed = true;
+	m_pivot->ClearStickyFaults(0);
 }
 
 double Arm::GetAllowedExtensionPos() {
@@ -328,4 +341,8 @@ void Arm::ClearStickyFaults() {
 	m_extenderMaster->ClearStickyFaults(0);
 	m_extenderSlave->ClearStickyFaults(0);
 	m_pivot->ClearStickyFaults(0);
+}
+
+bool Arm::IsPivotZeroed() {
+	return m_isPivotZeroed;
 }

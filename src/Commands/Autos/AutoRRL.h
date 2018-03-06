@@ -1,22 +1,22 @@
 /*
- * AutoLLR.h
+ * AutoRRL.h
  *
- *  Created on: Mar 3, 2018
+ *  Created on: Mar 5, 2018
  *      Author: FIRSTMentor
  */
 
-#ifndef SRC_COMMANDS_AUTOS_AUTOLLR_H_
-#define SRC_COMMANDS_AUTOS_AUTOLLR_H_
+#ifndef SRC_COMMANDS_AUTOS_AUTORRL_H_
+#define SRC_COMMANDS_AUTOS_AUTORRL_H_
 
 #include "Commands/CommandGroup.h"
 
-class AutoLLR : public CommandGroup{
+class AutoRRL : public CommandGroup{
 public:
-	AutoLLR() : CommandGroup("AutoLLR") {
+	AutoRRL() : CommandGroup("AutoRRL"){
 		//cube 1 to switch
-		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
+		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(279.656, 16.5), Rotation2D::fromDegrees(0))));
 		AddParallel(new ArmToSwitchFront(""), 1.0);
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathLeftStartToLeftCube4.csv"));
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathRightStartToRightCube4.csv"));
 		AddSequential(new DriveTrainWaitForFieldXorYCommandGroup(-1, 135));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerUnloadCommand(0.7));
@@ -49,7 +49,7 @@ public:
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 		AddSequential(new PrintCommand("ARM"));
 
-		AddSequential(new DriveTrainFollowPath("/home/lvuser/PathLeftCube4ToRightScale.csv"));
+		AddSequential(new DriveTrainFollowPath("/home/lvuser/PathRightCube4ToLeftScale.csv"));
 		AddSequential(new PrintCommand("FollowPath"));
 
 		AddParallel(new IntakeReleaseCubeCommandGroup(1.0), 1.0);
@@ -59,7 +59,7 @@ public:
 		AddSequential(new PrintCommand("ArmExtentionMotionScaling"));
 
 //Cube 6
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathRightScaleToLeftCube6.csv"));
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathLeftScaleToRightCube6.csv"));
 		AddSequential(new WaitCommand(0.5));
 		AddParallel(new IntakeClampOpenCommand());
 		AddParallel(new IntakeRollerLoadCommand(1));
@@ -81,7 +81,7 @@ public:
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 		AddSequential(new PrintCommand("ARM"));
 
-		AddSequential(new DriveTrainFollowPath("/home/lvuser/PathLeftCube6ToRightScale.csv"));
+		AddSequential(new DriveTrainFollowPath("/home/lvuser/PathRightCube6ToLeftScale.csv"));
 		AddSequential(new PrintCommand("FollowPath"));
 
 		AddParallel(new IntakeReleaseCubeCommandGroup(0.4), 1.0);
@@ -97,4 +97,4 @@ public:
 	}
 };
 
-#endif /* SRC_COMMANDS_AUTOS_AUTOLLR_H_ */
+#endif /* SRC_COMMANDS_AUTOS_AUTORRL_H_ */
