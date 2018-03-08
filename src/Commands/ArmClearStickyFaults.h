@@ -12,7 +12,9 @@
 
 class ArmClearStickyFaults : public InstantCommand{
 public:
-	ArmClearStickyFaults() : InstantCommand("ArmClearStickyFaults"){}
+	ArmClearStickyFaults() : InstantCommand("ArmClearStickyFaults"){
+		SetRunWhenDisabled(true);
+	}
 	virtual ~ArmClearStickyFaults(){}
 
 	void Initialize() {

@@ -124,7 +124,7 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 
 	if (m_isFieldCentric) {
 		translation = translation.rotateBy(gyroAngle.inverse());
-		yawRate *= 0.1;
+		yawRate *= 0.05;
 	}
 	else {
 		  //limit yawRate speed while not in field centric
@@ -346,11 +346,12 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
 	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
 
-//	SmartDashboard::PutNumber("FL steer encoder connected", m_flWheel->GetSteerEncoder()->IsConnected());
-//	SmartDashboard::PutNumber("FR steer encoder connected", m_frWheel->GetSteerEncoder()->IsConnected());
-//	SmartDashboard::PutNumber("BL steer encoder connected", m_blWheel->GetSteerEncoder()->IsConnected());
-//	SmartDashboard::PutNumber("BR steer encoder connected", m_brWheel->GetSteerEncoder()->IsConnected());
-
+	if(DriverStation::GetInstance().IsDisabled()) {
+		SmartDashboard::PutBoolean("FL steer encoder connected", m_flWheel->GetSteerEncoder()->IsConnected());
+		SmartDashboard::PutBoolean("FR steer encoder connected", m_frWheel->GetSteerEncoder()->IsConnected());
+		SmartDashboard::PutBoolean("BL steer encoder connected", m_blWheel->GetSteerEncoder()->IsConnected());
+		SmartDashboard::PutBoolean("BR steer encoder connected", m_brWheel->GetSteerEncoder()->IsConnected());
+	}
 //	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
@@ -460,14 +461,14 @@ void DriveTrain::DisengagePTO() {
 
 void DriveTrain::SetNearWinchSpeed(double speed) {
 	//back & front left physically linked, have to be run opposite direction
-	m_flWheel->Set(speed, m_flWheel->GetAngle());
-	m_blWheel->Set(-speed, m_blWheel->GetAngle());
+	m_frWheel->Set(speed, m_frWheel->GetAngle());
+	m_brWheel->Set(-speed, m_brWheel->GetAngle());
 }
 
 void DriveTrain::SetFarWinchSpeed(double speed) {
 	//back & front right physically linked, have to be run opposite direction
-	m_frWheel->Set(speed, m_frWheel->GetAngle());
-	m_brWheel->Set(-speed, m_brWheel->GetAngle());
+	m_flWheel->Set(speed, m_flWheel->GetAngle());
+	m_blWheel->Set(-speed, m_blWheel->GetAngle());
 }
 
 bool DriveTrain::IsPtoEngaged() {

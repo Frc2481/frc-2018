@@ -17,14 +17,6 @@ public:
 	Joystick2481* GetDriverStick();
 	Joystick2481* GetOperatorStick();
 
-	Button* m_aDriverButton;
-	Button* m_bDriverButton;
-	Button* m_xDriverButton;
-	Button* m_yDriverButton;
-
-	Button* m_leftDriverBumper;
-	Button* m_rightDriverBumper;
-
 	Button* m_aOpButton;
 	Button* m_bOpButton;
 	Button* m_xOpButton;
@@ -40,30 +32,26 @@ public:
 	Button* m_rightTrigger;
 
 //driver
-//	Button* m_shifterButton;
 	Button* m_shifterButton;
 	Button* m_fieldCentricButton;
 	AnalogJoystickButton* m_intakeCubeButton;
-	AnalogJoystickButton* m_climberButton;
+//	AnalogJoystickButton* m_climberButton;
 	Button* m_armToIntakeFront;
 	Button* m_armToIntakeBack;
-	Button* m_armToIntake2Front;
-	Button* m_armToIntake2Back;
-	Button* m_releaseSlowCubeButton;
-	Button* m_releaseFastCubeButton;
-	Button* m_stowButton;
+	Button* m_stowButtonDriver;
+	Button* m_intake3PosButton;
+	Button* m_driveTrainZeroGyro;
 
 //for testing
-	AnalogJoystickButton* m_intakeCubeManualButton;
-	Button* m_openClampButton;
+//	AnalogJoystickButton* m_intakeCubeManualButton;
 
 //operator
 	AnalogJoystickButton* m_extenderButton;
 	AnalogJoystickButton* m_retractButton;
-	AnalogJoystickButton* m_pivotForwardButton;
-	AnalogJoystickButton* m_pivotReverseButton;
-	Button* m_intakeButton;
-	Button* m_releaseButton;
+	AnalogJoystickButton* m_pivotUpButton;
+	AnalogJoystickButton* m_pivotDownButton;
+//	Button* m_intakeButton;
+//	Button* m_releaseButton;
 
 
 	Button* m_armToSwitchFront;
@@ -80,12 +68,19 @@ public:
 
 	Button* m_mirrorArmPos;
 
-	Button* m_deployRampsPTOButton;
-	Button* m_climbButton;
+//	Button* m_deployRampsPTOButton;
+//	Button* m_climbButton;
 
 	Button* m_outerWinch;
 	Button* m_innerWinch;
 	Button* m_extensionOpenLoop;
+
+	Button* m_stowButtonOp;
+
+	Button* m_exchangeFrontButton;
+	Button* m_exchangeBackButton;
+
+	Button* m_variableReleaseSpeed;
 };
 
 #endif  // OI_H

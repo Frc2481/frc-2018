@@ -44,7 +44,7 @@ void PathManager::ReloadPaths() {
 		PathLoader pathLoader(path);
 		pathLoader.LoadPath(pathPair.first);
 
-		if(path.empty()) {
+		if(path.empty() && !pathPair.first.empty()) {
 			m_missingPath = true;
 			printf("missing path %s\n", pathPair.first.c_str());
 		}

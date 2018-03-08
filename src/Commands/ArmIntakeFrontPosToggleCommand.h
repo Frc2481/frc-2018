@@ -17,22 +17,19 @@ class ArmIntakeFrontPosToggleCommand : public InstantCommand {
 private:
 	Command* m_armIntake1Front;
 	Command* m_armIntake2Front;
-	Command* m_armIntake3Front;
+//	Command* m_armIntake3Front;
 
 public:
 	ArmIntakeFrontPosToggleCommand() : InstantCommand("ArmIntakeFrontPosToggleCommand") {
 		m_armIntake1Front = new ArmToIntakeFront("");
 		m_armIntake2Front = new ArmToIntake2Front("");
-		m_armIntake3Front = new ArmToIntake3Front("");
+//		m_armIntake3Front = new ArmToIntake3Front("");
 	}
 	virtual ~ArmIntakeFrontPosToggleCommand() {}
 	void Initialize() {
 		double pivotAngle = CommandBase::m_arm->GetDesiredPivotAngle().getDegrees();
 		if(fabs(pivotAngle - ArmToIntakeFront::k_pivotAngle) < .0001) {
 			m_armIntake2Front->Start();
-		}
-		else if(fabs(pivotAngle - ArmToIntake2Front::k_pivotAngle) < .0001) {
-			m_armIntake3Front->Start();
 		}
 		else {
 			m_armIntake1Front->Start();

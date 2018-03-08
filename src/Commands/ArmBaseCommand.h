@@ -18,8 +18,8 @@
 template <int EXT, int PIVOT_ANGLE>
 class ArmBaseCommand : public CommandBase{
 private:
-	int m_debounce;
-
+	bool m_pivotOnTarget;
+	bool m_extensionOnTarget;
 public:
 	ArmBaseCommand(std::string name) : CommandBase(name) {
 		Requires(m_arm.get());
@@ -28,21 +28,23 @@ public:
 	void Initialize() {
 		m_arm->SetDesiredExtension(EXT);
 		m_arm->SetPivotAngle(Rotation2D::fromDegrees(PIVOT_ANGLE));
-		m_debounce = 0;
+		m_pivotOnTarget = false;
+		m_extensionOnTarget = false;
 	}
 	void Execute() {
 		m_arm->SetExtensionPosition(m_arm->GetAllowedExtensionPos());
 		SmartDashboard::PutNumber("get allowed extension pos", m_arm->GetAllowedExtensionPos());
 	}
 	bool IsFinished() {
-		if(CommandBase::m_arm->IsPivotOnTarget() && CommandBase::m_arm->IsExtensionOnTarget()) {
-			m_debounce++;
+		if(CommandBase::m_arm->IsPivotOnTarget()) {
+			m_pivotOnTarget = true;
 		}
-		else {
-			m_debounce = 0;
+		if(CommandBase::m_arm->IsExtensionOnTarget()) {
+			m_extensionOnTarget = true;
 		}
-		return m_debounce > 5;
+		return m_pivotOnTarget && m_extensionOnTarget;
 	}
+
 	void End() {
 		SmartDashboard::PutNumber("arm movement time", TimeSinceInitialized());
 	}
@@ -59,13 +61,19 @@ public:
 	static const int k_pivotAngle = PIVOT_ANGLE;
 
 	ArmBaseCommandGroup(std::string name) : CommandGroup(name) {
-		AddSequential(new ArmRetractWhenExtendedCommand(PIVOT_ANGLE));
-		AddSequential(new ArmBaseCommand<EXT, PIVOT_ANGLE>(""));
+		AddSequential(new PrintCommand("Arm Start Base Command Group"));
+		AddSequential(new ArmRetractWhenExtendedCommand(PIVOT_ANGLE), 1.5);
+		AddSequential(new PrintCommand("Arm Mid Base Command Group"));
+		AddSequential(new ArmBaseCommand<EXT, PIVOT_ANGLE>(""), 1.5);
+		AddSequential(new PrintCommand("Arm End Base Command Group"));
 	}
 };
 
+typedef ArmBaseCommandGroup<2, 112> ArmToExchangeFront;
+typedef ArmBaseCommandGroup<2, -112> ArmToExchangeBack;
+
 typedef ArmBaseCommandGroup<4, 120> ArmToIntakeFront;
-typedef ArmBaseCommandGroup<4, -119> ArmToIntakeBack;
+typedef ArmBaseCommandGroup<4, -121> ArmToIntakeBack;
 
 typedef ArmBaseCommandGroup<1, 104> ArmToIntake2Front;
 typedef ArmBaseCommandGroup<1, -101> ArmToIntake2Back;
@@ -79,8 +87,8 @@ typedef ArmBaseCommandGroup<0, -66> ArmToSwitchBack;
 typedef ArmBaseCommandGroup<0, 66> ArmToSwitch2Front;
 typedef ArmBaseCommandGroup<0, -66> ArmToSwitch2Back;
 
-typedef ArmBaseCommandGroup<8, 39> ArmToLowScaleFront; //15, 44
-typedef ArmBaseCommandGroup<8, -39> ArmToLowScaleBack; // 11, -45
+typedef ArmBaseCommandGroup<9, 35> ArmToLowScaleFront; //15, 44
+typedef ArmBaseCommandGroup<9, -35> ArmToLowScaleBack; // 11, -45
 
 typedef ArmBaseCommandGroup<8, 28> ArmToLowScale2Front;
 typedef ArmBaseCommandGroup<8, -28> ArmToLowScale2Back;
@@ -92,7 +100,7 @@ typedef ArmBaseCommandGroup<30, 23> ArmToMidScale2Front;
 typedef ArmBaseCommandGroup<30, -23> ArmToMidScale2Back;
 
 typedef ArmBaseCommandGroup<36, 17> ArmToHighScaleFront; //<36, 22>
-typedef ArmBaseCommandGroup<36, -17> ArmToHighScaleBack; //<36, -22>
+typedef ArmBaseCommandGroup<36, -22> ArmToHighScaleBack; //<36, -22>
 
 typedef ArmBaseCommandGroup<36, 16> ArmToHighScale2Front;
 typedef ArmBaseCommandGroup<36, -16> ArmToHighScale2Back;

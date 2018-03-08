@@ -13,12 +13,11 @@
 class DriveTrainFarWinchCommand : public CommandBase{
 public:
 	DriveTrainFarWinchCommand() : CommandBase("DriveTrainFarWinchCommand") {
-		Requires(m_driveTrain.get());
 	}
 	virtual ~DriveTrainFarWinchCommand(){}
 
 	void Initialize() {
-		m_driveTrain->SetFarWinchSpeed(0.8);
+		m_driveTrain->SetFarWinchSpeed(1);
 	}
 	void End() {
 		m_driveTrain->SetFarWinchSpeed(0);

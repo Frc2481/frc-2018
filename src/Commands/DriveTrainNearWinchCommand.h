@@ -13,12 +13,11 @@
 class DriveTrainNearWinchCommand : public CommandBase{
 public:
 	DriveTrainNearWinchCommand() : CommandBase("DriveTrainNearWinchCommand") {
-		Requires(m_driveTrain.get());
 	}
 	virtual ~DriveTrainNearWinchCommand(){}
 
 	void Initialize() {
-		m_driveTrain->SetNearWinchSpeed(0.8);
+		m_driveTrain->SetNearWinchSpeed(-0.4);
 	}
 	void End() {
 		m_driveTrain->SetNearWinchSpeed(0);

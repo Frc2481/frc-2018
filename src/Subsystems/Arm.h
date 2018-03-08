@@ -17,16 +17,20 @@
 
 class Arm : public Subsystem{
 private:
+	DigitalOutput* m_calLed;
 	TalonSRX* m_extenderMaster;
 	TalonSRX* m_extenderSlave;
 	TalonSRX* m_pivot;
 	bool m_prevExtensionTravellingDown;
 	double m_desiredExtensionSetpoint;
+	double m_extensionSetpoint;
 	ArmExtension m_armConstraints;
 	Rotation2D m_pivotAngle;
 	double m_scale;
 	bool m_isPivotZeroed;
 	bool m_isExtensionZeroed;
+
+	bool m_armLegal;
 
 public:
 	Arm();
@@ -36,14 +40,14 @@ public:
 	double GetDesiredExtension();
 	double GetExtensionPosition();
 	bool IsExtensionOnTarget();
-	void ZeroExtension();
+	void ZeroExtension(int pos = 0);
 	void SetExtensionOpenLoop(double speed);
 	void SetPivotOpenLoop(double speed);
 	void SetPivotAngle(Rotation2D angle);
 	bool IsPivotOnTarget();
 	Rotation2D GetPivotAngle();
 	Rotation2D GetDesiredPivotAngle();
-	void ZeroPivot();
+	void ZeroPivot(int pos = 0);
 	void SetPivotAccel(int accel);
 	virtual void Periodic();
 	double GetAllowedExtensionPos();
@@ -54,6 +58,7 @@ public:
 	void SetIntakePos(int intakePos);
 	int GetIntakePos();
 	void ClearStickyFaults();
+	bool IsPivotZeroed();
 
 };
 

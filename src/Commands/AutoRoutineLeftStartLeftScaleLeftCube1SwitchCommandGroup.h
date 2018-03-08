@@ -13,14 +13,16 @@
 #include "AutoCubeCommandGroup.h"
 #include "AutoSwitchCommandGroup.h"
 #include "AutoScaleCommandGroup.h"
+#include "DriveTrainDriveCommand.h"
 
 class AutoRoutineLeftStartLeftScaleLeftCube1SwitchCommandGroup : public CommandGroup{
 public:
 	AutoRoutineLeftStartLeftScaleLeftCube1SwitchCommandGroup() : CommandGroup("AutoRoutineLeftStartLeftScaleLeftCube1SwitchCommandGroup"){
 		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
-		AddSequential(new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv"));
-		AddSequential(new AutoCubeCommandGroup("home/lvuser/PathLeftScaleToLeftCube1.csv", -1, -1));
+		AddSequential(new AutoScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathLeftStartToLeftScale.csv"));
+		AddSequential(new AutoCubeCommandGroup("/home/lvuser/PathLeftScaleToLeftCube1.csv", -1, -1));
 		AddSequential(new AutoSwitchCommandGroup("/home/lvuser/PathLeftCube1ToSwitch.csv", false, -1, 228));
+//		AddSequential(new AutoSwitchCommandGroup("", false, -1, 228));
 	}
 };
 

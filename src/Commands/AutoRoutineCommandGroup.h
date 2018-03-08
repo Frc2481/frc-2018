@@ -11,27 +11,28 @@
 #include "Commands/CommandGroup.h"
 #include "Commands/AutoRoutineCommandGroup.h"
 #include "Commands/DriveTrainFollowPath.h"
-//#include "Robot.cpp"
-
 
 class AutoRoutineCommandGroup : public CommandGroup{
 public:
-	AutoRoutineCommandGroup() : CommandGroup("AutoRoutineCommandGroup"){
-
-//		AddSequential(new IntakeClampCloseCommand());
-//		AddSequential(new ArmToStow(""));
-//		AddSequential(task1); //fix
-		AddSequential(new AutoScaleCommandGroup("/home/lvuser/PathLeftStartToLeftScale.csv"));
-
-		AddSequential(new DriveTrainFollowPath("home/lvuser/PathLeftScaleToLeftCube1.csv"));
-//		AddSequential(new ArmToIntakeBack(""));
-//		AddSequential(new IntakeAcquireCubeCommandGroup());
-//		AddSequential(task2); //fix
-//
-//		AddSequential(new DriveTrainFollowPath("home/lvuser/PathLeftCube1ToLeftScale.csv"));
-//		AddSequential(new ArmToIntakeBack(""));
-//		AddSequential(new IntakeAcquireCubeCommandGroup());
-//		AddSequential(task3); //fix
+	AutoRoutineCommandGroup(Command* startPos, Command* task1, Command* task2, Command* task3) : CommandGroup("AutoRoutineCommandGroup"){
+		AddSequential(startPos);
+		AddSequential(new IntakeClampCloseCommand());
+		if(task1 != nullptr) {
+			AddSequential(new PrintCommand("Task 1 Start"));
+			AddSequential(task1);
+			AddSequential(new PrintCommand("Task 1 Finished"));
+		}
+		if(task2 != nullptr) {
+			AddSequential(new PrintCommand("Task 2 Start"));
+			AddSequential(task2);
+			AddSequential(new PrintCommand("Task 2 Finished"));
+		}
+		if(task3 != nullptr) {
+			AddSequential(new PrintCommand("Task 3 Start"));
+			AddSequential(task3);
+			AddSequential(new PrintCommand("Task 3 Finished"));
+		}
+		AddSequential(new ArmToStow(""));
 	}
 };
 

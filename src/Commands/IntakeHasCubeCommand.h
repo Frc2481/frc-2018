@@ -9,6 +9,7 @@ private:
 public:
 	IntakeHasCubeCommand() : CommandBase("IntakeHasCubeCommand"){
 		m_debounceCounter = 0;
+//		SetTimeout(3);
 	}
 
 	void Initialize() {
@@ -18,13 +19,14 @@ public:
 	void Execute() {}
 
 	bool IsFinished(){
-		if(m_intake->HasCube()) {
-			m_debounceCounter++;
-		}
-		else {
-			m_debounceCounter = 0;
-		}
-		return m_debounceCounter > 2;
+//		if(m_intake->HasCube()) {
+//			m_debounceCounter++;
+//		}
+//		else {
+//			m_debounceCounter = 0;
+//		}
+//		return m_debounceCounter > 2;
+		return m_intake->HasCube(); // || IsTimedOut();
 	}
 };
 
