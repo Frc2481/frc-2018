@@ -205,7 +205,8 @@ void Arm::Periodic() {
 
 		if (m_isPivotZeroed == false && m_pivot->GetSensorCollection().IsFwdLimitSwitchClosed()) {
 			// Zero pivot with offset.
-			ZeroPivot(5476);
+//			ZeroPivot(5476); // Practice
+			ZeroPivot(5623); // Competition
 
 		} else if (m_isPivotZeroed == false && m_pivot->GetSensorCollection().IsRevLimitSwitchClosed()) {
 			// Zero pivot with offset.

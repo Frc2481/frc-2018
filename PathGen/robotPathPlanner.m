@@ -285,8 +285,8 @@ LLR_rightScale = [fieldDim(1) - 71.6 - 6, 298 - (robotDim(2) / 2) - 6, 10, 0];
 LLR_leftCube6 = [LLR_leftCube4(1) + 50, LLR_leftCube4(2) + 2, 0, 0];
 LLR_rightScale2 = [LLR_rightScale(1) + 5, LLR_rightScale(2) + 9, 40, 0];
 
-leftCube62 = [fieldDim(1) - leftCube1(1) + 5, leftCube1(2) + 1, 0, 0];
-leftCube1 = [85.3 + 6.5 + 8, 196 + 6.5 + (robotDim(2) / 2) + 10, 0, 0];
+% leftCube62 = [fieldDim(1) - leftCube1(1) + 5, leftCube1(2) + 1, 0, 0];
+% leftCube1 = [85.3 + 6.5 + 8, 196 + 6.5 + (robotDim(2) / 2) + 10, 0, 0];
 
 % left start to left cube 4
 maxSpeed = 100 * 0.95 * 1.0;
@@ -313,8 +313,8 @@ waypoints = [LLR_leftCube4;
 generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
 
 % right scale to left cube 6
-maxSpeed = 100 * 0.95 * 0.8;
-maxAccel = maxSpeed * 1.0;
+maxSpeed = 100 * 0.95 * 0.7;
+maxAccel = maxSpeed * 0.8;
 sampleRate = 50;
 csvFilename = 'PathRightScaleToLeftCube62.csv';
 waypoints = [LLR_rightScale;

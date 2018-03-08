@@ -59,8 +59,8 @@ public:
 		AddSequential(new PrintCommand("ArmExtentionMotionScaling"));
 
 //Cube 6
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathRightScaleToLeftCube6.csv"));
-		AddSequential(new WaitCommand(0.5));
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathRightScaleToLeftCube62.csv"));
+		AddSequential(new WaitCommand(0.5)); // Don't clip the scale with the intake.
 		AddParallel(new IntakeClampOpenCommand());
 		AddParallel(new IntakeRollerLoadCommand(1));
 
