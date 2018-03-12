@@ -9,6 +9,7 @@
 #define SRC_COMMANDS_LOGOBSERVERCOMMAND_H_
 
 #include <fstream>
+#include <sstream>
 #include "CommandBase.h"
 
 class LogObserverCommand : public CommandBase{
@@ -18,13 +19,15 @@ public:
 	LogObserverCommand() : CommandBase("LogObserverCommand"){}
 	virtual ~LogObserverCommand(){}
 	void Initialize() {
-		m_stream = std::ofstream("/home/lvuser/ObserverLog.csv");
+		std::stringstream ss;
+		ss << "/home/lvuser/ObserverLog_" << DriverStation::GetInstance().GetMatchNumber() << ".csv";
+		m_stream = std::ofstream(ss.str());
 		m_stream<< "time,x,y,heading\n";
 	}
 
 	void Execute() {
-		RigidTransform2D pose = CommandBase::m_driveTrain->GetObserver()->GetRobotPos(GetFPGATime());
-		m_stream<<GetFPGATime() << "," <<
+		RigidTransform2D pose = CommandBase::m_driveTrain->GetObserver()->GetLastRobotPose();
+		m_stream<< RobotController::GetFPGATime() << "," <<
 				  pose.getTranslation().getX()<< "," <<
 				  pose.getTranslation().getY() << "," <<
 				  pose.getRotation().getDegrees() << "\n";
