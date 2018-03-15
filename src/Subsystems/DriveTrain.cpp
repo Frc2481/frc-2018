@@ -22,6 +22,7 @@
 #include "Commands/DriveTrainEngagePtoCommand.h"
 #include "Commands/DriveTrainOpenLoopCommand.h"
 #include "WPILib.h"
+#include "ctre/Phoenix.h"
 
 DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_flWheel(new SwerveModule(FRONT_LEFT_DRIVE, FRONT_LEFT_STEER, "FRONT_LEFT")),
@@ -31,6 +32,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_shifter(new Solenoid(SHIFTER)),
 	m_pto(new DoubleSolenoid(PTO1, PTO2)),
 	m_imu(new AHRS(SPI::kMXP)),
+	m_pigeon(new PigeonIMU(0)),
 	m_isFieldCentric(false),
 //	m_isForward(true),
 	m_xVel(0),
@@ -480,4 +482,12 @@ void DriveTrain::SetOpenLoopSteer(double speed) {
 	 m_frWheel->SetOpenLoopSteer(speed);
 	 m_blWheel->SetOpenLoopSteer(speed);
 	 m_brWheel->SetOpenLoopSteer(speed);
+}
+
+AHRS* DriveTrain::GetImu() {
+	return m_imu;
+}
+
+PigeonIMU* DriveTrain::GetPigeonImu() {
+	return m_pigeon;
 }

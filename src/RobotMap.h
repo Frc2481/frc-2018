@@ -22,6 +22,7 @@
 
 		#define EXTENDER_MASTER 15
 		#define EXTENDER_SLAVE 16
-		#define PIVOT 17
+		#define PIVOT_MASTER 17
+		#define PIVOT_SLAVE 18
 
 #endif

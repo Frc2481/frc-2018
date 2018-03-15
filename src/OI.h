@@ -44,6 +44,8 @@ public:
 
 //for testing
 //	AnalogJoystickButton* m_intakeCubeManualButton;
+	Button* m_manualExtend;
+	Button* m_manualRetract;
 
 //operator
 	AnalogJoystickButton* m_extenderButton;

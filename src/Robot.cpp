@@ -99,6 +99,8 @@ private:
 	cs::UsbCamera m_usbCam1;
 	cs::UsbCamera m_usbCam2;
 
+	Command* m_logger;
+
 //	SendableChooser<Autos>* m_posChooser;
 //	SendableChooser<Autos>* m_firstCubeChooser;
 //	SendableChooser<Autos>* m_secondCubeChooser;
@@ -188,6 +190,8 @@ private:
 		m_usbCam2 = m_server->StartAutomaticCapture("cam2", 1);
 		m_usbCam2.SetFPS(15);
 		m_usbCam2.SetResolution(320, 180);
+
+		m_logger = new LogObserverCommand();
 	}
 
 	/**
@@ -219,6 +223,10 @@ private:
 	 */
 	void AutonomousInit() override {
 //		std::string autoSelected = frc::SmartDashboard::GetString("Auto Selector", "Default");
+
+		if (m_logger != nullptr) {
+			m_logger->Start();
+		}
 
 		m_fieldConfig.Initialize();
 
@@ -266,126 +274,6 @@ private:
 	void AutoTasksFunction(){
 		m_autoTasks = new std::map<int, Command*>();
 
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathLeftStartToLeftScale.csv");
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathLeftStartToLeftSwitch.csv", true);
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE2] = new AutoCubeAndScaleCommandGroup<ArmToMidScale2Front>("/home/lvuser/PathLeftScaleToLeftCube1.csv", "", -1, -1);
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH2] = new AutoCubeAndSwitchCommandGroup("/home/lvuser/PathLeftScaleToLeftCube1.csv", "/home/lvuser/PathLeftCube1ToSwitch.csv", -1, -1, -1, -1);
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SCALE3] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
-//
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathLeftStartToLeftScale.csv");
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE2] = new AutoCubeAndScaleCommandGroup<ArmToMidScale2Front>("/home/lvuser/PathLeftScaleToLeftCube1.csv", "", -1, -1);
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH2] = new AutoCubeAndSwitchCommandGroup("/home/lvuser/PathLeftScaleToLeftCube6.csv", "/home/lvuser/PathLeftCube6ToSwitch.csv", 155, -1, -1, -1);
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
-//
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathLeftStartToRightScale.csv");
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoStartSwitchCommandGroup("/home/lvuser/PathLeftStartToLeftSwitch.csv", -1, 160);
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE2] = new AutoCubeAndScaleCommandGroup<ArmToMidScale2Front>("/home/lvuser/PathLeftSwitchToLeftCube4.csv", "/home/lvuser/PathLeftCube4ToRightScale.csv", 105, -1);
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH2] = new AutoCubeAndSwitchCommandGroup("/home/lvuser/PathLeftSwitchToLeftCube4.csv", "", -1, -1, -1, -1); //change first -1
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SCALE3] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
-//
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathLeftStartToRightScale.csv");
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE2] = new AutoCubeAndScaleCommandGroup<ArmToMidScale2Front>("/home/lvuser/PathRightScaleToLeftCube6.csv", "", -1, -1);
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH2] = new AutoCubeAndSwitchCommandGroup("/home/lvuser/PathRightScaleToLeftCube6.csv", "/home/lvuser/PathLeftCube6ToSwitch2.csv", -1, -1, -1, -1); //change first -1
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
-//		(*AutoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
-//
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathRightStartToLeftScale.csv");
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE2] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH2] = new AutoCubeAndSwitchCommandGroup("/home/lvuser/PathLeftScaleToRightCube6.csv", "/home/lvuser/PathRightCube6ToSwitch.csv", -1, -1, -1, -1);
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SCALE3] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
-//
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE1] = new AutoScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathRightStartToLeftScale.csv");
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathRightStartToRightSwitch.csv", false);
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE2] = new AutoCubeAndScaleCommandGroup<ArmToMidScale2Front>("/home/lvuser/PathRightSwitchToRightCube4.csv", "/home/lvuser/PathRightCube4ToLeftScale.csv", -1, -1);
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH2] = new AutoCubeAndSwitchCommandGroup("/home/lvuser/PathRightSwitchToRightCube4.csv", "", -1, -1, -1, -1);
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
-//
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE1] = new AutoScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathRightStartToRightScale.csv");
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE2] = new AutoCubeAndScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathRightScaleToRightCube6.csv", "", -1, -1);
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH2] = new AutoCubeAndSwitchCommandGroup("/home/lvuser/PathRightScaleToRightCube1.csv", "/home/lvuser/PathRightCube1ToSwitch.csv", -1, -1, -1, -1); //change first -1
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING2] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SCALE3] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | SWITCH3] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | NOTHING3] = new AutoCommand();
-//
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE1] = new AutoScaleCommandGroup<ArmToMidScaleFront>("/home/lvuser/PathRightStartToRightScale.csv");
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoSwitchCommandGroup("/home/lvuser/PathRightStartToRightSwitch.csv", false);
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE2] = new AutoCubeAndScaleCommandGroup<ArmToMidScale2Front>("/home/lvuser/PathRightScaleToRightCube1.csv", "", -1, -1);
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH2] = new AutoCubeAndSwitchCommandGroup("/home/lvuser/PathRightScaleToRightCube1.csv", "/home/lvuser/PathRightCube1ToSwitch.csv", -1, -1, -1, -1);
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING2] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SCALE3] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | SWITCH3] = new AutoCommand();
-//		(*AutoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | NOTHING3] = new AutoCommand();
-//
-//
-//		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-//		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
-//		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_LEFT | SWITCH1] = new AutoCommand();
-//		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_RIGHT | SWITCH1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_LEFT | EXCHANGE1] = new AutoCommand();
-//		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_RIGHT | EXCHANGE1] = new AutoCommand();
-//		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_LEFT | EXCHANGE1] = new AutoCommand();
-//		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_RIGHT | EXCHANGE1] = new AutoCommand();
-//
-//		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_LEFT | EXCHANGE2] = new AutoCommand();
-//		(*AutoTasks)[POS_CENTER | SCALE_LEFT | SWITCH_RIGHT | EXCHANGE2] = new AutoCommand();
-//		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_LEFT | EXCHANGE2] = new AutoCommand();
-//		(*AutoTasks)[POS_CENTER | SCALE_RIGHT | SWITCH_RIGHT | EXCHANGE2] = new AutoCommand();
-
-
 		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS] = new AutoLLL();
 		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS] = new AutoLRL();
 		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS] = new AutoLLR();
@@ -417,5 +305,9 @@ private:
 //	frc::SendableChooser<frc::Command*> numCubes;
 	frc::SendableChooser<frc::Command*> centerCross;
 };
+
+//LRR hit last 2 cubes
+//LLR arm goes down too soon
+//LLL cube to switch, not thrown away
 
 START_ROBOT_CLASS(Robot)

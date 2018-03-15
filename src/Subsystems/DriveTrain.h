@@ -31,6 +31,7 @@ private:
 	DoubleSolenoid *m_pto;
 
 	AHRS* m_imu;
+	class PigeonIMU* m_pigeon;
 	bool m_isFieldCentric;
 //	bool m_isForward;
 	double m_xVel, m_yVel, m_yawRate;
@@ -119,6 +120,10 @@ public:
 	bool IsPtoEngaged();
 
 	void SetOpenLoopSteer(double speed);
+
+	AHRS* GetImu();
+
+	PigeonIMU* GetPigeonImu();
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

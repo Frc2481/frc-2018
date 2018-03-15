@@ -16,7 +16,7 @@ public:
 	virtual ~ArmRetractCommand(){}
 
 	void Initialize() {
-		m_arm->SetExtensionOpenLoop(-0.5);
+		m_arm->SetExtensionOpenLoop(-1);
 	}
 	bool IsFinished() {
 		return false;

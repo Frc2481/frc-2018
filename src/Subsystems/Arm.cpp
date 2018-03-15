@@ -52,23 +52,23 @@ Arm::Arm() : Subsystem("Arm"){
 
 	m_extenderMaster->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Relative, 0, 0);
 
-	m_extenderMaster->ConfigMotionCruiseVelocity(RobotParameters::k_extenderVelocity, 0); //convert to talon speed: encoder count/100 ms / 2.0
-	m_extenderMaster->ConfigMotionAcceleration(RobotParameters::k_extenderAcceleration, 0); //9200
+	m_extenderMaster->ConfigMotionCruiseVelocity(RobotParameters::k_extenderVelocityUp, 0); //convert to talon speed: encoder count/100 ms / 2.0
+	m_extenderMaster->ConfigMotionAcceleration(RobotParameters::k_extenderAccelerationUp, 0); //9200
 	m_scale = 1.0;
 
 	m_extenderMaster->SetStatusFramePeriod(Status_2_Feedback0_, 10, 0);
-	m_extenderMaster->SetStatusFramePeriod(Status_10_MotionMagic, 100, 0);
+	m_extenderMaster->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
 
 	m_extenderMaster->ConfigAllowableClosedloopError(0, 0, 0);
 
 	m_extenderMaster->ConfigPeakCurrentDuration(0, 0);
 	m_extenderMaster->ConfigContinuousCurrentLimit(30, 0);
-	m_extenderMaster->EnableCurrentLimit(true);
+	m_extenderMaster->EnableCurrentLimit(false);
 	m_extenderMaster->ConfigPeakCurrentLimit(0, 0);
 
 	m_extenderSlave->ConfigPeakCurrentDuration(0, 0);
 	m_extenderSlave->ConfigContinuousCurrentLimit(30, 0);
-	m_extenderSlave->EnableCurrentLimit(true);
+	m_extenderSlave->EnableCurrentLimit(false);
 	m_extenderSlave->ConfigPeakCurrentLimit(0, 0);
 
 	m_extenderSlave->SetInverted(true);
@@ -76,55 +76,68 @@ Arm::Arm() : Subsystem("Arm"){
 
 	m_desiredExtensionSetpoint = 0;
 
-	m_pivot = new TalonSRX(PIVOT);
-	m_pivot->SelectProfileSlot(0, 0);
-	m_pivot->Set(ControlMode::PercentOutput, 0);
-	m_pivot->Config_kP(0, RobotParameters::k_pivotP, 0);
-	m_pivot->Config_kI(0, RobotParameters::k_pivotI, 0);
-	m_pivot->Config_kD(0, RobotParameters::k_pivotD, 0);
-	m_pivot->Config_kF(0, RobotParameters::k_pivotF, 0);
-	m_pivot->Config_IntegralZone(0, 200, 0);
-	m_pivot->SetSensorPhase(true);
-	m_pivot->SetInverted(true);
+	m_pivotMaster = new TalonSRX(PIVOT_MASTER);
+	m_pivotSlave = new VictorSPX(PIVOT_SLAVE);
 
-	m_pivot->ConfigNominalOutputForward(0.0, 0.0);
-	m_pivot->ConfigNominalOutputReverse(0.0, 0.0);
-	m_pivot->ConfigPeakOutputForward(RobotParameters::k_pivotPeakOutputForward, 0.0);
-	m_pivot->ConfigPeakOutputReverse(RobotParameters::k_pivotPeakOutputReverse, 0.0);
+	m_pivotMaster->SelectProfileSlot(0, 0);
+	m_pivotMaster->Set(ControlMode::PercentOutput, 0);
+	m_pivotMaster->Config_kP(0, RobotParameters::k_pivotP, 0);
+	m_pivotMaster->Config_kI(0, RobotParameters::k_pivotI, 0);
+	m_pivotMaster->Config_kD(0, RobotParameters::k_pivotD, 0);
+	m_pivotMaster->Config_kF(0, RobotParameters::k_pivotF, 0);
+	m_pivotMaster->Config_IntegralZone(0, 200, 0);
+	m_pivotMaster->SetSensorPhase(true);
+	m_pivotMaster->SetInverted(true);
 
-	m_pivot->ConfigForwardSoftLimitEnable(true, 0);
-	m_pivot->ConfigForwardSoftLimitThreshold(5740, 0);
-	m_pivot->ConfigReverseSoftLimitEnable(true, 0);
-	m_pivot->ConfigReverseSoftLimitThreshold(-5650, 0);
+	m_pivotMaster->ConfigNominalOutputForward(0.0, 0.0);
+	m_pivotMaster->ConfigNominalOutputReverse(0.0, 0.0);
+	m_pivotMaster->ConfigPeakOutputForward(RobotParameters::k_pivotPeakOutputForward, 0.0);
+	m_pivotMaster->ConfigPeakOutputReverse(RobotParameters::k_pivotPeakOutputReverse, 0.0);
 
-	m_pivot->ConfigForwardLimitSwitchSource(LimitSwitchSource_FeedbackConnector, LimitSwitchNormal_NormallyOpen, 0);
-	m_pivot->ConfigReverseLimitSwitchSource(LimitSwitchSource_FeedbackConnector, LimitSwitchNormal_NormallyOpen, 0);
+	m_pivotMaster->ConfigForwardSoftLimitEnable(true, 0);
+	m_pivotMaster->ConfigForwardSoftLimitThreshold(5740, 0);
+	m_pivotMaster->ConfigReverseSoftLimitEnable(true, 0);
+	m_pivotMaster->ConfigReverseSoftLimitThreshold(-5650, 0);
 
-	m_pivot->ConfigSetParameter(ParamEnum::eClearPosOnLimitF, 0, 0, 0, 0);
-	m_pivot->ConfigSetParameter(ParamEnum::eClearPosOnLimitR, 0, 0, 0, 0);
+	m_pivotMaster->ConfigForwardLimitSwitchSource(LimitSwitchSource_FeedbackConnector, LimitSwitchNormal_NormallyOpen, 0);
+	m_pivotMaster->ConfigReverseLimitSwitchSource(LimitSwitchSource_FeedbackConnector, LimitSwitchNormal_NormallyOpen, 0);
 
-	m_pivot->ConfigContinuousCurrentLimit(25, 0);
-	m_pivot->ConfigPeakCurrentLimit(0, 0);
-	m_pivot->ConfigPeakCurrentDuration(0, 0);
-	m_pivot->EnableCurrentLimit(true);
+	m_pivotMaster->ConfigSetParameter(ParamEnum::eClearPosOnLimitF, 0, 0, 0, 0);
+	m_pivotMaster->ConfigSetParameter(ParamEnum::eClearPosOnLimitR, 0, 0, 0, 0);
 
-	m_pivot->SetNeutralMode(Brake);
+	m_pivotMaster->ConfigContinuousCurrentLimit(25, 0);
+	m_pivotMaster->ConfigPeakCurrentLimit(0, 0);
+	m_pivotMaster->ConfigPeakCurrentDuration(0, 0);
+	m_pivotMaster->EnableCurrentLimit(false); //ToDo: enable current limit
 
-	m_pivot->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Relative, 0, 0);
+	m_pivotMaster->SetNeutralMode(Brake);
 
-	m_pivot->ConfigMotionCruiseVelocity(RobotParameters::k_pivotVelocity, 0);
-	m_pivot->ConfigMotionAcceleration(RobotParameters::k_pivotAcceleration, 0);
+	m_pivotMaster->ConfigSelectedFeedbackSensor(CTRE_MagEncoder_Relative, 0, 0);
 
-	m_pivot->SetStatusFramePeriod(Status_2_Feedback0_, 10, 0);
-	m_pivot->SetStatusFramePeriod(Status_10_MotionMagic, 100, 0);
+	m_pivotMaster->ConfigMotionCruiseVelocity(RobotParameters::k_pivotVelocity, 0);
+	m_pivotMaster->ConfigMotionAcceleration(RobotParameters::k_pivotAcceleration, 0);
 
-	m_pivot->ConfigAllowableClosedloopError(0, 0, 0);
+	m_pivotMaster->SetStatusFramePeriod(Status_2_Feedback0_, 10, 0);
+	m_pivotMaster->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
+
+	m_pivotMaster->ConfigAllowableClosedloopError(0, 0, 0);
+
+	m_pivotSlave->Set(ControlMode::Follower, 17);
+
+	m_pivotSlave->SetInverted(false);
 
 	m_prevExtensionTravellingDown = false;
 
 	m_isPivotZeroed = false;
 	m_isExtensionZeroed = false;
 	m_armLegal = true;
+
+//	SmartDashboard::PutNumber("pivot velocity config", 0);
+//	SmartDashboard::PutNumber("pivot accel config", 0);
+//	SmartDashboard::PutNumber("extension velocity config", 0);
+//	SmartDashboard::PutNumber("extension accel config", 0);
+
+	m_maxIllegal = 0;
 }
 
 Arm::~Arm() {
@@ -139,20 +152,22 @@ void Arm::SetExtensionPosition(double position) {
 
 		SmartDashboard::PutNumber("set position extension", position);
 
-	//	bool goingDown = GetExtensionPosition() > position; //handle pivot
-	//	if(goingDown != m_prevExtensionTravellingDown) {
-	//		if(goingDown) {
-	//			m_extender->SelectProfileSlot(1, 0);
-	//			m_extender->ConfigMotionAcceleration(1650, 0);
-	//		}
-	//		else {
-	//			m_extender->SelectProfileSlot(0, 0);
-				m_extenderMaster->ConfigMotionAcceleration(13800, 0);
-	//		}
-	//		m_prevExtensionTravellingDown = goingDown;
-	//		SmartDashboard::PutNumber("isGoingDown", goingDown);
+		bool goingDown = GetExtensionPosition() > position; //handle pivot
+		if(goingDown != m_prevExtensionTravellingDown) {
+			if(goingDown) {
+//				m_extenderMaster->SelectProfileSlot(1, 0);
+//				m_extenderMaster->ConfigMotionAcceleration(RobotParameters::k_extenderAccelerationDown, 0);
+//				m_extenderMaster->ConfigMotionCruiseVelocity(RobotParameters::k_extenderVelocityDown, 0);
+			}
+			else {
+//				m_extenderMaster->SelectProfileSlot(0, 0);
+//				m_extenderMaster->ConfigMotionAcceleration(RobotParameters::k_extenderAccelerationUp, 0);
+//				m_extenderMaster->ConfigMotionCruiseVelocity(RobotParameters::k_extenderVelocityUp, 0);
+			}
+			m_prevExtensionTravellingDown = goingDown;
+			SmartDashboard::PutNumber("isGoingDown", goingDown);
 
-	//	}
+		}
 	}
 }
 
@@ -183,7 +198,7 @@ bool Arm::IsExtensionOnTarget() {
 }
 
 void Arm::SetPivotOpenLoop(double speed) {
-	m_pivot->Set(ControlMode::PercentOutput, speed);
+	m_pivotMaster->Set(ControlMode::PercentOutput, speed);
 }
 
 bool Arm::IsPivotOnTarget() {
@@ -191,7 +206,7 @@ bool Arm::IsPivotOnTarget() {
 }
 
 void Arm::SetPivotAccel(int accel) {
-	m_pivot->ConfigMotionAcceleration(accel, 0);
+	m_pivotMaster->ConfigMotionAcceleration(accel, 0);
 }
 
 void Arm::Periodic() {
@@ -203,12 +218,12 @@ void Arm::Periodic() {
 			ZeroExtension();
 		}
 
-		if (m_isPivotZeroed == false && m_pivot->GetSensorCollection().IsFwdLimitSwitchClosed()) {
+		if (m_isPivotZeroed == false && m_pivotMaster->GetSensorCollection().IsFwdLimitSwitchClosed()) {
 			// Zero pivot with offset.
 //			ZeroPivot(5476); // Practice
 			ZeroPivot(5623); // Competition
 
-		} else if (m_isPivotZeroed == false && m_pivot->GetSensorCollection().IsRevLimitSwitchClosed()) {
+		} else if (m_isPivotZeroed == false && m_pivotMaster->GetSensorCollection().IsRevLimitSwitchClosed()) {
 			// Zero pivot with offset.
 			ZeroPivot(-5429);
 		}
@@ -216,19 +231,20 @@ void Arm::Periodic() {
 
 	m_calLed->Set(m_isPivotZeroed && m_isExtensionZeroed);
 
-	SetExtensionPosition(GetAllowedExtensionPos());
-
 	StickyFaults masterExtensionFaults;
 	m_extenderMaster->GetStickyFaults(masterExtensionFaults);
 
 	StickyFaults slaveExtensionFaults;
 	m_extenderSlave->GetStickyFaults(slaveExtensionFaults);
 
-	StickyFaults pivotFaults;
-	m_pivot->GetStickyFaults(pivotFaults);
+	StickyFaults masterPivotFaults;
+	m_pivotMaster->GetStickyFaults(masterPivotFaults);
+
+	StickyFaults slavePivotFaults;
+	m_pivotSlave->GetStickyFaults(slavePivotFaults);
 
 	// Save the extension and pivot.  Don't get fouls.
-	if (pivotFaults.ResetDuringEn == true && m_isPivotZeroed) {
+	if ((masterPivotFaults.ResetDuringEn == true) && m_isPivotZeroed) {
 		m_desiredExtensionSetpoint = 0;
 		SetExtensionPosition(m_desiredExtensionSetpoint);
 		m_isPivotZeroed = false;
@@ -236,80 +252,96 @@ void Arm::Periodic() {
 		SetExtensionPosition(GetAllowedExtensionPos());
 	}
 
-//	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
+	SmartDashboard::PutNumber("extension speed", m_extenderMaster->GetSelectedSensorVelocity(0));
 	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)));
-	SmartDashboard::PutNumber("extension master current", m_extenderMaster->GetOutputCurrent());
-	SmartDashboard::PutNumber("extension slave current", m_extenderSlave->GetOutputCurrent());
+//	SmartDashboard::PutNumber("extension master current", m_extenderMaster->GetOutputCurrent());
+//	SmartDashboard::PutNumber("extension slave current", m_extenderSlave->GetOutputCurrent());
 //	SmartDashboard::PutNumber("extension error", m_extenderMaster->GetClosedLoopError(0));
 
 	bool armLegal = ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)) < GetAllowedExtensionPos();
 
 	SmartDashboard::PutBoolean("arm legal", armLegal);
 
-	if(m_armLegal && !armLegal) {
-		double allowedExt = GetAllowedExtensionPos();
-		double actualExt = GetExtensionPosition();
-		double errorExt = allowedExt - actualExt;
-		printf("allowed: %f, actual: %f, setpoint: %f, error: %f\n", allowedExt, actualExt, m_extensionSetpoint, errorExt);
+	double allowedExt = GetAllowedExtensionPos();
+	double actualExt = GetExtensionPosition();
+	double errorExt = allowedExt - actualExt;
+
+	if(!m_armLegal && armLegal) {
+		printf("allowed: %f, actual: %f, setpoint: %f, error: %f, max illegal: %f\n", allowedExt, actualExt, m_extensionSetpoint, errorExt, m_maxIllegal);
+		m_maxIllegal = 0;
 	}
+
+	if(!armLegal) {
+		m_maxIllegal = std::max(m_maxIllegal, errorExt);
+	}
+
 	m_armLegal = armLegal;
-//	if(m_extenderMaster->GetControlMode() == ControlMode::MotionMagic) {
-//		SmartDashboard::PutNumber("active trajectory position extender",
-//				ConvertEncTicksToInches(m_extenderMaster->GetActiveTrajectoryPosition()));
+	if(m_extenderMaster->GetControlMode() == ControlMode::MotionMagic) {
+		SmartDashboard::PutNumber("active trajectory position extender",
+				ConvertEncTicksToInches(m_extenderMaster->GetActiveTrajectoryPosition()));
 //		SmartDashboard::PutNumber("active trajectory velocity extender", m_extenderMaster->GetActiveTrajectoryVelocity());
-//	}
+	}
 
 //	SmartDashboard::PutNumber("applied motor output extender", m_extenderMaster->GetMotorOutputVoltage());
-////
-//	SmartDashboard::PutNumber("pivot speed", m_pivot->GetSelectedSensorVelocity(0));
+
+//	SmartDashboard::PutNumber("pivot speed", m_pivotMaster->GetSelectedSensorVelocity(0));
 	SmartDashboard::PutNumber("pivot angle", GetPivotAngle().getDegrees());
 //	SmartDashboard::PutNumber("pivot ticks", m_pivot->GetSelectedSensorPosition(0));
-	SmartDashboard::PutNumber("pivot current", m_pivot->GetOutputCurrent());
-//	SmartDashboard::PutNumber("pivot error", m_pivot->GetClosedLoopError(0));
-//
-//	if(m_pivot->GetControlMode() == ControlMode::MotionMagic) {
-//		SmartDashboard::PutNumber("active trajectory position pivot", m_pivot->GetActiveTrajectoryPosition());
-//		SmartDashboard::PutNumber("active trajectory velocity pivot", m_pivot->GetActiveTrajectoryVelocity());
+	SmartDashboard::PutNumber("pivot master current", m_pivotMaster->GetOutputCurrent());
+	SmartDashboard::PutNumber("pivot slave current", m_pivotSlave->GetOutputCurrent());
+//	SmartDashboard::PutNumber("pivot error", m_pivotMaster->GetClosedLoopError(0) / RobotParameters::k_encoderTicksPerPivotDegree);
+
+//	if(m_pivotMaster->GetControlMode() == ControlMode::MotionMagic) {
+//		SmartDashboard::PutNumber("active trajectory position pivot", m_pivotMaster->GetActiveTrajectoryPosition() / RobotParameters::k_encoderTicksPerPivotDegree);
+//		SmartDashboard::PutNumber("active trajectory velocity pivot", m_pivotMaster->GetActiveTrajectoryVelocity());
 //	}
-//	SmartDashboard::PutNumber("applied motor output pivot", m_pivot->GetMotorOutputVoltage());
-//
-//	SmartDashboard::PutNumber("Arm Extension Position", GetExtensionPosition());
-//
+	SmartDashboard::PutNumber("applied motor output pivot", m_pivotMaster->GetMotorOutputVoltage());
+
+	SmartDashboard::PutNumber("Arm Extension Position", GetExtensionPosition());
+
 //	SmartDashboard::PutNumber("extender distance ticks", m_extenderMaster->GetSelectedSensorPosition(0));
 	SmartDashboard::PutBoolean("extension reset master", !masterExtensionFaults.ResetDuringEn);
 	SmartDashboard::PutBoolean("extension reset slave", !slaveExtensionFaults.ResetDuringEn);
-	SmartDashboard::PutBoolean("pivot reset", !pivotFaults.ResetDuringEn);
+	SmartDashboard::PutBoolean("pivot reset master", !masterPivotFaults.ResetDuringEn);
+	SmartDashboard::PutBoolean("pivot reset slave", !slavePivotFaults.ResetDuringEn);
 
 //	SmartDashboard::PutBoolean("extension limit switch", m_extenderMaster->GetSensorCollection().IsRevLimitSwitchClosed());
 //	SmartDashboard::PutBoolean("pivot limit switch forward", m_pivot->GetSensorCollection().IsFwdLimitSwitchClosed());
 //	SmartDashboard::PutBoolean("pivot limit switch reverse", m_pivot->GetSensorCollection().IsRevLimitSwitchClosed());
 	SmartDashboard::PutBoolean("extension encoder connected", m_extenderMaster->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
-	SmartDashboard::PutBoolean("pivot encoder connected", m_pivot->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
+	SmartDashboard::PutBoolean("pivot encoder connected", m_pivotMaster->GetSensorCollection().GetPulseWidthRiseToRiseUs() > 0);
 	SmartDashboard::PutBoolean("pivot zeroed", m_isPivotZeroed);
 	SmartDashboard::PutBoolean("extension zeroed", m_isExtensionZeroed);
+
+//use for tuning
+//	m_pivotMaster->ConfigMotionCruiseVelocity(SmartDashboard::GetNumber("pivot velocity config",0), 0);
+//	m_pivotMaster->ConfigMotionAcceleration(SmartDashboard::GetNumber("pivot accel config",0), 0);
+//	m_extenderMaster->ConfigMotionCruiseVelocity(SmartDashboard::GetNumber("extension velocity config",0), 0);
+//	m_extenderMaster->ConfigMotionAcceleration(SmartDashboard::GetNumber("extension accel config",0), 0);
 }
 
 void Arm::SetPivotAngle(Rotation2D angle) {
 	if((m_isExtensionZeroed == true) && (m_isPivotZeroed == true)) {
-		m_pivot->Set(ControlMode::MotionMagic, angle.getDegrees() * RobotParameters::k_encoderTicksPerPivotDegree); //control mode?
+		m_pivotMaster->Set(ControlMode::MotionMagic, angle.getDegrees() * RobotParameters::k_encoderTicksPerPivotDegree); //control mode?
 		m_pivotAngle = angle;
 		SmartDashboard::PutNumber("pivotAngle", angle.getDegrees());
 	}
 }
 
 Rotation2D Arm::GetPivotAngle() {
-	return Rotation2D::fromDegrees(m_pivot->GetSelectedSensorPosition(0) / RobotParameters::k_encoderTicksPerPivotDegree);
+	return Rotation2D::fromDegrees(m_pivotMaster->GetSelectedSensorPosition(0) / RobotParameters::k_encoderTicksPerPivotDegree);
 }
 
 void Arm::ZeroPivot(int pos) {
 	for(int i = 0; i < 5; i++) {
-		ErrorCode error = m_pivot->SetSelectedSensorPosition(pos, 0, 10);
+		ErrorCode error = m_pivotMaster->SetSelectedSensorPosition(pos, 0, 10);
 		if(error == OK) {
 			break;
 		}
 	}
 	m_isPivotZeroed = true;
-	m_pivot->ClearStickyFaults(0);
+	m_pivotMaster->ClearStickyFaults(0);
+	m_pivotSlave->ClearStickyFaults(0);
 }
 
 double Arm::GetAllowedExtensionPos() {
@@ -334,14 +366,15 @@ double Arm::ConvertEncTicksToInches(double ticks) {
 
 void Arm::SetExtentionMotionScaling(double scale) {
 	m_scale = scale;
-	m_extenderMaster->ConfigMotionCruiseVelocity(RobotParameters::k_extenderVelocity * m_scale, 0);
-	m_extenderMaster->ConfigMotionAcceleration(RobotParameters::k_extenderAcceleration * m_scale, 0);
+	m_extenderMaster->ConfigMotionCruiseVelocity(RobotParameters::k_extenderVelocityUp * m_scale, 0);
+	m_extenderMaster->ConfigMotionAcceleration(RobotParameters::k_extenderAccelerationUp * m_scale, 0);
 }
 
 void Arm::ClearStickyFaults() {
 	m_extenderMaster->ClearStickyFaults(0);
 	m_extenderSlave->ClearStickyFaults(0);
-	m_pivot->ClearStickyFaults(0);
+	m_pivotMaster->ClearStickyFaults(0);
+	m_pivotSlave->ClearStickyFaults(0);
 }
 
 bool Arm::IsPivotZeroed() {

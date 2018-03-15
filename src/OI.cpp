@@ -99,6 +99,12 @@ OI::OI() {
 	m_driveTrainZeroGyro = new JoystickButton(m_driverStick, XB_START_BUTTON);
 	m_driveTrainZeroGyro->WhenPressed(new DriveTrainZeroGyroCommand());
 
+//	m_manualExtend = new JoystickButton(m_driverStick, XB_START_BUTTON);
+//	m_manualExtend->WhileHeld(new ArmPivotUpCommand());
+//
+//	m_manualRetract = new JoystickButton(m_driverStick, XB_BACK_BUTTON);
+//	m_manualRetract->WhileHeld(new ArmPivotDownCommand());
+
 
 //operator
 

@@ -57,6 +57,10 @@ public:
 		}
 	}
 
+	void Execute() {
+		m_arm->SetExtensionPosition(m_arm->GetAllowedExtensionPos());
+	}
+
 	bool IsFinished() {
 		return (m_arm->GetExtensionPosition() < m_extensionThreshold) || (m_skip == true);
 	}

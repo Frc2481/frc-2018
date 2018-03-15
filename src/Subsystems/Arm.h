@@ -20,7 +20,8 @@ private:
 	DigitalOutput* m_calLed;
 	TalonSRX* m_extenderMaster;
 	TalonSRX* m_extenderSlave;
-	TalonSRX* m_pivot;
+	TalonSRX* m_pivotMaster;
+	VictorSPX* m_pivotSlave;
 	bool m_prevExtensionTravellingDown;
 	double m_desiredExtensionSetpoint;
 	double m_extensionSetpoint;
@@ -31,6 +32,7 @@ private:
 	bool m_isExtensionZeroed;
 
 	bool m_armLegal;
+	double m_maxIllegal;
 
 public:
 	Arm();

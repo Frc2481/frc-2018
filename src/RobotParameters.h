@@ -74,18 +74,20 @@ public:
 	static constexpr double k_extenderI = 0;
 	static constexpr double k_extenderD = 0;
 	static constexpr double k_extenderF = 0.445;
-	static constexpr double k_extenderVelocity = 2300;
-	static constexpr double k_extenderAcceleration = 2300;
+	static constexpr double k_extenderVelocityUp = 2600;
+	static constexpr double k_extenderVelocityDown = 4000;
+	static constexpr double k_extenderAccelerationUp = 2300;
+	static constexpr double k_extenderAccelerationDown = 16000;
 	static constexpr double k_extenderPeakOutputForward = 1.0;
 	static constexpr double k_extenderPeakOutputReverse = -1.0;
 
 	static constexpr double k_pivotP = 3;
 	static constexpr double k_pivotI = 0;
-	static constexpr double k_pivotD = 400;
-	static constexpr double k_pivotF = 2.046; //3
+	static constexpr double k_pivotD = 50;
+	static constexpr double k_pivotF = 0.639; //3
 
-	static constexpr double k_pivotVelocity = 900;
-	static constexpr double k_pivotAcceleration = 1800;
+	static constexpr double k_pivotVelocity = 1600;
+	static constexpr double k_pivotAcceleration = 4000;
 	static constexpr double k_pivotPeakOutputForward = 1.0;
 	static constexpr double k_pivotPeakOutputReverse = -1.0;
 
