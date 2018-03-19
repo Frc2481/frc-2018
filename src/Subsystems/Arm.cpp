@@ -16,6 +16,7 @@
 Arm::Arm() : Subsystem("Arm"){
 
 	m_calLed = new DigitalOutput(0);
+	m_canifier = new CANifier(0);
 
 	m_extenderMaster = new TalonSRX(EXTENDER_MASTER);
 	m_extenderSlave = new TalonSRX(EXTENDER_SLAVE);
@@ -57,7 +58,7 @@ Arm::Arm() : Subsystem("Arm"){
 	m_scale = 1.0;
 
 	m_extenderMaster->SetStatusFramePeriod(Status_2_Feedback0_, 10, 0);
-	m_extenderMaster->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
+	m_extenderMaster->SetStatusFramePeriod(Status_10_MotionMagic, 100, 0);
 
 	m_extenderMaster->ConfigAllowableClosedloopError(0, 0, 0);
 
@@ -118,11 +119,12 @@ Arm::Arm() : Subsystem("Arm"){
 	m_pivotMaster->ConfigMotionAcceleration(RobotParameters::k_pivotAcceleration, 0);
 
 	m_pivotMaster->SetStatusFramePeriod(Status_2_Feedback0_, 10, 0);
-	m_pivotMaster->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
+	m_pivotMaster->SetStatusFramePeriod(Status_10_MotionMagic, 100, 0);
 
 	m_pivotMaster->ConfigAllowableClosedloopError(0, 0, 0);
 
-	m_pivotSlave->Set(ControlMode::Follower, 17);
+//	m_pivotSlave->Set(ControlMode::Follower, 17);
+	m_pivotSlave->Follow(*m_pivotMaster);
 
 	m_pivotSlave->SetInverted(false);
 
@@ -230,6 +232,14 @@ void Arm::Periodic() {
 //	}
 
 	m_calLed->Set(m_isPivotZeroed && m_isExtensionZeroed);
+
+	if (m_isPivotZeroed && m_isExtensionZeroed) {
+		m_canifier->SetLEDOutput(1, CANifier::LEDChannelA);
+		m_canifier->SetLEDOutput(0, CANifier::LEDChannelB);
+	} else {
+		m_canifier->SetLEDOutput(0, CANifier::LEDChannelA);
+		m_canifier->SetLEDOutput(1, CANifier::LEDChannelB);
+	}
 
 	StickyFaults masterExtensionFaults;
 	m_extenderMaster->GetStickyFaults(masterExtensionFaults);

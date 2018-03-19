@@ -74,9 +74,9 @@ public:
 	static constexpr double k_extenderI = 0;
 	static constexpr double k_extenderD = 0;
 	static constexpr double k_extenderF = 0.445;
-	static constexpr double k_extenderVelocityUp = 2600;
+	static constexpr double k_extenderVelocityUp = 4000; //2600;
 	static constexpr double k_extenderVelocityDown = 4000;
-	static constexpr double k_extenderAccelerationUp = 2300;
+	static constexpr double k_extenderAccelerationUp = 16000; //2300;
 	static constexpr double k_extenderAccelerationDown = 16000;
 	static constexpr double k_extenderPeakOutputForward = 1.0;
 	static constexpr double k_extenderPeakOutputReverse = -1.0;
@@ -85,7 +85,7 @@ public:
 	static constexpr double k_pivotI = 0;
 	static constexpr double k_pivotD = 50;
 	static constexpr double k_pivotF = 0.639; //3
-
+\
 	static constexpr double k_pivotVelocity = 1600;
 	static constexpr double k_pivotAcceleration = 4000;
 	static constexpr double k_pivotPeakOutputForward = 1.0;
@@ -105,12 +105,12 @@ public:
 	static constexpr double k_rightFrameConstrained = 58; //calculated: 49, changed to be optimal
 	static constexpr double k_leftFrameConstrained = -66; //-55
   
-	static constexpr double cameraOffsetX = 0;
-	static constexpr double cameraOffsetY = 0;
-	static constexpr double cameraOffsetZ = 28.75;
+	static constexpr double cameraOffsetX = 5;
+	static constexpr double cameraOffsetY = 4;
+	static constexpr double cameraOffsetZ = 28.375;
 	static constexpr double cameraOffsetRoll = 0;
-	static constexpr double cameraOffsetPitch = -4.31;
+	static constexpr double cameraOffsetPitch = -19;
 	static constexpr double cameraOffsetYaw = 0;
-	static constexpr double cubeHeight = 12.0;
+	static constexpr double cubeHeight = 11.0;
 };
 #endif

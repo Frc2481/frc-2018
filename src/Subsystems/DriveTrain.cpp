@@ -32,7 +32,7 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_shifter(new Solenoid(SHIFTER)),
 	m_pto(new DoubleSolenoid(PTO1, PTO2)),
 	m_imu(new AHRS(SPI::kMXP)),
-	m_pigeon(new PigeonIMU(0)),
+//	m_pigeon(new PigeonIMU(0)),
 	m_isFieldCentric(false),
 //	m_isForward(true),
 	m_xVel(0),
@@ -488,6 +488,6 @@ AHRS* DriveTrain::GetImu() {
 	return m_imu;
 }
 
-PigeonIMU* DriveTrain::GetPigeonImu() {
-	return m_pigeon;
-}
+//PigeonIMU* DriveTrain::GetPigeonImu() {
+//	return m_pigeon;
+//}

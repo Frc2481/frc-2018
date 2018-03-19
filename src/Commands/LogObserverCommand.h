@@ -26,12 +26,12 @@ public:
 		std::stringstream ss;
 		ss << "/home/lvuser/ObserverLog_" << DriverStation::GetInstance().GetMatchNumber() << ".csv";
 		m_stream = std::ofstream(ss.str());
-		m_stream<< "time,x,y,heading, flSteer, frSteer, blSteer, brSteer, flDrive, frDrive, blDrive, brDrive, rawGyro, rawAccelX, rawAccelY, yaw, pigeon yaw, pigeon raw\n";
+		m_stream<< "time,x,y,heading, flSteer, frSteer, blSteer, brSteer, flDrive, frDrive, blDrive, brDrive, rawGyro, rawAccelX, rawAccelY, yaw, pivot pos, ext pos, cube x, cube y, cube deg\n";
 	}
 
 	void Execute() {
-		double ypr[3];
-		m_driveTrain->GetPigeonImu()->GetYawPitchRoll(ypr);
+//		double ypr[3];
+//		m_driveTrain->GetPigeonImu()->GetYawPitchRoll(ypr);
 		RigidTransform2D pose = CommandBase::m_driveTrain->GetObserver()->GetLastRobotPose();
 		m_stream<< RobotController::GetFPGATime() << "," <<
 				  pose.getTranslation().getX()<< "," <<
@@ -49,8 +49,14 @@ public:
 				  m_driveTrain->GetImu()->GetRawAccelX() << "," <<
 				  m_driveTrain->GetImu()->GetRawAccelY() << "," <<
 				  m_driveTrain->GetImu()->GetYaw() << "," <<
-				  m_driveTrain->GetPigeonImu()->GetFusedHeading() << "," <<
-				  ypr[0] << "\n";
+//				  m_driveTrain->GetPigeonImu()->GetFusedHeading() << "," <<
+//				  ypr[0] << ","  <<
+				  m_arm->GetPivotAngle().getDegrees() << "," <<
+				  m_arm->GetExtensionPosition() << "," <<
+				  m_limeLight->GetPowerCubePose().getTranslation().getX() << "," <<
+				  m_limeLight->GetPowerCubePose().getTranslation().getY() << "," <<
+				  m_limeLight->GetPowerCubePose().getRotation().getDegrees() << "," <<
+				  "\n";
 	}
 	bool IsFinished() {
 		return false;

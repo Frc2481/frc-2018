@@ -31,7 +31,7 @@ private:
 	DoubleSolenoid *m_pto;
 
 	AHRS* m_imu;
-	class PigeonIMU* m_pigeon;
+//	class PigeonIMU* m_pigeon;
 	bool m_isFieldCentric;
 //	bool m_isForward;
 	double m_xVel, m_yVel, m_yawRate;
@@ -123,7 +123,7 @@ public:
 
 	AHRS* GetImu();
 
-	PigeonIMU* GetPigeonImu();
+//	PigeonIMU* GetPigeonImu();
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

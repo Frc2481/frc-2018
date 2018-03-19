@@ -39,7 +39,7 @@ public:
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerLoadCommand(1));
 
-		AddSequential(new DriveTrainWaitForFieldXorYCommandGroup(155, -1));
+		AddSequential(new DriveTrainWaitForFieldXorYCommandGroup(180, -1));
 		AddParallel(new ArmToIntakeBack(""), 1);
 
 		AddSequential(new IntakeHasCubeCommand());

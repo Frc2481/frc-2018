@@ -24,7 +24,16 @@ public:
 
 	void Execute() {
 		double triggerPos = oi->GetOperatorStick()->GetRawAxis(XB_LEFT_TRIGGER); // Left = Abigail, Right = Abigail
-		if(triggerPos > 0) {
+
+		if (fabs(m_arm->GetDesiredPivotAngle().getDegrees() - ArmToSwitchFront::k_pivotAngle) < 0.1) {
+			m_intake->RollerUnload(.6);
+		}
+
+		else if (fabs(m_arm->GetDesiredPivotAngle().getDegrees() - ArmToSwitchBack::k_pivotAngle) < 0.1) {
+			m_intake->RollerUnload(.6);
+		}
+
+		else if(triggerPos > 0) {
 			m_intake->RollerUnload(triggerPos + .5);
 		}
 	}

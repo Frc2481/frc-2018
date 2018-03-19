@@ -15,8 +15,9 @@ public:
 	AutoLLR() : CommandGroup("AutoLLR") {
 		//cube 1 to switch
 		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
-		AddParallel(new ArmToSwitchFront(""), 1.0);
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathLeftStartToLeftCube4.csv"));
+		AddSequential(new DriveTrainWaitForFieldYCommand(35));
+		AddParallel(new ArmToSwitchFront(""), 1.0);
 		AddSequential(new DriveTrainWaitForFieldXorYCommandGroup(-1, 135));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerUnloadCommand(0.7));

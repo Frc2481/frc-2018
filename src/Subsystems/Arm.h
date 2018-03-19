@@ -18,6 +18,7 @@
 class Arm : public Subsystem{
 private:
 	DigitalOutput* m_calLed;
+	CANifier* m_canifier;
 	TalonSRX* m_extenderMaster;
 	TalonSRX* m_extenderSlave;
 	TalonSRX* m_pivotMaster;

@@ -71,8 +71,13 @@ void LimeLight::CalculatePowerCubePose() {
 	// +yaw = CCW, zero is robot forward
 
 	Rotation2D yawCube = Rotation2D::fromDegrees(getPowerCubeTargetOffsetAngleHorizontal() + RobotParameters::cameraOffsetYaw);
-	double yCube = (RobotParameters::cameraOffsetZ - RobotParameters::cubeHeight/2.0) / tan((-getPowerCubeTargetOffsetAngleVertical() - RobotParameters::cameraOffsetPitch) * M_PI / 180.0) + RobotParameters::cameraOffsetY;
-	double xCube = RobotParameters::cameraOffsetX + (yCube - RobotParameters::cameraOffsetY) * tan(yawCube.getRadians());
+
+	double yCube = 0;
+	double xCube = 0;
+	if (tan((-getPowerCubeTargetOffsetAngleVertical() - RobotParameters::cameraOffsetPitch) * M_PI / 180.0)) {
+		yCube = (RobotParameters::cameraOffsetZ - RobotParameters::cubeHeight/2.0) / tan((-getPowerCubeTargetOffsetAngleVertical() - RobotParameters::cameraOffsetPitch) * M_PI / 180.0) + RobotParameters::cameraOffsetY;
+		xCube = RobotParameters::cameraOffsetX + (yCube - RobotParameters::cameraOffsetY) * tan(yawCube.getRadians());
+	}
 
 	Translation2D cubePos = Translation2D(xCube, yCube);
 
