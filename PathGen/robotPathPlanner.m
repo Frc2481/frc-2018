@@ -103,7 +103,7 @@ generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
 %%%%%%%%%%%% left start, left scale, left cube 1, left switch, left cube 2, left scale %%%%%%%%%%%%
 LLL_leftStart = [29.7 + (robotDim(1) / 2), (robotDim(2) / 2), 0, 0];
 LLL_leftScale = [71.6 + 9, 298 - (robotDim(2) / 2) - 7, -10, 0];
-LLL_leftCube1 = [85.3 + (cubeDim / 2) + 8, 196 + (cubeDim / 2) + (robotDim(2) / 2) + 10, 0, 0];
+LLL_leftCube1 = [85.3 + (cubeDim / 2) + 9, 196 + (cubeDim / 2) + (robotDim(2) / 2) + 10, 0, 0];
 LLL_leftSwitchBack = [LLL_leftCube1(1) + 2, LLL_leftCube1(2) - 20, 0, 0];
 LLL_leftCube2 = [LLL_leftCube1(1) + 28, LLL_leftCube1(2), 0, 0];
 LLL_leftScale2 = [LLL_leftScale(1), LLL_leftScale(2) + 9, -40, 0];
@@ -160,10 +160,10 @@ generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
 
 %%%%%%%%%%%% left start, right scale, left cube 6, right switch, left cube 5, right scale %%%%%%%%%%%%
 LRR_leftStart = [29.7 + (robotDim(1) / 2), (robotDim(2) / 2), 0, 0];
-LRR_rightScale = [fieldDim(1) - 71.6 - 6, 298 - (robotDim(2) / 2) - 4, 10, 0];
+LRR_rightScale = [fieldDim(1) - 71.6 - 5, 298 - (robotDim(2) / 2) - 4, 10, 0];
 LRR_leftCube6 = [fieldDim(1) - 85.3 - (cubeDim / 2) - 3, 196 + (cubeDim / 2) + (robotDim(2) / 2) + 11, 0, 0];
 LRR_rightSwitchBack = [LRR_leftCube6(1) - 2, LRR_leftCube6(2) - 20, 0, 0];
-LRR_leftCube5 = [LRR_leftCube6(1) - 27, LRR_leftCube6(2) - 1, 0, 0];
+LRR_leftCube5 = [LRR_leftCube6(1) - 27, LRR_leftCube6(2), 0, 0];
 LRR_rightScale2 = [LRR_rightScale(1) + 4, LRR_rightScale(2) + 9, 40, 0];
 
 % left start to right scale
@@ -202,8 +202,8 @@ maxAccel = maxSpeed * 0.9;
 sampleRate = 50;
 csvFilename = 'PathSwitchToLeftCube52.csv';
 waypoints = [LRR_rightSwitchBack
-             LRR_rightSwitchBack(1) + 10, LRR_leftCube5(2) + 25, 0, 2;
-             LRR_leftCube5(1) - 5, LRR_leftCube5(2) + 25, 0, 2;
+             LRR_rightSwitchBack(1) + 10, LRR_leftCube5(2) + 20, 0, 2;
+             LRR_leftCube5(1) - 5, LRR_leftCube5(2) + 20, 0, 2;
              LRR_leftCube5];
 generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
 
@@ -241,8 +241,8 @@ maxAccel = maxSpeed * 0.9;
 sampleRate = 50;
 csvFilename = 'PathLeftScaleToLeftCube6.csv';
 waypoints = [LRL_leftScale;
-             LRL_leftScale(1) - 10, LRL_leftCube6(2) + 5, 0, 2;
-             LRL_leftCube6(1) + 15, LRL_leftCube6(2) + 20, 0, 2;
+             LRL_leftScale(1) - 10, LRL_leftCube6(2) + 7, 0, 2;
+             LRL_leftCube6(1) + 15, LRL_leftCube6(2) + 28, 0, 2;
              LRL_leftCube6];
 generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
 
