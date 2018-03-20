@@ -81,15 +81,17 @@ public:
 	static constexpr double k_extenderPeakOutputForward = 1.0;
 	static constexpr double k_extenderPeakOutputReverse = -1.0;
 
-	static constexpr double k_pivotP = 3;
+	static constexpr double k_pivotP = 2.5;
 	static constexpr double k_pivotI = 0;
-	static constexpr double k_pivotD = 50;
-	static constexpr double k_pivotF = 0.639; //3
-\
+	static constexpr double k_pivotD = 100;
+	static constexpr double k_pivotF = 0.639;
+
 	static constexpr double k_pivotVelocity = 1600;
-	static constexpr double k_pivotAcceleration = 4000;
+	static constexpr double k_pivotAcceleration = 5000;
+	static constexpr double k_pivotDecceleration = 2500;
 	static constexpr double k_pivotPeakOutputForward = 1.0;
 	static constexpr double k_pivotPeakOutputReverse = -1.0;
+	static constexpr double k_pivotVelocityFudge = 300;
 
 	static constexpr double k_minRobotExtend = 32.25;
 	static constexpr double k_gripperThickness = 1;
