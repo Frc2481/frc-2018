@@ -241,6 +241,24 @@ void Arm::Periodic() {
 		m_canifier->SetLEDOutput(1, CANifier::LEDChannelB);
 	}
 
+	if(!m_isPivotZeroed) {
+		m_pivotMaster->ConfigForwardSoftLimitEnable(false, 0);
+		m_pivotMaster->ConfigReverseSoftLimitEnable(false, 0);
+	}
+	else {
+		m_pivotMaster->ConfigForwardSoftLimitEnable(true, 0);
+		m_pivotMaster->ConfigReverseSoftLimitEnable(true, 0);
+	}
+
+	if(!m_isExtensionZeroed) {
+		m_extenderMaster->ConfigForwardSoftLimitEnable(false, 0);
+		m_extenderMaster->ConfigReverseSoftLimitEnable(false, 0);
+	}
+	else {
+		m_extenderMaster->ConfigForwardSoftLimitEnable(true, 0);
+		m_extenderMaster->ConfigReverseSoftLimitEnable(true, 0);
+	}
+
 	StickyFaults masterExtensionFaults;
 	m_extenderMaster->GetStickyFaults(masterExtensionFaults);
 
@@ -395,4 +413,8 @@ void Arm::ClearStickyFaults() {
 
 bool Arm::IsPivotZeroed() {
 	return m_isPivotZeroed;
+}
+
+bool Arm::IsExtensionZeroed() {
+	return m_isExtensionZeroed;
 }
