@@ -80,12 +80,18 @@ def genRobotSquare(p, heading):
 
 sd = NetworkTables.getTable('SmartDashboard')
     
+#Robot actual
 xdata = [0.0]
 ydata = [0.0]
 headings = [0.0]
 
+#Path
+pxdata = [0.0]
+pydata = [0.0]
+pheadings = [0.0]
+
 #The animation tick, update only what needs to change in the plot
-def updatePoint(n, point, robot, path):
+def updatePoint(n, point, pathpoint, robot, actualPath, targetPath):
     xval = sd.getNumber('Robot Pose X', 0.0)
     yval = sd.getNumber('Robot Pose Y', 0.0)
     hval = sd.getNumber('Robot Pose Theta', 0.0)
@@ -93,19 +99,31 @@ def updatePoint(n, point, robot, path):
     ydata.append(yval)
     headings.append(hval)
     print n*0.4, xval, yval, hval
+
+    pxval = sd.getNumber('PathX', 0.0)
+    pyval = sd.getNumber('PathY', 0.0)
+    phval = sd.getNumber('Path Yaw', 0.0)
+    pxdata.append(pxval)
+    pydata.append(pyval)
+    pheadings.append(phval)
+
     point.set_data(np.array([xval, yval]))
+    pathpoint.set_data(np.array([pxval, pyval]))
     robotData = genRobotSquare((xval, yval), hval)
     robot.set_data([p[0] for p in robotData], [p[1] for p in robotData])
-    path.set_data(xdata, ydata)
-    return [point, robot, path]
+    actualPath.set_data(xdata, ydata)
+    targetPath.set_data(pxdata, pydata)
+    return [point, pathpoint, robot, actualPath, targetPath]
 
 #Generate the figure and draw static elements
 fig = plt.figure()
 ax = fig.add_subplot(111, aspect='equal')
 drawField(ax)
-path, = ax.plot(xdata, ydata, color='black', alpha=0.25)
+targetPath, = ax.plot(pxdata, pydata, color='red', alpha=0.5)
+actualPath, = ax.plot(xdata, ydata, color='black', alpha=0.25)
 
-point, = ax.plot(xdata[0], ydata[0], marker='o', markersize=5, color="red")
+pathpoint, = ax.plot(pxdata[0], pydata[0], marker='o', markersize=5, color="red")
+point, = ax.plot(xdata[0], ydata[0], marker='o', markersize=5, color="blue")
 startingRobot = genRobotSquare((xdata[0], ydata[0]), 0.0)
 robot, = ax.plot([p[0] for p in startingRobot], [p[1] for p in startingRobot], color="black")
 
@@ -113,7 +131,7 @@ robot, = ax.plot([p[0] for p in startingRobot], [p[1] for p in startingRobot], c
 plt.margins(x=0.1, y=0.1)
 
 #Animate
-ani = animation.FuncAnimation(fig, updatePoint, len(xdata), fargs=(point, robot, path))
+ani = animation.FuncAnimation(fig, updatePoint, len(xdata), fargs=(point, pathpoint, robot, actualPath, targetPath))
 
 #plt.show will quickly show it on a matplotlib window, but is not guaranteed to be realtime (dependent on host machine specs)
 #ani.save will produce an mp4 that takes longer to generate but will have proper time scaling
