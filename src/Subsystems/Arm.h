@@ -62,6 +62,7 @@ public:
 	int GetIntakePos();
 	void ClearStickyFaults();
 	bool IsPivotZeroed();
+	bool IsExtensionZeroed();
 
 };
 
