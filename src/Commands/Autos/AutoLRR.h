@@ -24,7 +24,7 @@ public:
 		AddSequential(new DriveTrainFollowPath("/home/lvuser/PathLeftStartToRightScale.csv"));
 		AddSequential(new PrintCommand("FollwPath"));
 
-		AddParallel(new IntakeReleaseCubeCommandGroup(1), 1.0);
+		AddParallel(new IntakeReleaseCubeCommandGroup(0.75), 1.0);
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
 
 		AddSequential(new WaitCommand(0.5));
@@ -46,6 +46,7 @@ public:
 		AddSequential(new PrintCommand("Clamp"));
 		AddSequential(new DriveTrainStopCommand());
 		AddSequential(new PrintCommand("StopDrive"));
+		AddSequential(new WaitCommand(0.25));
 
 //switch 1
 		AddSequential(new PrintCommand("StartSwitch"));
@@ -70,6 +71,7 @@ public:
 		AddSequential(new PrintCommand("Clamp"));
 		AddSequential(new DriveTrainStopCommand());
 		AddSequential(new PrintCommand("StopDrive"));
+		AddSequential(new WaitCommand(0.25));
 
 //scale 2
 //		AddSequential(new ArmExtentionMotionScaling(0.7));
