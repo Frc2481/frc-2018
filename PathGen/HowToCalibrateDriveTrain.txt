@@ -1,0 +1,13 @@
+How to calibrate drivetrain without logging data and analyzing in MATLAB...
+1. Modify code to only use one wheel to estimate pose.
+2. Zero robot pose, drive robot slowly in straight line, measure distance traveled.
+3. Calibrate wheel steering angle offset until pose estimate is straight line.
+4. Calibrate wheel diameter until pose estimate distance traveled is correct.
+5. Repeat for all wheels.
+6. Modify code to use all wheels to estimate pose.
+
+How to calibrate drivetrain by logging data and analyzing in MATLAB...
+1. Log drivetrain sensors, drive robot slowly in straight line, measure distance traveled.
+2. Analyze pose estimate using one wheel in MATLAB and calibrate wheel steering angle offset until pose estimate is straight line.
+3. Analyze pose estimate using one wheel in MATLAB and calibrate wheel diameter until pose estimate distance traveled is correct.
+4. Repeat for all wheels.
