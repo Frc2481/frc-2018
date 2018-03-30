@@ -71,14 +71,14 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% % test robot path
-% maxSpeed = 100 * 0.95 * 1.0; % 65 in/s low gear, 100 in/s high gear, 95% for allowing controller to catch up when lagging
-% maxAccel = maxSpeed * 0.9;
-% sampleRate = 50;
-% csvFilename = 'robotPath.csv';
-% waypoints = [0, 0, 0, 0;
-%              0, 100, 90, 0];
-% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+% test robot path
+maxSpeed = 100 * 0.95; % 65 in/s low gear, 100 in/s high gear, 95% for allowing controller to catch up when lagging
+maxAccel = 90;
+sampleRate = 20;
+csvFilename = 'robotPath.csv';
+waypoints = [0, 0, 0, 0;
+             0, 150, 0 0];
+generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

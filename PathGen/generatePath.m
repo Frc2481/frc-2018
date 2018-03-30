@@ -1,12 +1,28 @@
 function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-% waypoints = [x position,
-%              y position,
-%              yaw,
-%              maximum distance away from point,
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% waypoints = [x position (in),
+%              y position (in),
+%              yaw (deg),
+%              maximum distance away from point (in)],
+%
+%              generatePath() adds the following to waypoints...
 %              temp path index,
-%              distance traveled,
+%              distance traveled (in),
 %              final path index];
+%
+% csvFilename = file name to output finalPath to .csv
+%
+% maxSpeed = max speed (in)
+%
+% sampleRate = sample rate (Hz)
+%
+% finalPath = [time (s),
+%              x position (in),
+%              y position (in),
+%              yaw (deg),
+%              x vel (in/s),
+%              y vel (in/s),
+%              x accel (in/s^2),
+%              y accel (in/s^2)]
 
     % input error checking
     if(isempty(waypoints))
@@ -103,13 +119,13 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
             crossV21V23 = cross([v21, 0], [v23, 0]);
 
             % generate points along arc
-            for phi = linspace(sign(crossV21V23(3)) * (pi - theta) / 2, -sign(crossV21V23(3)) * (pi - theta) / 2, 17)
+            for phi = linspace(sign(crossV21V23(3)) * (pi - theta) / 2, -sign(crossV21V23(3)) * (pi - theta) / 2, 51)
                 p7(1) = p6(1) - R * (cos(phi) * v26(1) - sin(phi) * v26(2)) / norm(v26);
                 p7(2) = p6(2) - R * (sin(phi) * v26(1) + cos(phi) * v26(2)) / norm(v26);
 
                 % add p7 to path
                 tempPath(end + 1, 1:2) = p7;
-                if (phi == 0)
+                if (-0.0001 < phi) && (phi < 0.001)
                     sizeTempPath = size(tempPath);
                     waypoints(j, 5) = sizeTempPath(1);
                     j = j + 1;
@@ -183,10 +199,13 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
 
     % limit distance to total path length
     dist(dist > tempPath(end, 3)) = tempPath(end, 3);
+    
+    % add time to final path
+    finalPath(:, 1) = time;
+    lengthFinalPath = length(finalPath);
 
-    % interpolate distance traveled to get final path
-    finalPath = interparc(dist / tempPath(end, 3), tempPath(:, 1)', tempPath(:, 2)', 'linear');
-    sizeFinalPath = size(finalPath);
+    % interpolate distance traveled to get final path positions
+    finalPath(:, 2:3) = interparc(dist / tempPath(end, 3), tempPath(:, 1)', tempPath(:, 2)', 'linear');
 
     % get distance traveled corresponding to waypoints
     waypoints(:, 6) = tempPath(waypoints(:, 5), 3);
@@ -194,7 +213,7 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
     % get final path index corresponding to waypoints
     j = 2;
     waypoints(1, 7) = 1;
-    for i = 2:sizeFinalPath(1)
+    for i = 2:lengthFinalPath
         if (dist(i) > waypoints(j, 6))
             waypoints(j, 7) = i - 1;
             j = j + 1;
@@ -219,13 +238,13 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
 
     % add yaw to final path
     j = 1;
-    finalPath(1, 3) = waypoints(1, 3);
-    for i = 2:sizeFinalPath(1)
+    finalPath(1, 4) = waypoints(1, 3);
+    for i = 2:lengthFinalPath
         if (i > waypoints(j, 7))
             j = j + 1;
         end
 
-        newYaw = finalPath(i - 1, 3) + yawRate(j - 1);
+        newYaw = finalPath(i - 1, 4) + yawRate(j - 1);
 
         % angle wraparound
         if (newYaw > 180)
@@ -234,12 +253,27 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
             newYaw = newYaw + 360;
         end
 
-        finalPath(i, 3) = newYaw;
+        finalPath(i, 4) = newYaw;
     end
-
-    % add time to final path
-    finalPath(:, 4) = time;
     
+    % calculate final path velocity
+    velX = diff(finalPath(:, 2)) ./ diff(finalPath(:, 1));
+    velX(end) = 0;
+    velX = [0; velX];
+    velY = diff(finalPath(:, 3)) ./ diff(finalPath(:, 1));
+    velY(end) = 0;
+    velY = [0; velY];
+    accelX = diff(velX) ./ diff(finalPath(:, 1));
+    accelX(end) = 0;
+    accelX = [0; accelX];
+    accelY = diff(velY) ./ diff(finalPath(:, 1));
+    accelY(end) = 0;
+    accelY = [0; accelY];
+    
+    finalPath(:, 5) = velX;
+    finalPath(:, 6) = velY;
+    finalPath(:, 7) = accelX;
+    finalPath(:, 8) = accelY;
         
     % draw field
     fieldDim = 12 * [27, 54];
@@ -277,7 +311,7 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
     % quiver(waypoints(:, 1), waypoints(:, 2), cosd(waypoints(:, 3) + 90), sind(waypoints(:, 3) + 90), 'b');
     hold on
     plot(tempPath(:, 1), tempPath(:, 2), 'gx-')
-    plot(finalPath(:, 1), finalPath(:, 2), 'rx-')
+    plot(finalPath(:, 2), finalPath(:, 3), 'rx-')
     % quiver(finalPath(:, 1), finalPath(:, 2), cosd(finalPath(:, 3) + 90), sind(finalPath(:, 3) + 90), 'r');
     plot(fieldDraw(:, 1), fieldDraw(:, 2), 'b')
     plot(switchDraw(:, 1), switchDraw(:, 2), 'b')
