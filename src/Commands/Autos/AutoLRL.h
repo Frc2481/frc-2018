@@ -49,6 +49,7 @@ public:
 		AddSequential(new PrintCommand("Clamp"));
 		AddSequential(new DriveTrainStopCommand());
 		AddSequential(new PrintCommand("StopDrive"));
+		AddSequential(new WaitCommand(0.25));
 
 
 		//switch
@@ -73,6 +74,7 @@ public:
 		AddSequential(new PrintCommand("Clamp"));
 		AddSequential(new DriveTrainStopCommand());
 		AddSequential(new PrintCommand("StopDrive"));
+		AddSequential(new WaitCommand(0.25));
 
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/PathLeftCube5ToLeftScale.csv"));
 		AddSequential(new ArmToStow(""));

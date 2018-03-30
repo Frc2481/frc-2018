@@ -42,6 +42,7 @@ public:
 		AddSequential(new PrintCommand("Clamp"));
 		AddSequential(new DriveTrainStopCommand());
 		AddSequential(new PrintCommand("StopDrive"));
+		AddSequential(new WaitCommand(0.25));
 
 //scale 1
 		AddSequential(new ArmExtentionMotionScaling(0.4));
@@ -74,6 +75,7 @@ public:
 		AddSequential(new PrintCommand("Clamp"));
 		AddSequential(new DriveTrainStopCommand());
 		AddSequential(new PrintCommand("StopDrive"));
+		AddSequential(new WaitCommand(0.25));
 
 //scale 2
 		AddSequential(new ArmExtentionMotionScaling(0.7));
