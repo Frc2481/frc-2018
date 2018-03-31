@@ -270,10 +270,20 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
     accelY(end) = 0;
     accelY = [0; accelY];
     
+    velYaw = diff(finalPath(:, 4)) ./ diff(finalPath(:, 1));
+    velYaw(end) = 0;
+    velYaw = [0; velYaw];
+    accelYaw = diff(velYaw) ./ diff(finalPath(:, 1));
+    accelYaw(end) = 0;
+    accelYaw = [0; accelYaw];
+    
+    
     finalPath(:, 5) = velX;
     finalPath(:, 6) = velY;
-    finalPath(:, 7) = accelX;
-    finalPath(:, 8) = accelY;
+    finalPath(:, 7) = velYaw;
+    finalPath(:, 8) = accelX;
+    finalPath(:, 9) = accelY;
+    finalPath(:, 10)= accelYaw;
         
     % draw field
     fieldDim = 12 * [27, 54];

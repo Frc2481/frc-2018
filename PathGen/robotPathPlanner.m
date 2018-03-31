@@ -72,12 +72,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % test robot path
-maxSpeed = 100 * 0.95; % 65 in/s low gear, 100 in/s high gear, 95% for allowing controller to catch up when lagging
+maxSpeed = 100 * 0.85; % 65 in/s low gear, 100 in/s high gear, 95% for allowing controller to catch up when lagging
 maxAccel = 90;
-sampleRate = 20;
+sampleRate = 50;
 csvFilename = 'robotPath.csv';
 waypoints = [0, 0, 0, 0;
-             0, 150, 0 0];
+             50, 150, 90, 0];
 generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,7 +91,7 @@ cubeDim = 13;
 LL_leftStart = [29.7 + (robotDim(1) / 2), (robotDim(2) / 2), 0, 0];
 LL_leftSwitchSide = [85.3 - (robotDim(2) / 2) - 8, 168, -90, 0];
 
-maxSpeed = 100 * 0.95 * 1.0;
+maxSpeed = 100 * 0.85 * 1.0;
 maxAccel = maxSpeed * 0.9;
 sampleRate = 50;
 csvFilename = 'PathLeftStartToLeftSwitch.csv';
@@ -109,7 +109,7 @@ LLL_leftCube2 = [LLL_leftCube1(1) + 28, LLL_leftCube1(2), 0, 0];
 LLL_leftScale2 = [LLL_leftScale(1), LLL_leftScale(2) + 9, -40, 0];
 
 % left start to left scale
-maxSpeed = 100 * 0.95 * 1.0;
+maxSpeed = 100 * 0.90 * 1.0;
 maxAccel = maxSpeed * 0.9;
 sampleRate = 50;
 csvFilename = 'PathLeftStartToLeftScale.csv';
@@ -226,7 +226,7 @@ LRL_leftCube5 = [LRL_leftCube6(1) - 27, LRL_leftCube6(2) - 1, 0, 0];
 LRL_leftScale2 = [LRL_leftScale(1), LRL_leftScale(2) + 9, -40, 0];
 
 % left start to left scale
-maxSpeed = 100 * 0.95 * 1.0;
+maxSpeed = 100 * 0.90 * 1.0;
 maxAccel = maxSpeed * 0.9;
 sampleRate = 50;
 csvFilename = 'PathLeftStartToLeftScale.csv';
