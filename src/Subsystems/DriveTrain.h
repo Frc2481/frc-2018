@@ -16,6 +16,7 @@
 #include "Subsystems/Observer.h"
 #include "Kinematics.h"
 #include "Components/DriveController.h"
+#include "DriveTrainPathFollower.h"
 
 class SwerveModule;
 class AHRS;
@@ -26,15 +27,16 @@ private:
 	SwerveModule *m_frWheel;
 	SwerveModule *m_brWheel;
 	SwerveModule *m_blWheel;
+	std::mutex m_swerveModuleMutex;
+
 	Solenoid *m_shifter;
 
 	DoubleSolenoid *m_pto;
 
 	AHRS* m_imu;
 //	class PigeonIMU* m_pigeon;
-	bool m_isFieldCentric;
+	std::atomic<bool> m_isFieldCentric;
 //	bool m_isForward;
-	double m_xVel, m_yVel, m_yawRate;
 //	float m_pHeadingCorrection;
 //	float m_originX;
 //	float m_originY;
@@ -62,11 +64,9 @@ private:
 
 	Rotation2D m_oldGyroYaw;
 
-	DriveController* m_driveController;
-
 	double m_oldTimestamp;
 
-	bool m_isPtoEngaged;
+	std::atomic<bool> m_isPtoEngaged;
 
 	bool m_first;
 
@@ -109,8 +109,6 @@ public:
 
 	void CheckDiagnostics();
 
-	DriveController* GetDriveController();
-
 	Observer* GetObserver();
 
 	void EngagePTO();
@@ -124,6 +122,10 @@ public:
 	AHRS* GetImu();
 
 //	PigeonIMU* GetPigeonImu();
+
+	void Calibrate();
+
+	void SetPreciseMode(bool isPrecise);
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

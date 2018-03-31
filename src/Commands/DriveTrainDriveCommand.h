@@ -34,10 +34,9 @@ public:
 		CommandBase::m_driveTrain->Stop();
 	}
 
-	bool IsInterrupted() {
+	void Interrupted() {
 		End();
 	}
-
 };
 
 #endif /* SRC_COMMANDS_DRIVETRAINDRIVECOMMAND_H_ */

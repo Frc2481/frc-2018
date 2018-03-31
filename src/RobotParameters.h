@@ -52,22 +52,23 @@ public:
 	static constexpr double k_steerI = 0;
 	static constexpr double k_steerD = 40;
 
-	static constexpr double kpPos = 0.02; //0.01; //0.007;
-	static constexpr double kiPos = 0;
-	static constexpr double kdPos = 0;
-	static constexpr double kfPos = 0; //0.007;
-	static constexpr double kIZonePos = 0;
+	static constexpr double kpDrivePos = 0;
+	static constexpr double kvDrivePos = 0;
+	static constexpr double kapDrivePos = 0;
+	static constexpr double kanDrivePos = 0;
+	static constexpr double kdDrivePos = 0;
 
-	static constexpr double kpYaw = 0.02;
-	static constexpr double kiYaw = 0.0;
-	static constexpr double kdYaw = 0;
-	static constexpr double kfYaw = 0;
-	static constexpr double kIZoneYaw = 5.0;
+	static constexpr double kpDriveYaw = 0;
+	static constexpr double kvDriveYaw = 0;
+	static constexpr double kaDriveYaw = 0;
+	static constexpr double kdDriveYaw = 0;
 
-	static constexpr double PositionControllerPeriod = 0.05;
+	static constexpr double k_driveVIntercept = 0.125;
 
-	static constexpr double kTolerancePos = 3.0; //3.0;
-	static constexpr double kToleranceHeading = 3.0; //3.0;
+	static constexpr double DriveControllerPeriod = 0.05; // seconds
+
+	static constexpr double kTolerancePos = 3.0; // inches
+	static constexpr double kToleranceHeading = 3.0; // inches
 
 	static constexpr double k_extenderUpP = 0.3; //ToDo: change values //40% * 1023 / 3700
 	static constexpr double k_extenderDownP = 0.5;

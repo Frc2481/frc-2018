@@ -10,61 +10,41 @@
 DriveController::DriveController(Observer* observerObj) {
 	m_observer = observerObj;
 
-	m_positionXControlSource = new ObserverPIDSourceX(observerObj);
-	m_positionYControlSource = new ObserverPIDSourceY(observerObj);
-	m_positionYawControlSource = new ObserverPIDSourceYaw(observerObj);
+	m_positionXController = new PVAController(RobotParameters::kpDrivePos, RobotParameters::kvDrivePos, RobotParameters::kapDrivePos, RobotParameters::kanDrivePos, RobotParameters::kdDrivePos);
+	m_positionYController = new PVAController(RobotParameters::kpDrivePos, RobotParameters::kvDrivePos, RobotParameters::kapDrivePos, RobotParameters::kanDrivePos, RobotParameters::kdDrivePos);
+	m_positionYawController = new PVAController(RobotParameters::kpDriveYaw, RobotParameters::kvDriveYaw, RobotParameters::kaDriveYaw, 0, RobotParameters::kdDriveYaw);
 
-	m_positionXControlSignal = new DriveControllerOutput();
-	m_positionYControlSignal = new DriveControllerOutput();
-	m_positionYawControlSignal = new DriveControllerOutput();
-
-	m_positionXController = new PIDController2481(RobotParameters::kpPos, RobotParameters::kiPos, RobotParameters::kdPos, RobotParameters::kfPos,
-										m_positionXControlSource, m_positionXControlSignal, RobotParameters::PositionControllerPeriod);
-	m_positionYController = new PIDController2481(RobotParameters::kpPos, RobotParameters::kiPos, RobotParameters::kdPos, RobotParameters::kfPos,
-										m_positionYControlSource, m_positionYControlSignal, RobotParameters::PositionControllerPeriod);
-	m_positionYawController = new PIDController2481(RobotParameters::kpYaw, RobotParameters::kiYaw, RobotParameters::kdYaw, RobotParameters::kfYaw,
-										m_positionYawControlSource, m_positionYawControlSignal, RobotParameters::PositionControllerPeriod);
-
-	m_positionYawController->SetInputRange(-180, 180);
+	m_positionYawController->SetPositionLimits(-180, 180);
 	m_positionYawController->SetContinuous(true);
-
-	m_positionXController->SetIZone(RobotParameters::kIZonePos);
-	m_positionYController->SetIZone(RobotParameters::kIZonePos);
-	m_positionYawController->SetIZone(RobotParameters::kIZoneYaw);
-
-	SmartDashboard::PutData(m_positionXController);
-	SmartDashboard::PutData(m_positionYController);
-	SmartDashboard::PutData(m_positionYawController);
 }
 
 DriveController::~DriveController() {
 }
 
-void DriveController::SetFieldTarget(RigidTransform2D fieldTarget) {
-	m_positionXController->SetSetpoint(fieldTarget.getTranslation().getX());
-	m_positionYController->SetSetpoint(fieldTarget.getTranslation().getY());
-	m_positionYawController->SetSetpoint(fieldTarget.getRotation().getDegrees());
+void DriveController::SetFieldTarget(PathPoint2D &fieldTarget) {
+	m_positionXController->SetTarget(fieldTarget.xPos, fieldTarget.xVel, fieldTarget.xAccel);
+	m_positionYController->SetTarget(fieldTarget.yPos, fieldTarget.yVel, fieldTarget.yAccel);
+	m_positionYawController->SetTarget(fieldTarget.yaw, fieldTarget.yawVel, fieldTarget.yawAccel);
 }
 
-void DriveController::SetRobotTarget(RigidTransform2D robotTarget) {
+void DriveController::SetRobotTarget(PathPoint2D &robotTarget) {
 	//TODO transform from robot frame to field frame and call SetFieldTarget()
-	m_positionXController->SetSetpoint(robotTarget.getTranslation().getX());
-	m_positionYController->SetSetpoint(robotTarget.getTranslation().getY());
-	m_positionYawController->SetSetpoint(robotTarget.getRotation().getDegrees());
-}
-
-bool DriveController::IsOnTarget() {
-	bool onTarget = m_positionXController->OnTarget() && m_positionYController->OnTarget() && m_positionYawController->OnTarget();
-	return onTarget;
+	m_positionXController->SetTarget(robotTarget.xPos, robotTarget.xVel, robotTarget.xAccel);
+	m_positionYController->SetTarget(robotTarget.yPos, robotTarget.yVel, robotTarget.yAccel);
+	m_positionYawController->SetTarget(robotTarget.yaw, 0, 0);
 }
 
 RigidTransform2D DriveController::GetDriveControlSignal() {
-	Translation2D controlSignalTranslation;
-	Rotation2D controlSignalRotation;
+	m_positionXController->SetActualPosition(m_observer->GetLastRobotPose().getTranslation().getX());
+	m_positionYController->SetActualPosition(m_observer->GetLastRobotPose().getTranslation().getY());
+	m_positionYawController->SetActualPosition(m_observer->GetLastRobotPose().getRotation().getDegrees());
 
-	controlSignalTranslation.setX(m_positionXControlSignal->GetOutput());
-	controlSignalTranslation.setY(m_positionYControlSignal->GetOutput());
-	controlSignalRotation = Rotation2D::fromDegrees(m_positionYawControlSignal->GetOutput());
+	double xOutput = m_positionXController->CalculateVelocityControlSignal();
+	double yOutput = m_positionYController->CalculateVelocityControlSignal();
+	double yawOutput = m_positionYawController->CalculateVelocityControlSignal();
+
+	Translation2D controlSignalTranslation(xOutput, yOutput);
+	Rotation2D controlSignalRotation = Rotation2D::fromDegrees(yawOutput);
 
 	//Convert drive signal from field frame to robot frame
 	Rotation2D robotYaw = m_observer->GetLastRobotPose().getRotation();
@@ -87,15 +67,21 @@ RigidTransform2D DriveController::GetControllerError() {
 	return error;
 }
 
+Observer* DriveController::GetObserver() {
+	return m_observer;
+}
+
 void DriveController::ResetController() {
 	m_positionXController->Reset();
 	m_positionYController->Reset();
 	m_positionYawController->Reset();
 }
 
-void DriveController::EnableController() {
-	ResetController();
-	m_positionXController->Enable();
-	m_positionYController->Enable();
-	m_positionYawController->Enable();
+void DriveController::SetPositionGains(double kp, double kv, double kap, double kan, double kd) {
+	m_positionXController->SetGains(kp, kv, kap, kan, kd);
+	m_positionYController->SetGains(kp, kv, kap, kan, kd);
+}
+
+void DriveController::SetYawGains(double kp, double kv, double kap, double kan, double kd) {
+	m_positionYawController->SetGains(kp, kv, kap, kan, kd);
 }

@@ -14,6 +14,7 @@
 #include "PIDSource.h"
 #include "SmartDashboard/SendableBase.h"
 #include "Timer.h"
+#include "RobotParameters.h"
 
 namespace frc {
 
@@ -32,13 +33,13 @@ class PIDOutput;
 class PIDController2481 : public SendableBase, public PIDInterface {
  public:
   PIDController2481(double p, double i, double d, PIDSource* source,
-                PIDOutput* output, double period = 0.05);
+                PIDOutput* output, double period = RobotParameters::DriveControllerPeriod);
   PIDController2481(double p, double i, double d, double f, PIDSource* source,
-                PIDOutput* output, double period = 0.05);
+                PIDOutput* output, double period = RobotParameters::DriveControllerPeriod);
   PIDController2481(double p, double i, double d, PIDSource& source,
-                PIDOutput& output, double period = 0.05);
+                PIDOutput& output, double period = RobotParameters::DriveControllerPeriod);
   PIDController2481(double p, double i, double d, double f, PIDSource& source,
-                PIDOutput& output, double period = 0.05);
+                PIDOutput& output, double period = RobotParameters::DriveControllerPeriod);
   ~PIDController2481() override;
 
   PIDController2481(const PIDController2481&) = delete;
