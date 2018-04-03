@@ -109,7 +109,7 @@ LLL_leftCube2 = [LLL_leftCube1(1) + 28, LLL_leftCube1(2), 0, 0];
 LLL_leftScale2 = [LLL_leftScale(1), LLL_leftScale(2) + 9, -40, 0];
 
 % left start to left scale
-maxSpeed = 100 * 0.90 * 1.0;
+maxSpeed = 100 * 0.60 * 1.0;
 maxAccel = maxSpeed * 0.9;
 sampleRate = 50;
 csvFilename = 'PathLeftStartToLeftScale.csv';
@@ -226,7 +226,7 @@ LRL_leftCube5 = [LRL_leftCube6(1) - 27, LRL_leftCube6(2) - 1, 0, 0];
 LRL_leftScale2 = [LRL_leftScale(1), LRL_leftScale(2) + 9, -40, 0];
 
 % left start to left scale
-maxSpeed = 100 * 0.90 * 1.0;
+maxSpeed = 100 * 0.60 * 1.0;
 maxAccel = maxSpeed * 0.9;
 sampleRate = 50;
 csvFilename = 'PathLeftStartToLeftScale.csv';
