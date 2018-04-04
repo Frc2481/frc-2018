@@ -18,6 +18,11 @@ public:
 	static constexpr double k_encoderRevPerWheelRevLowGear = 6.7403;
 	static constexpr double k_encoderRevPerWheelRevHighGear = 3.1166;
 
+	static constexpr double k_flRadiusPercent = 0.98;
+	static constexpr double k_frRadiusPercent = 0.99;
+	static constexpr double k_blRadiusPercent = 0.99;
+	static constexpr double k_brRadiusPercent = 0.995;
+
 	//low: 12:36 * 34:50 * 34:50 * 80:32 * 16:44 = .1401
 	//high: 12:36 * 34:50 * 50:34 * 80:32 * 16:44 = .303
 
