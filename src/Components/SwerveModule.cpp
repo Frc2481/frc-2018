@@ -35,6 +35,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID,
 	m_optimizationEnabled = true;
 	m_isMoving = false;
 	m_motionMagic = false;
+	m_isPreciseMode = false;
 
 	m_driveMotor->SelectProfileSlot(0, 0);
 	m_driveMotor->Set(ControlMode::PercentOutput, 0);
@@ -67,7 +68,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID,
 	m_steerMotor->SetSensorPhase(true);
 	m_steerMotor->SetInverted(false);
 //	m_steerMotor->SetSelectedSensorPosition(m_steerMotor->GetSelectedSensorPosition(0) & 0xFFF, 0, 0);
-	m_steerMotor->ConfigAllowableClosedloopError(0, 40, 0);
+	m_steerMotor->ConfigAllowableClosedloopError(0, 5, 0);
 	m_steerMotor->SetStatusFramePeriod(Status_2_Feedback0, 10, 0);
 //	m_steerMotor->SetStatusFrameRateMs(TalonSRX::StatusFrameRateGeneral, 10);
 }
@@ -108,12 +109,19 @@ bool SwerveModule::IsSteerOnTarget() const {
 }
 
 void SwerveModule::SetOpenLoopSpeed(double speed) {
+	if(m_isPreciseMode && speed > 0.05) {
+		speed += RobotParameters::k_driveVIntercept;
+	}
+	else if(m_isPreciseMode && speed < -0.05) {
+		speed -= RobotParameters::k_driveVIntercept;
+	}
 	if(m_angleOptimized) {
 		speed *= -1;
 	}
 	m_driveMotor->Set(ControlMode::PercentOutput, speed);
 	m_isMoving = fabs(speed) > .05;
 	m_isCloseLoopControl = false;
+
 }
 
 void SwerveModule::SetOpenLoopSteer(double speed) {
@@ -195,4 +203,12 @@ double SwerveModule::GetDriveCurrent() const {
 void SwerveModule::Periodic() {
 	m_steerEncoder->Periodic();
 	m_driveEncoder->Periodic();
+}
+
+double SwerveModule::GetAppliedVoltage() {
+	return m_driveMotor->GetMotorOutputVoltage();
+}
+
+void SwerveModule::SetPreciseMode(bool isPrecise) {
+	m_isPreciseMode = isPrecise;
 }

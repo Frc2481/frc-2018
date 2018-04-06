@@ -20,7 +20,6 @@
 #include "Commands/Diag/DriveTrainTestCommandGroup.h"
 #include "Commands/DriveTrainEngagePtoCommand.h"
 #include "Commands/DriveTrainOpenLoopCommand.h"
-#include "Commands/DriveTrainDriveToPosition.h"
 #include "Commands/DriveTrainShiftCommand.h"
 #include "Commands/ArmBaseCommand.h"
 #include "Commands/AutoCommand.h"
@@ -47,6 +46,7 @@
 
 #include "Commands/Autos/AutoLRL.h"
 #include "Commands/Autos/AutoLL0.h"
+#include "Commands/DriveTrainAutoTestDrive.h"
 
 //enum Autos {
 //	POS_LEFT = 1,
@@ -111,7 +111,7 @@ private:
 
 	FieldConfiguration m_fieldConfig;
 
-	std::map<int, Command*> *m_autoTasks;
+	std::map<int, std::shared_ptr<Command>> *m_autoTasks;
 
 	void RobotInit() {
 		SetPeriod(.015); //100hz
@@ -156,7 +156,7 @@ private:
 
 		SmartDashboard::PutData("Auto LRR", new AutoLRR());
 
-//		SmartDashboard::PutData("Zero Pose Left Start", new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
+		SmartDashboard::PutData("Zero Pose Left Start", new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.44, 19.5), Rotation2D::fromDegrees(0))));
 //		SmartDashboard::PutData("Zero Pose Right Start", new ObserverResetPosCommand(RigidTransform2D(Translation2D(324 - 46.4, 19.5), Rotation2D::fromDegrees(0))));
 		SmartDashboard::PutData(new ArmZeroCommandGroup());
 
@@ -178,6 +178,8 @@ private:
 
 		SmartDashboard::PutData("log observer", new LogObserverCommand());
 
+		SmartDashboard::PutData("drive test auto", new DriveTrainAutoTestDrive());
+
 		SmartDashboard::PutData(Scheduler::GetInstance());
 		SmartDashboard::PutData(CommandBase::m_arm.get());
 		SmartDashboard::PutData(CommandBase::m_driveTrain.get());
@@ -192,6 +194,10 @@ private:
 		m_usbCam2.SetResolution(320, 180);
 
 		m_logger = new LogObserverCommand();
+
+		SmartDashboard::PutData("DriveTrainFollowPath", new DriveTrainFollowPath("/home/lvuser/robotPath.csv"));
+
+		NetworkTable::SetUpdateRate(0.02);
 	}
 
 	/**
@@ -204,6 +210,9 @@ private:
 		CommandBase::m_intake->CloseClamp();
 		CommandBase::m_intake->RollerOff();
 
+		if (autonomousCommand != nullptr) {
+			autonomousCommand->Cancel();
+		}
 	}
 
 	void DisabledPeriodic() override {
@@ -237,7 +246,7 @@ private:
 						      ((m_fieldConfig.GetScalePlate() == FieldConfiguration::LEFT) ? SCALE_LEFT : SCALE_RIGHT));
 
 //		if(auto
-				autonomousCommand = std::unique_ptr<Command>(m_autoTasks->at(autoMode));
+				autonomousCommand = m_autoTasks->at(autoMode);
 
 		if(autonomousCommand.get() != nullptr) {
 			autonomousCommand->Start();
@@ -272,31 +281,31 @@ private:
 	}
 
 	void AutoTasksFunction(){
-		m_autoTasks = new std::map<int, Command*>();
+		m_autoTasks = new std::map<int, std::shared_ptr<Command>>();
 
-		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS] = new AutoLLL();
-		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS] = new AutoLRL();
-		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS] = new AutoLLR();
-		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS] = new AutoLRR();
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS] = std::make_shared<AutoLLL>();
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS] = std::make_shared<AutoLRL>();
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS] = std::make_shared<AutoLLR>();
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS] = std::make_shared<AutoLRR>();
 
-		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS] = new AutoLLL();
-		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS] = new AutoLL0(); //test
-		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS] = nullptr;   //cube to switch
-		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS] = nullptr;  //drive forward
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS] = std::make_shared<AutoLLL>();
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS] = std::make_shared<AutoLL0>(); //test
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);   //cube to switch
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);  //drive forward
 
-		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS] = nullptr;
-		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS] = nullptr;
-		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS] = nullptr;
-		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS] = nullptr;
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
 
-		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS] = nullptr;
-		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS] = nullptr; //test
-		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS] = nullptr;   //cube to switch
-		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS] = nullptr;  //drive forward
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS] = std::shared_ptr<Command>(nullptr); //test
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);   //cube to switch
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);  //drive forward
 };
 
 private:
-	std::unique_ptr<frc::Command> autonomousCommand;
+	std::shared_ptr<frc::Command> autonomousCommand;
 	frc::SendableChooser<frc::Command*> autoPos;
 //	frc::SendableChooser<frc::Command*> firstCube;
 //	frc::SendableChooser<frc::Command*> secondCube;

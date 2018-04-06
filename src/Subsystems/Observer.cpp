@@ -22,7 +22,7 @@ Observer::~Observer() {
 void Observer::UpdateRobotPoseObservation(Rotation2D& flAngle, RigidTransform2D::Delta& flVelocity, Rotation2D& frAngle,
 	RigidTransform2D::Delta& frVelocity, Rotation2D& blAngle, RigidTransform2D::Delta& blVelocity,
 	Rotation2D& brAngle, RigidTransform2D::Delta& brVelocity, double timestamp, Rotation2D& deltaGyroYaw) {
-	RigidTransform2D::Delta deltaRobotPos = Kinematics::SwerveForwardKinematics(flAngle, flVelocity, frAngle, frVelocity, blAngle, blVelocity, brAngle, brVelocity);
+	RigidTransform2D::Delta deltaRobotPos = Kinematics::SwerveForwardKinematics(flAngle, flVelocity, frAngle, frVelocity, blAngle, blVelocity, brAngle, brVelocity, deltaGyroYaw);
 
 	RigidTransform2D oldRobotPos = GetLastRobotPose();
 
@@ -30,9 +30,7 @@ void Observer::UpdateRobotPoseObservation(Rotation2D& flAngle, RigidTransform2D:
 	Rotation2D finalAngleDelta = Rotation2D::fromRadians((deltaRobotPos.GetTheta() * kFwdKinematicsWeight) + (deltaGyroYaw.getRadians() * kGyroWeight));
 	Rotation2D newRobotAngle = oldRobotPos.getRotation().rotateBy(finalAngleDelta);
 
-	Rotation2D halfAngle = oldRobotPos.getRotation().rotateBy(Rotation2D::fromDegrees(finalAngleDelta.getDegrees() * 1));
-
-	Translation2D newRobotTranslation = oldRobotPos.getTranslation().translateBy(Translation2D(deltaRobotPos.GetX(),deltaRobotPos.GetY()).rotateBy(halfAngle));
+	Translation2D newRobotTranslation = oldRobotPos.getTranslation().translateBy(Translation2D(deltaRobotPos.GetX(), deltaRobotPos.GetY()).rotateBy(newRobotAngle));
 
 	RigidTransform2D robotPos(newRobotTranslation, newRobotAngle);
 	SetRobotPos(robotPos, timestamp);

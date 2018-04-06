@@ -16,7 +16,7 @@
 Arm::Arm() : Subsystem("Arm"){
 
 	m_calLed = new DigitalOutput(0);
-	m_canifier = new CANifier(0);
+//	m_canifier = new CANifier(0);
 
 	m_extenderMaster = new TalonSRX(EXTENDER_MASTER);
 	m_extenderSlave = new TalonSRX(EXTENDER_SLAVE);
@@ -233,13 +233,13 @@ void Arm::Periodic() {
 
 	m_calLed->Set(m_isPivotZeroed && m_isExtensionZeroed);
 
-	if (m_isPivotZeroed && m_isExtensionZeroed) {
-		m_canifier->SetLEDOutput(1, CANifier::LEDChannelA);
-		m_canifier->SetLEDOutput(0, CANifier::LEDChannelB);
-	} else {
-		m_canifier->SetLEDOutput(0, CANifier::LEDChannelA);
-		m_canifier->SetLEDOutput(1, CANifier::LEDChannelB);
-	}
+//	if (m_isPivotZeroed && m_isExtensionZeroed) {
+//		m_canifier->SetLEDOutput(1, CANifier::LEDChannelA);
+//		m_canifier->SetLEDOutput(0, CANifier::LEDChannelB);
+//	} else {
+//		m_canifier->SetLEDOutput(0, CANifier::LEDChannelA);
+//		m_canifier->SetLEDOutput(1, CANifier::LEDChannelB);
+//	}
 
 	if(!m_isPivotZeroed) {
 		m_pivotMaster->ConfigForwardSoftLimitEnable(false, 0);
@@ -299,11 +299,13 @@ void Arm::Periodic() {
 
 	m_armLegal = armLegal;
 
-	double distanceThreshold = pow(fabs(m_pivotMaster->GetActiveTrajectoryVelocity()) + RobotParameters::k_pivotVelocityFudge, 2) * 10 / (2 * RobotParameters::k_pivotDecceleration);
-	double pivotError = fabs((GetDesiredPivotAngle().getDegrees() * RobotParameters::k_encoderTicksPerPivotDegree) - m_pivotMaster->GetActiveTrajectoryPosition());
-	if(distanceThreshold >= pivotError) {
-		m_pivotMaster->ConfigMotionCruiseVelocity(fabs(m_pivotMaster->GetActiveTrajectoryVelocity()), 0);
-		m_pivotMaster->ConfigMotionAcceleration(RobotParameters::k_pivotDecceleration, 0);
+	if(m_pivotMaster->GetControlMode() == ControlMode::MotionMagic) {
+		double distanceThreshold = pow(fabs(m_pivotMaster->GetActiveTrajectoryVelocity()) + RobotParameters::k_pivotVelocityFudge, 2) * 10 / (2 * RobotParameters::k_pivotDecceleration);
+		double pivotError = fabs((GetDesiredPivotAngle().getDegrees() * RobotParameters::k_encoderTicksPerPivotDegree) - m_pivotMaster->GetActiveTrajectoryPosition());
+		if(distanceThreshold >= pivotError) {
+			m_pivotMaster->ConfigMotionCruiseVelocity(fabs(m_pivotMaster->GetActiveTrajectoryVelocity()), 0);
+			m_pivotMaster->ConfigMotionAcceleration(RobotParameters::k_pivotDecceleration, 0);
+		}
 	}
 
 	SmartDashboard::PutNumber("extension distance", ConvertEncTicksToInches(m_extenderMaster->GetSelectedSensorPosition(0)));
