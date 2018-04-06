@@ -75,12 +75,25 @@ void LimeLight::CalculatePowerCubePose() {
 	double yawCube = 0;
 
 	if(getPowerCubeTargetValid()) {
-		yawCube = getPowerCubeTargetOffsetAngleHorizontal() + RobotParameters::cameraOffsetYaw;
+		yawCube = -getPowerCubeTargetOffsetAngleHorizontal() + RobotParameters::cameraOffsetYaw;
+		if(yawCube > 180) {
+			yawCube -= 360;
+		}
+		else if(yawCube < -180) {
+			yawCube += 360;
+		}
 
 		double tanVal = tan((-getPowerCubeTargetOffsetAngleVertical() - RobotParameters::cameraOffsetPitch) * M_PI / 180.0);
 		if (tanVal) {
-			yCube = (RobotParameters::cameraOffsetZ - (RobotParameters::cubeHeight / 2.0)) / tanVal;
-			xCube = RobotParameters::cameraOffsetX + (yCube - RobotParameters::cameraOffsetY) * tan(yawCube * M_PI / 180.0);
+			yCube = (RobotParameters::cameraOffsetZ - RobotParameters::cubeOffsetHeight) / tanVal;
+
+			if((yawCube > 90) || (yawCube < -90)) {
+				yCube *= -1;
+			}
+
+			yCube += RobotParameters::cameraOffsetY;
+
+			xCube = RobotParameters::cameraOffsetX + yCube * tan(-yawCube * M_PI / 180.0);
 		}
 	}
 

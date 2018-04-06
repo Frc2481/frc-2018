@@ -380,10 +380,10 @@ void DriveTrain::Periodic() {
 //	SmartDashboard::PutNumber("BL Current", m_blWheel->GetDriveCurrent());
 //	SmartDashboard::PutNumber("BR Current", m_brWheel->GetDriveCurrent());
 
-//	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
-//	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());
-//	SmartDashboard::PutNumber("BL encTicks", m_blWheel->GetDriveEncoder()->GetEncoderTicks());
-//	SmartDashboard::PutNumber("BR encTicks", m_brWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BL encTicks", m_blWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BR encTicks", m_brWheel->GetDriveEncoder()->GetEncoderTicks());
 
 //	SmartDashboard::PutNumber("FL encoder delta", fabs(deltaFlVelocity.GetDx()));
 //	SmartDashboard::PutNumber("FR encoder delta", fabs(deltaFrVelocity.GetDx()));

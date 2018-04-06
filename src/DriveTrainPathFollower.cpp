@@ -61,8 +61,6 @@ void DriveTrainPathFollower::OnLoop() {
 		CommandBase::m_driveTrain->Drive(driveSignal.getTranslation().getX(),
 							driveSignal.getTranslation().getY(),
 							driveSignal.getRotation().getDegrees());
-
-
 	}
 	else {
 		m_isFinished = true;

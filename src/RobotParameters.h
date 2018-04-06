@@ -18,10 +18,10 @@ public:
 	static constexpr double k_encoderRevPerWheelRevLowGear = 6.7403;
 	static constexpr double k_encoderRevPerWheelRevHighGear = 3.1166;
 
-	static constexpr double k_flRadiusPercent = 0.98;
-	static constexpr double k_frRadiusPercent = 0.99;
-	static constexpr double k_blRadiusPercent = 0.99;
-	static constexpr double k_brRadiusPercent = 0.995;
+	static constexpr double k_flRadiusPercent = 1.0;
+	static constexpr double k_frRadiusPercent = 1.0;
+	static constexpr double k_blRadiusPercent = 1.0;
+	static constexpr double k_brRadiusPercent = 1.0;
 
 	//low: 12:36 * 34:50 * 34:50 * 80:32 * 16:44 = .1401
 	//high: 12:36 * 34:50 * 50:34 * 80:32 * 16:44 = .303
@@ -113,12 +113,12 @@ public:
 	static constexpr double k_rightFrameConstrained = 58; //calculated: 49, changed to be optimal
 	static constexpr double k_leftFrameConstrained = -66; //-55
   
-	static constexpr double cameraOffsetX = -5;
-	static constexpr double cameraOffsetY = -4;
+	static constexpr double cameraOffsetX = -4.5;
+	static constexpr double cameraOffsetY = -6;
 	static constexpr double cameraOffsetZ = 28.375;
 	static constexpr double cameraOffsetRoll = 0;
-	static constexpr double cameraOffsetPitch = -19;
-	static constexpr double cameraOffsetYaw = 180;
-	static constexpr double cubeHeight = 11.0;
+	static constexpr double cameraOffsetPitch = -12.5;
+	static constexpr double cameraOffsetYaw = 175;
+	static constexpr double cubeOffsetHeight = 8.0;
 };
 #endif
