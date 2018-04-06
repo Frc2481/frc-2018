@@ -1,12 +1,30 @@
 function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-% waypoints = [x position,
-%              y position,
-%              yaw,
-%              maximum distance away from point,
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% waypoints = [x position (in),
+%              y position (in),
+%              yaw (deg),
+%              maximum distance away from point (in)],
+%
+%              generatePath() adds the following to waypoints...
 %              temp path index,
-%              distance traveled,
+%              distance traveled (in),
 %              final path index];
+%
+% csvFilename = file name to output finalPath to .csv
+%
+% maxSpeed = max speed (in)
+%
+% sampleRate = sample rate (Hz)
+%
+% finalPath = [time (s),
+%              x position (in),
+%              y position (in),
+%              yaw (deg),
+%              x vel (in/s),
+%              y vel (in/s),
+%              yaw rate (deg/s),
+%              x accel (in/s^2),
+%              y accel (in/s^2),
+%              yaw accel (deg/s^2)]
 
     % input error checking
     if(isempty(waypoints))
@@ -103,13 +121,13 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
             crossV21V23 = cross([v21, 0], [v23, 0]);
 
             % generate points along arc
-            for phi = linspace(sign(crossV21V23(3)) * (pi - theta) / 2, -sign(crossV21V23(3)) * (pi - theta) / 2, 17)
+            for phi = linspace(sign(crossV21V23(3)) * (pi - theta) / 2, -sign(crossV21V23(3)) * (pi - theta) / 2, 51)
                 p7(1) = p6(1) - R * (cos(phi) * v26(1) - sin(phi) * v26(2)) / norm(v26);
                 p7(2) = p6(2) - R * (sin(phi) * v26(1) + cos(phi) * v26(2)) / norm(v26);
 
                 % add p7 to path
                 tempPath(end + 1, 1:2) = p7;
-                if (phi == 0)
+                if (-0.0001 < phi) && (phi < 0.001)
                     sizeTempPath = size(tempPath);
                     waypoints(j, 5) = sizeTempPath(1);
                     j = j + 1;
@@ -183,10 +201,13 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
 
     % limit distance to total path length
     dist(dist > tempPath(end, 3)) = tempPath(end, 3);
+    
+    % add time to final path
+    finalPath(:, 1) = time;
+    lengthFinalPath = length(finalPath);
 
-    % interpolate distance traveled to get final path
-    finalPath = interparc(dist / tempPath(end, 3), tempPath(:, 1)', tempPath(:, 2)', 'linear');
-    sizeFinalPath = size(finalPath);
+    % interpolate distance traveled to get final path positions
+    finalPath(:, 2:3) = interparc(dist / tempPath(end, 3), tempPath(:, 1)', tempPath(:, 2)', 'linear');
 
     % get distance traveled corresponding to waypoints
     waypoints(:, 6) = tempPath(waypoints(:, 5), 3);
@@ -194,7 +215,7 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
     % get final path index corresponding to waypoints
     j = 2;
     waypoints(1, 7) = 1;
-    for i = 2:sizeFinalPath(1)
+    for i = 2:lengthFinalPath
         if (dist(i) > waypoints(j, 6))
             waypoints(j, 7) = i - 1;
             j = j + 1;
@@ -219,13 +240,13 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
 
     % add yaw to final path
     j = 1;
-    finalPath(1, 3) = waypoints(1, 3);
-    for i = 2:sizeFinalPath(1)
+    finalPath(1, 4) = waypoints(1, 3);
+    for i = 2:lengthFinalPath
         if (i > waypoints(j, 7))
             j = j + 1;
         end
 
-        newYaw = finalPath(i - 1, 3) + yawRate(j - 1);
+        newYaw = finalPath(i - 1, 4) + yawRate(j - 1);
 
         % angle wraparound
         if (newYaw > 180)
@@ -234,12 +255,37 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
             newYaw = newYaw + 360;
         end
 
-        finalPath(i, 3) = newYaw;
+        finalPath(i, 4) = newYaw;
     end
-
-    % add time to final path
-    finalPath(:, 4) = time;
     
+    % calculate final path velocity
+    velX = diff(finalPath(:, 2)) ./ diff(finalPath(:, 1));
+    velX(end) = 0;
+    velX = [0; velX];
+    velY = diff(finalPath(:, 3)) ./ diff(finalPath(:, 1));
+    velY(end) = 0;
+    velY = [0; velY];
+    yawRate = diff(finalPath(:, 4)) ./ diff(finalPath(:, 1));
+    yawRate(end) = 0;
+    yawRate = [0; yawRate];
+    
+    % calculate final path acceleration
+    accelX = diff(velX) ./ diff(finalPath(:, 1));
+    accelX(end) = 0;
+    accelX = [0; accelX];
+    accelY = diff(velY) ./ diff(finalPath(:, 1));
+    accelY(end) = 0;
+    accelY = [0; accelY];
+    yawAccel = diff(yawRate) ./ diff(finalPath(:, 1));
+    yawAccel(end) = 0;
+    yawAccel = [0; yawAccel];
+    
+    finalPath(:, 5) = velX;
+    finalPath(:, 6) = velY;
+    finalPath(:, 7) = yawRate;
+    finalPath(:, 8) = accelX;
+    finalPath(:, 9) = accelY;
+    finalPath(:, 10) = yawAccel;
         
     % draw field
     fieldDim = 12 * [27, 54];
@@ -255,6 +301,11 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
                   fieldDim(1) - 85.25, 196;
                   85.25, 196;
                   85.25, 140];
+    switchDraw2 = [85.25, fieldDim(2) - 140;
+                  fieldDim(1) - 85.25, fieldDim(2) - 140;
+                  fieldDim(1) - 85.25, fieldDim(2) - 196;
+                  85.25, fieldDim(2) - 196;
+                  85.25, fieldDim(2) - 140];
     
     % draw scale
     scaleDraw = [71.57, 299.65;
@@ -270,22 +321,54 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
                     95.25, 386.53;
                     95.25, 261.47];
     
+    % draw cubes
+    cubeDim = 13;
+    cubeSpacing = 28.1;
+    cube1 = [85.25 + 0 * cubeSpacing, 196, cubeDim, cubeDim];
+    cube2 = [85.25 + 1 * cubeSpacing, 196, cubeDim, cubeDim];
+    cube3 = [85.25 + 2 * cubeSpacing, 196, cubeDim, cubeDim];
+    cube4 = [85.25 + 3 * cubeSpacing, 196, cubeDim, cubeDim];
+    cube5 = [85.25 + 4 * cubeSpacing, 196, cubeDim, cubeDim];
+    cube6 = [85.25 + 5 * cubeSpacing, 196, cubeDim, cubeDim];
+    cube7 = [(fieldDim(1) / 2) - (cubeDim / 2), 100, cubeDim, cubeDim];
+    cube8 = [(fieldDim(1) / 2) - cubeDim, 120 - (cubeDim / 2), cubeDim, cubeDim];
+    cube9 = [(fieldDim(1) / 2), 120 - (cubeDim / 2), cubeDim, cubeDim];
+    cube10 = [(fieldDim(1) / 2) - (cubeDim / 2), 120 + (cubeDim / 2), cubeDim, cubeDim];
+    cube11 = [(fieldDim(1) / 2) - 1.5 * cubeDim, 120 + (cubeDim / 2), cubeDim, cubeDim];
+    cube12 = [(fieldDim(1) / 2) + (cubeDim / 2), 120 + (cubeDim / 2), cubeDim, cubeDim];
+    
     % plot path
-    close all
+%     close all
     figure
     plot(waypoints(:, 1), waypoints(:, 2), 'bo-')
     % quiver(waypoints(:, 1), waypoints(:, 2), cosd(waypoints(:, 3) + 90), sind(waypoints(:, 3) + 90), 'b');
     hold on
     plot(tempPath(:, 1), tempPath(:, 2), 'gx-')
-    plot(finalPath(:, 1), finalPath(:, 2), 'rx-')
+    plot(finalPath(:, 2), finalPath(:, 3), 'rx-')
     % quiver(finalPath(:, 1), finalPath(:, 2), cosd(finalPath(:, 3) + 90), sind(finalPath(:, 3) + 90), 'r');
     plot(fieldDraw(:, 1), fieldDraw(:, 2), 'b')
     plot(switchDraw(:, 1), switchDraw(:, 2), 'b')
+    plot(switchDraw2(:, 1), switchDraw2(:, 2), 'b')
     plot(scaleDraw(:, 1), scaleDraw(:, 2), 'b')
     plot(platformDraw(:, 1), platformDraw(:, 2), 'b')
+    rectangle('Position', cube1, 'EdgeColor', 'b')
+    rectangle('Position', cube2, 'EdgeColor', 'b')
+    rectangle('Position', cube3, 'EdgeColor', 'b')
+    rectangle('Position', cube4, 'EdgeColor', 'b')
+    rectangle('Position', cube5, 'EdgeColor', 'b')
+    rectangle('Position', cube6, 'EdgeColor', 'b')
+    rectangle('Position', cube7, 'EdgeColor', 'b')
+    rectangle('Position', cube8, 'EdgeColor', 'b')
+    rectangle('Position', cube9, 'EdgeColor', 'b')
+    rectangle('Position', cube10, 'EdgeColor', 'b')
+    rectangle('Position', cube11, 'EdgeColor', 'b')
+    rectangle('Position', cube12, 'EdgeColor', 'b')
     hold off
     axis([-5 700 -5 700])
 
     % write final path to .csv file
     csvwrite(csvFilename, finalPath);
+    
+    disp(csvFilename)
+    disp(finalPath(end, 1))
 end
