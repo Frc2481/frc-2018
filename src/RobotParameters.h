@@ -107,12 +107,12 @@ public:
 	static constexpr double k_rightFrameConstrained = 58; //calculated: 49, changed to be optimal
 	static constexpr double k_leftFrameConstrained = -66; //-55
   
-	static constexpr double cameraOffsetX = 5;
-	static constexpr double cameraOffsetY = 4;
+	static constexpr double cameraOffsetX = -5;
+	static constexpr double cameraOffsetY = -4;
 	static constexpr double cameraOffsetZ = 28.375;
 	static constexpr double cameraOffsetRoll = 0;
 	static constexpr double cameraOffsetPitch = -19;
-	static constexpr double cameraOffsetYaw = 0;
+	static constexpr double cameraOffsetYaw = 180;
 	static constexpr double cubeHeight = 11.0;
 };
 #endif

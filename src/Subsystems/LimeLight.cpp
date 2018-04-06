@@ -70,22 +70,28 @@ void LimeLight::CalculatePowerCubePose() {
 	// +z = robot up
 	// +yaw = CCW, zero is robot forward
 
-	Rotation2D yawCube = Rotation2D::fromDegrees(getPowerCubeTargetOffsetAngleHorizontal() + RobotParameters::cameraOffsetYaw);
-
-	double yCube = 0;
 	double xCube = 0;
-	if (tan((-getPowerCubeTargetOffsetAngleVertical() - RobotParameters::cameraOffsetPitch) * M_PI / 180.0)) {
-		yCube = (RobotParameters::cameraOffsetZ - RobotParameters::cubeHeight/2.0) / tan((-getPowerCubeTargetOffsetAngleVertical() - RobotParameters::cameraOffsetPitch) * M_PI / 180.0) + RobotParameters::cameraOffsetY;
-		xCube = RobotParameters::cameraOffsetX + (yCube - RobotParameters::cameraOffsetY) * tan(yawCube.getRadians());
+	double yCube = 0;
+	double yawCube = 0;
+
+	if(getPowerCubeTargetValid()) {
+		yawCube = getPowerCubeTargetOffsetAngleHorizontal() + RobotParameters::cameraOffsetYaw;
+
+		double tanVal = tan((-getPowerCubeTargetOffsetAngleVertical() - RobotParameters::cameraOffsetPitch) * M_PI / 180.0);
+		if (tanVal) {
+			yCube = (RobotParameters::cameraOffsetZ - (RobotParameters::cubeHeight / 2.0)) / tanVal;
+			xCube = RobotParameters::cameraOffsetX + (yCube - RobotParameters::cameraOffsetY) * tan(yawCube * M_PI / 180.0);
+		}
 	}
 
 	Translation2D cubePos = Translation2D(xCube, yCube);
+	Rotation2D cubeRot = Rotation2D::fromDegrees(yawCube);
 
-	SetPowerCubePose(RigidTransform2D(cubePos, yawCube));
+	SetPowerCubePose(RigidTransform2D(cubePos, cubeRot));
 
 	SmartDashboard::PutNumber("x Cube", xCube);
 	SmartDashboard::PutNumber("y Cube", yCube);
-	SmartDashboard::PutNumber("yaw Cube", yawCube.getDegrees());
+	SmartDashboard::PutNumber("yaw Cube", yawCube);
 }
 
 void LimeLight::SetPowerCubePose(RigidTransform2D cubePose) {
