@@ -17,75 +17,75 @@ sampleRate = 50;
 cubeApproachDist = 15;
 
 % %%%%%%%%%%%% left start, left scale %%%%%%%%%%%%
-% leftStart = [29.69 + (robotDim(1) / 2), (robotDim(2) / 2), 0, 0];
-% leftScaleWP1 = [leftStart(1), 190, 0, 40];
-% leftScale = [71.57 + 10, 299.65 - (robotDim(2) / 2) - 6, -30, 0];
-% leftScaleWP2 = [71.57 + 10, 250, 0, 20];
-% leftCube1Approach = [85.25 + (cubeDim / 2), 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist + cubeApproachDist, 0, 10];
-% leftCube1 = [85.25 + (cubeDim / 2), 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist, 0, 0];
-% leftCube2Approach = [85.25 + (cubeDim / 2) + cubeSpacing, 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist + cubeApproachDist, 0, 10];
-% leftCube2 = [85.25 + (cubeDim / 2) + cubeSpacing, 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist, 0, 0];
-% leftCube3Approach = [85.25 + (cubeDim / 2) + 2 * cubeSpacing, 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist + cubeApproachDist, 0, 10];
-% leftCube3 = [85.25 + (cubeDim / 2) + 2 * cubeSpacing, 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist, 0, 0];
-% 
-% maxSpeed = 100 * 0.95 * 1.0;
-% maxAccel = 90;
-% csvFilename = 'Path_LL_scale1.csv';
-% waypoints = [leftStart;
-%              leftScaleWP1;
-%              leftScale];
-% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-% 
-% maxSpeed = 100 * 0.95 * 1.0;
-% maxAccel = 90;
-% csvFilename = 'Path_LL_scale2.csv';
-% waypoints = [leftScale;
-%              leftScaleWP2;
-%              leftCube1Approach;
-%              leftCube1];
-% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-% 
-% maxSpeed = 100 * 0.95 * 1.0;
-% maxAccel = 90;
-% csvFilename = 'Path_LL_scale3.csv';
-% waypoints = [leftCube1;
-%              leftScaleWP2;
-%              leftScale];
-% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-% 
-% maxSpeed = 100 * 0.95 * 1.0;
-% maxAccel = 90;
-% csvFilename = 'Path_LL_scale4.csv';
-% waypoints = [leftScale;
-%              leftScaleWP2;
-%              leftCube2Approach;
-%              leftCube2];
-% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-% 
-% maxSpeed = 100 * 0.95 * 1.0;
-% maxAccel = 90;
-% csvFilename = 'Path_LL_scale5.csv';
-% waypoints = [leftCube2;
-%              leftScaleWP2;
-%              leftScale];
-% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-% 
-% maxSpeed = 100 * 0.95 * 1.0;
-% maxAccel = 90;
-% csvFilename = 'Path_LL_scale6.csv';
-% waypoints = [leftScale;
-%              leftScaleWP2;
-%              leftCube3Approach;
-%              leftCube3];
-% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
-% 
-% maxSpeed = 100 * 0.95 * 1.0;
-% maxAccel = 90;
-% csvFilename = 'Path_LL_scale7.csv';
-% waypoints = [leftCube3;
-%              leftScaleWP2;
-%              leftScale];
-% generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+ leftStart = [29.69 + (robotDim(1) / 2), (robotDim(2) / 2), 0, 0];
+ leftScaleWP1 = [leftStart(1), 190, 0, 40];
+ leftScale = [71.57 + 10, 292 - (robotDim(2) / 2) - 6, -15, 0];
+ leftScaleWP2 = [71.57 + 10, 250, 0, 20];
+ leftCube1Approach = [85.25 + (cubeDim / 2), 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist + cubeApproachDist, 0, 10];
+ leftCube1 = [85.25 + (cubeDim / 2), 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist, 0, 0];
+ leftCube2Approach = [85.25 + (cubeDim / 2) + cubeSpacing, 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist + cubeApproachDist, 0, 10];
+ leftCube2 = [85.25 + (cubeDim / 2) + cubeSpacing, 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist, 0, 0];
+ leftCube3Approach = [85.25 + (cubeDim / 2) + 2 * cubeSpacing, 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist + cubeApproachDist, 0, 10];
+ leftCube3 = [85.25 + (cubeDim / 2) + 2 * cubeSpacing, 196 + (cubeDim / 2) + (robotDim(2) / 2) + cubeGrabDist, 0, 0];
+ 
+ maxSpeed = 100 * 0.95 * 1.0;
+ maxAccel = 90;
+ csvFilename = 'Path_LL_scale1.csv';
+ waypoints = [leftStart;
+              leftScaleWP1;
+              leftScale];
+ generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+ 
+ maxSpeed = 100 * 0.95 * 1.0;
+ maxAccel = 90;
+ csvFilename = 'Path_LL_scale2.csv';
+ waypoints = [leftScale;
+              leftScaleWP2;
+              leftCube1Approach;
+              leftCube1];
+ generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+ 
+ maxSpeed = 100 * 0.95 * 1.0;
+ maxAccel = 90;
+ csvFilename = 'Path_LL_scale3.csv';
+ waypoints = [leftCube1;
+              leftScaleWP2;
+              leftScale];
+ generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+ 
+ maxSpeed = 100 * 0.95 * 1.0;
+ maxAccel = 90;
+ csvFilename = 'Path_LL_scale4.csv';
+ waypoints = [leftScale;
+              leftScaleWP2;
+              leftCube2Approach;
+              leftCube2];
+ generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+ 
+ maxSpeed = 100 * 0.95 * 1.0;
+ maxAccel = 90;
+ csvFilename = 'Path_LL_scale5.csv';
+ waypoints = [leftCube2;
+              leftScaleWP2;
+              leftScale];
+ generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+ 
+ maxSpeed = 100 * 0.95 * 1.0;
+ maxAccel = 90;
+ csvFilename = 'Path_LL_scale6.csv';
+ waypoints = [leftScale;
+              leftScaleWP2;
+              leftCube3Approach;
+              leftCube3];
+ generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+ 
+ maxSpeed = 100 * 0.95 * 1.0;
+ maxAccel = 90;
+ csvFilename = 'Path_LL_scale7.csv';
+ waypoints = [leftCube3;
+              leftScaleWP2;
+              leftScale];
+ generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
 % 
 % %%%%%%%%%%%% left start, right scale %%%%%%%%%%%%
 % leftStart = [29.69 + (robotDim(1) / 2), (robotDim(2) / 2), 0, 0];
