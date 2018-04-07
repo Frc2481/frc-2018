@@ -56,8 +56,8 @@ public:
 	}
 
 	void End() {
-		m_driveTrain->Drive(0, 0, 0);
 		m_pathFollower->SetActive(false);
+		m_driveTrain->Drive(0, 0, 0);
 
 		//logging error at end of path
 		PathPoint2D &lastPoint = *m_path.rbegin();

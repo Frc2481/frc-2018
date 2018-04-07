@@ -85,7 +85,14 @@ double PVAController::CalculateVelocityControlSignal() {
 	// calculate velocity control signal
 	double velControl = 0;
 //	if(m_targetAccel > 1) {
-		velControl = m_kap * m_targetAccel + m_kv * m_targetVel + m_kp * m_posError + m_kd * m_velError;
+		velControl = m_kap * m_targetAccel + m_kv * m_targetVel;
+		if(m_targetVel > 0) {
+			velControl = std::max(velControl, 0.0);
+		}
+		else {
+			velControl = std::min(velControl, 0.0);
+		}
+		velControl += m_kp * m_posError + m_kd * m_velError;
 //	}
 //	else {
 //		velControl = m_kan * m_targetAccel + m_kv * m_targetVel + m_kp * m_posError + m_kd * m_velError;

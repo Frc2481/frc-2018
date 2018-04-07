@@ -41,7 +41,7 @@ RigidTransform2D DriveController::GetDriveControlSignal() {
 
 	double xOutput = m_positionXController->CalculateVelocityControlSignal();
 	double yOutput = m_positionYController->CalculateVelocityControlSignal();
-	double yawOutput = m_positionYawController->CalculateVelocityControlSignal();
+	double yawOutput = std::max(-0.1, std::min(m_positionYawController->CalculateVelocityControlSignal(), 0.1));
 
 	Translation2D controlSignalTranslation(xOutput, yOutput);
 	Rotation2D controlSignalRotation = Rotation2D::fromDegrees(yawOutput);
@@ -50,9 +50,15 @@ RigidTransform2D DriveController::GetDriveControlSignal() {
 	Rotation2D robotYaw = m_observer->GetLastRobotPose().getRotation();
 	RigidTransform2D driveControlSignal(controlSignalTranslation.rotateBy(robotYaw.inverse()), controlSignalRotation);
 
-	SmartDashboard::PutNumber("Get Error X", m_positionXController->GetError());
-	SmartDashboard::PutNumber("Get Error Y", m_positionYController->GetError());
-	SmartDashboard::PutNumber("Get Error Yaw", m_positionYawController->GetError());
+	if(fabs(m_positionXController->GetError()) < 50) {
+		SmartDashboard::PutNumber("Get Error X", m_positionXController->GetError());
+	}
+	if(fabs(m_positionYController->GetError()) < 50) {
+		SmartDashboard::PutNumber("Get Error Y", m_positionYController->GetError());
+	}
+	if(fabs(m_positionYawController->GetError()) < 50) {
+		SmartDashboard::PutNumber("Get Error Yaw", m_positionYawController->GetError());
+	}
 
 	return driveControlSignal;
 }

@@ -42,7 +42,7 @@ void DriveTrainPathFollower::OnStart() {
 }
 
 void DriveTrainPathFollower::OnLoop() {
-	if(++m_currPoint != m_path->end()) {
+	if(++m_currPoint != m_path->end() && !m_isFinished) {
 		m_driveController.SetFieldTarget(*m_currPoint);
 
 		SmartDashboard::PutNumber("PathX", m_currPoint->xPos);

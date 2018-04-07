@@ -365,6 +365,11 @@ void DriveTrain::Periodic() {
 //	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
 //	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
 //
+	SmartDashboard::PutNumber("FL angle ticks", m_flWheel->GetSteerEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("FR angle ticks", m_frWheel->GetSteerEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BL angle ticks", m_blWheel->GetSteerEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BR angle ticks", m_brWheel->GetSteerEncoder()->GetEncoderTicks());
+
 //	SmartDashboard::PutNumber("FL distance", fabs(m_flWheel->GetDistance().getX()));
 //	SmartDashboard::PutNumber("FR distance", fabs(m_frWheel->GetDistance().getX()));
 //	SmartDashboard::PutNumber("BL distance", fabs(m_blWheel->GetDistance().getX()));
@@ -379,6 +384,11 @@ void DriveTrain::Periodic() {
 //	SmartDashboard::PutNumber("FR Current", m_frWheel->GetDriveCurrent());
 //	SmartDashboard::PutNumber("BL Current", m_blWheel->GetDriveCurrent());
 //	SmartDashboard::PutNumber("BR Current", m_brWheel->GetDriveCurrent());
+
+	SmartDashboard::PutNumber("FL Voltage", m_flWheel->GetAppliedVoltage());
+	SmartDashboard::PutNumber("FR Voltage", m_frWheel->GetAppliedVoltage());
+	SmartDashboard::PutNumber("BL Voltage", m_blWheel->GetAppliedVoltage());
+	SmartDashboard::PutNumber("BR Voltage", m_brWheel->GetAppliedVoltage());
 
 //	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
 //	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());

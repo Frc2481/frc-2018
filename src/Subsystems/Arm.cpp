@@ -288,10 +288,10 @@ void Arm::Periodic() {
 	double actualExt = GetExtensionPosition();
 	double errorExt = allowedExt - actualExt;
 
-	if(!m_armLegal && armLegal) {
-		printf("allowed: %f, actual: %f, setpoint: %f, error: %f, max illegal: %f\n", allowedExt, actualExt, m_extensionSetpoint, errorExt, m_maxIllegal);
-		m_maxIllegal = 0;
-	}
+//	if(!m_armLegal && armLegal) {
+//		printf("allowed: %f, actual: %f, setpoint: %f, error: %f, max illegal: %f\n", allowedExt, actualExt, m_extensionSetpoint, errorExt, m_maxIllegal);
+//		m_maxIllegal = 0;
+//	}
 
 	if(!armLegal) {
 		m_maxIllegal = std::max(m_maxIllegal, errorExt);

@@ -20,7 +20,7 @@
 class CommandBase: public Command
 {
 public:
-	CommandBase(const std::string &name);
+	CommandBase(std::string name);
 	CommandBase();
 	static void init();
 	// Create a single static instance of all of your subsystems

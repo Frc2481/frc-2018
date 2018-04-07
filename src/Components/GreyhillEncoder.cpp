@@ -11,7 +11,7 @@
 
 //fix me!
 
-GreyhillEncoder::GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerRev, double inchesPerWheelRev, double encoderRevPerWheelRevLowGear, double encoderRevPerWheelRevHighGear)
+GreyhillEncoder::GreyhillEncoder(TalonSRX* talon, std::string name, int ticksPerRev, double inchesPerWheelRev, double encoderRevPerWheelRevLowGear, double encoderRevPerWheelRevHighGear)
 	: m_talon(talon), m_name(name), m_ticksPerRev(ticksPerRev), m_inchesPerWheelRev(inchesPerWheelRev),
 	  m_encoderRevPerWheelRevLowGear(encoderRevPerWheelRevLowGear), m_encoderRevPerWheelRevHighGear(encoderRevPerWheelRevHighGear) {
 

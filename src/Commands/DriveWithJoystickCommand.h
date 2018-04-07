@@ -14,7 +14,7 @@
 
 class DriveWithJoystickCommand : public CommandBase{
 public:
-	DriveWithJoystickCommand() : CommandBase("DriveWithJoystickCommandV2") {
+	DriveWithJoystickCommand() : CommandBase("DriveWJoystick") {
 		Requires(m_driveTrain.get());
 	}
 	virtual ~DriveWithJoystickCommand() {

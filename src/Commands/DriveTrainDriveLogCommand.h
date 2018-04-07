@@ -1,31 +1,31 @@
 /*
- * DriveTrainAutoTestDrive.h
+ * DriveTrainDriveLogCommand.h
  *
- *  Created on: Apr 2, 2018
+ *  Created on: Apr 6, 2018
  *      Author: Team2481
  */
 
-#ifndef SRC_COMMANDS_DRIVETRAINAUTOTESTDRIVE_H_
-#define SRC_COMMANDS_DRIVETRAINAUTOTESTDRIVE_H_
+#ifndef SRC_COMMANDS_DRIVETRAINDRIVELOGCOMMAND_H_
+#define SRC_COMMANDS_DRIVETRAINDRIVELOGCOMMAND_H_
 
 #include "CommandBase.h"
 
-class DriveTrainAutoTestDrive : public CommandBase{
+class DriveTrainDriveLogCommand : public CommandBase {
 private:
 	std::ofstream m_stream;
 
 public:
-	DriveTrainAutoTestDrive() : CommandBase("DriveTrainAutoTestDrive"){
+	DriveTrainDriveLogCommand() : CommandBase("DriveTrainDriveLogCommand"){
 		Requires(m_driveTrain.get());
 	}
-	virtual ~DriveTrainAutoTestDrive() {}
+	virtual ~DriveTrainDriveLogCommand() {}
 
 	void Initialize() {
-		m_stream = std::ofstream("/home/lvuser/RampDrive.csv");
+		m_stream = std::ofstream("/home/lvuser/Vel.6.csv");
 		m_stream<< "time,flDriveVel,frDriveVel,blDriveVel,brDriveVel,flVoltage,frVoltage,blVoltage,brVoltage\n";
 	}
 	void Execute() {
-		m_driveTrain->Drive(0, TimeSinceInitialized() * 1 / 48.0, 0);
+		m_driveTrain->Drive(0, .6, 0);
 
 		m_stream<< RobotController::GetFPGATime() << "," <<
 				m_driveTrain->GetModule(DriveTrain::FRONT_LEFT_MODULE)->GetSpeed() << "," <<
@@ -37,6 +37,7 @@ public:
 				m_driveTrain->GetModule(DriveTrain::FRONT_RIGHT_MODULE)->GetAppliedVoltage() << "," <<
 				m_driveTrain->GetModule(DriveTrain::BACK_LEFT_MODULE)->GetAppliedVoltage() << "," <<
 				m_driveTrain->GetModule(DriveTrain::BACK_RIGHT_MODULE)->GetAppliedVoltage() <<
+
 				"\n";
 
 	}
@@ -49,4 +50,4 @@ public:
 	}
 };
 
-#endif /* SRC_COMMANDS_DRIVETRAINAUTOTESTDRIVE_H_ */
+#endif /* SRC_COMMANDS_DRIVETRAINDRIVELOGCOMMAND_H_ */

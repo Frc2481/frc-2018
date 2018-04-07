@@ -36,7 +36,7 @@ bool Intake::HasCube() {
 //	SmartDashboard::PutBoolean("roller left is limit closed", m_rollerMotorLeft->GetSensorCollection().IsFwdLimitSwitchClosed());
 //	SmartDashboard::PutBoolean("roller right is limit closed", m_rollerMotorRight->GetSensorCollection().IsFwdLimitSwitchClosed());
 
-	return m_rollerMotorLeft->GetSensorCollection().IsFwdLimitSwitchClosed() &&
+	return m_rollerMotorLeft->GetSensorCollection().IsFwdLimitSwitchClosed() ||
 			m_rollerMotorRight->GetSensorCollection().IsFwdLimitSwitchClosed();
 }
 

@@ -68,7 +68,7 @@ public:
 	static constexpr double kaDriveYaw = 0;
 	static constexpr double kdDriveYaw = 0;
 
-	static constexpr double k_driveVIntercept = 0.125;
+	static constexpr double k_driveVIntercept = 0.118;//0.125;
 
 	static constexpr double DriveControllerPeriod = 0.05; // seconds
 

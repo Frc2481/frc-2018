@@ -12,7 +12,7 @@ std::unique_ptr<PathManager> CommandBase::m_pathManager;
 std::unique_ptr<DriveTrainPathFollower> CommandBase::m_pathFollower;
 bool CommandBase::m_pause;
 
-CommandBase::CommandBase(const std::string &name) :
+CommandBase::CommandBase(std::string name) :
 		Command(name)
 {
 }

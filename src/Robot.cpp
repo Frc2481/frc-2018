@@ -48,6 +48,8 @@
 #include "Commands/Autos/AutoLL0.h"
 #include "Commands/DriveTrainAutoTestDrive.h"
 
+#include "Commands/DriveTrainDriveLogCommand.h"
+
 //enum Autos {
 //	POS_LEFT = 1,
 //	POS_CENTER = 2,
@@ -179,6 +181,8 @@ private:
 		SmartDashboard::PutData("log observer", new LogObserverCommand());
 
 		SmartDashboard::PutData("drive test auto", new DriveTrainAutoTestDrive());
+
+		SmartDashboard::PutData("drive vel .6", new DriveTrainDriveLogCommand());
 
 		SmartDashboard::PutData(Scheduler::GetInstance());
 		SmartDashboard::PutData(CommandBase::m_arm.get());
