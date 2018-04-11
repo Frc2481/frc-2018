@@ -1,4 +1,4 @@
-function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRate)
+function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, maxSpeed2, maxAccel2, maxDeccel, sampleRate)
 % waypoints = [x position (in),
 %              y position (in),
 %              yaw (deg),
@@ -11,8 +11,16 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
 %
 % csvFilename = file name to output finalPath to .csv
 %
-% maxSpeed = max speed (in)
+% maxSpeed = max speed (in/s) for primary speeding up
 %
+% maxAccel = max acceleration (in/s^2) for primary speeding up
+% 
+% maxSpeed2 = max speed (in/s) for secondary speeding up
+% 
+% maxAccel2 = max acceleration (in/s^2) for secondary speeding up
+% 
+% maxDeccel = max decceleration (in/s^2) for slowing down
+% 
 % sampleRate = sample rate (Hz)
 %
 % finalPath = [time (s),
@@ -39,6 +47,21 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
 
     if(~any(maxAccel > 0))
         display('*****max accel is not positive real number*****')
+        return
+    end
+    
+    if(~any(maxSpeed2 > 0))
+        display('*****max speed 2 is not positive real number*****')
+        return
+    end
+
+    if(~any(maxAccel2 > 0))
+        display('*****max accel 2 is not positive real number*****')
+        return
+    end
+    
+    if(~any(maxDeccel < 0))
+        display('*****max deccel is not negative real number*****')
         return
     end
 
@@ -156,48 +179,82 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
     % calculate acceleration time and distance
     accelTime = maxSpeed / maxAccel;
     accelDist = 0.5 * maxAccel * accelTime^2;
-
+    accelTime2 = (maxSpeed2 - maxSpeed) / maxAccel2;
+    accelDist2 = maxSpeed * accelTime2 + 0.5 * maxAccel2 * accelTime2^2;
+    deccelTime = maxSpeed2 / -maxDeccel;
+    deccelDist = 0.5 * -maxDeccel * deccelTime^2;
+    
     % recalculate max speed if total path length is too small for max acceleration
-    if (2 * accelDist > tempPath(end, 3))
-        accelTime = sqrt(tempPath(end, 3) / 2 * 2 / maxAccel);
+    if ((accelDist + accelDist2 + deccelDist) > tempPath(end, 3))
+        accelTime = maxSpeed / maxAccel;
         accelDist = 0.5 * maxAccel * accelTime^2;
-        maxSpeed = accelTime * maxAccel;
+        deccelTime = maxSpeed / -maxDeccel;
+        deccelDist = 0.5 * -maxDeccel * deccelTime^2;
+        
+        if ((accelDist + deccelDist) > tempPath(end, 3))
+            accelDist = tempPath(end, 3) * -maxDeccel / (maxAccel - maxDeccel);
+            deccelDist = tempPath(end, 3) * maxAccel / (maxAccel - maxDeccel);
+            accelTime = sqrt(2 * accelDist / maxAccel);
+            deccelTime = sqrt(2 * deccelDist / -maxDeccel);
+            maxSpeed = accelTime * maxAccel;
+            accelDist2 = 0;
+            maxSpeed2 = maxSpeed;
+            accelTime2 = 0;
+        else
+            accelDist2 = (tempPath(end, 3) - accelDist - deccelDist) * -maxDeccel / (maxAccel2 - maxDeccel);
+            deccelDist = (tempPath(end, 3) - accelDist - deccelDist) * maxAccel2 / (maxAccel2 - maxDeccel) + deccelDist;
+            maxSpeed2 = sqrt(maxSpeed^2 + 2 * maxAccel2 * accelDist2);
+            accelTime2 = (maxSpeed2 - maxSpeed) / maxAccel2;
+            deccelTime = (maxSpeed2 - maxSpeed) / -maxDeccel + deccelTime;
+        end
     end
-
+    
     % calculate times during path
-    totalTime = 2 * accelTime + (tempPath(end, 3) - 2 * accelDist) / maxSpeed;
+    totalTime = accelTime + accelTime2 + deccelTime + (tempPath(end, 3) - (accelDist + accelDist2 + deccelDist)) / maxSpeed2;
     startMaxSpeedTime = accelTime;
-    stopMaxSpeedTime = totalTime - accelTime;
-    time = 0:(1 / sampleRate):(floor(totalTime * sampleRate) / sampleRate);
+    startMaxSpeedTime2 = accelTime + accelTime2;
+    stopMaxSpeedTime = totalTime - deccelTime;
+    time = 0:(1 / sampleRate):(floor(totalTime * sampleRate) / sampleRate);    
 
-    % calculate speed with respect to time
+    % calculate speed and acceleration with respect to time
     speed = 0;
+    accel = maxAccel;
     for i = time(2:end)
         if(i < startMaxSpeedTime)
+            accel(end + 1) = maxAccel;
             speed(end + 1) = maxAccel * i;
+        elseif(i < startMaxSpeedTime2)
+            accel(end + 1) = maxAccel2;
+            speed(end + 1) = maxAccel2 * (i - startMaxSpeedTime) + maxSpeed;
         elseif(i > stopMaxSpeedTime)
-            speed(end + 1) = maxAccel * (totalTime - i);
+            speed(end + 1) = -maxDeccel * (totalTime - i);
+            accel(end + 1) = maxDeccel;
         else
-            speed(end + 1) = maxSpeed;
+            speed(end + 1) = maxSpeed2;
+            accel(end + 1) = 0;
         end
     end
 
     % calculate distance traveled with respect to time
     dist = 0;
     for i = 2:length(time)
-        if((startMaxSpeedTime < time(i)) && (time(i) < (startMaxSpeedTime + 1 / sampleRate)))
-            dist(end + 1) = dist(end) + (time(i) - startMaxSpeedTime) * maxSpeed + (startMaxSpeedTime - time(i - 1)) * speed(i - 1);
-        elseif((stopMaxSpeedTime < time(i)) && (time(i) < (stopMaxSpeedTime + 1 / sampleRate)))
-            dist(end + 1) = dist(end) + (stopMaxSpeedTime - time(i - 1)) * maxSpeed + (time(i) - stopMaxSpeedTime) * speed(i);
-        else
-            dist(end + 1) = dist(end) + (speed(i) + speed(i - 1)) / (2 * sampleRate);
-        end
+        dist(end + 1) = dist(end) + (speed(i) + speed(i - 1)) / (2 * sampleRate);
     end
-
+    
     % calculate distance traveled during last point
     dist(end + 1) = tempPath(end, 3);
     speed(end + 1) = 0;
+    accel(end + 1) = maxDeccel;
     time(end + 1) = totalTime;
+    
+%     figure
+%     plot(time, dist)
+%     
+%     figure
+%     plot(time, speed)
+%     
+%     figure
+%     plot(time, accel)
 
     % limit distance to total path length
     dist(dist > tempPath(end, 3)) = tempPath(end, 3);
@@ -207,7 +264,8 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
     lengthFinalPath = length(finalPath);
 
     % interpolate distance traveled to get final path positions
-    finalPath(:, 2:3) = interparc(dist / tempPath(end, 3), tempPath(:, 1)', tempPath(:, 2)', 'linear');
+    [interPos, interVel, ~] = interparc(dist / tempPath(end, 3), tempPath(:, 1)', tempPath(:, 2)', 'linear');
+    finalPath(:, 2:3) = interPos;
 
     % get distance traveled corresponding to waypoints
     waypoints(:, 6) = tempPath(waypoints(:, 5), 3);
@@ -258,24 +316,19 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
         finalPath(i, 4) = newYaw;
     end
     
+    % calculate final path heading
+    heading = atan2d(interVel(:, 2), interVel(:, 1))';
+    
     % calculate final path velocity
-    velX = diff(finalPath(:, 2)) ./ diff(finalPath(:, 1));
-    velX(end) = 0;
-    velX = [0; velX];
-    velY = diff(finalPath(:, 3)) ./ diff(finalPath(:, 1));
-    velY(end) = 0;
-    velY = [0; velY];
+    velX = speed .* cosd(heading);
+    velY = speed .* sind(heading);
     yawRate = diff(finalPath(:, 4)) ./ diff(finalPath(:, 1));
     yawRate(end) = 0;
     yawRate = [0; yawRate];
     
     % calculate final path acceleration
-    accelX = diff(velX) ./ diff(finalPath(:, 1));
-    accelX(end) = 0;
-    accelX = [0; accelX];
-    accelY = diff(velY) ./ diff(finalPath(:, 1));
-    accelY(end) = 0;
-    accelY = [0; accelY];
+	accelX = accel .* cosd(heading);
+    accelY = accel .* sind(heading);
     yawAccel = diff(yawRate) ./ diff(finalPath(:, 1));
     yawAccel(end) = 0;
     yawAccel = [0; yawAccel];
@@ -365,9 +418,10 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, sampleRat
     rectangle('Position', cube12, 'EdgeColor', 'b')
     hold off
     axis([-5 700 -5 700])
-
+    
     % write final path to .csv file
-    csvwrite(csvFilename, finalPath);
+    headers = {'time', 'xPos', 'yPos', 'yaw', 'xVel', 'yVel', 'yawRate', 'xAccel', 'yAccel', 'yawAccel'};
+    csvwrite_with_headers(csvFilename, finalPath, headers)
     
     disp(csvFilename)
     disp(finalPath(end, 1))
