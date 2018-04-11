@@ -17,24 +17,48 @@ PathLoader::~PathLoader() {
 void PathLoader::LoadPath(const std::string filePath) {
 	//TODO error handling when no path is available
 
+	PathPoint2D pathPoint;
+
 	std::ifstream fin(filePath);
 
-	double x, y, yaw, time;
 	std::string field;
+
+//	if(fin.good()) {
+//		return;
+//	}
+//	std::getline(fin, field);
 
 	while(fin.good()) {
 		std::getline(fin, field, ',');
-		std::istringstream(field) >> x;
+		std::istringstream(field) >> pathPoint.time;
 
 		std::getline(fin, field, ',');
-		std::stringstream(field) >> y;
+		std::stringstream(field) >> pathPoint.xPos;
 
 		std::getline(fin, field, ',');
-		std::stringstream(field) >> yaw;
+		std::stringstream(field) >> pathPoint.yPos;
+
+		std::getline(fin, field, ',');
+		std::stringstream(field) >> pathPoint.yaw;
+
+		std::getline(fin, field, ',');
+		std::stringstream(field) >> pathPoint.xVel;
+
+		std::getline(fin, field, ',');
+		std::stringstream(field) >> pathPoint.yVel;
+
+		std::getline(fin, field, ',');
+		std::stringstream(field) >> pathPoint.yawVel;
+
+		std::getline(fin, field, ',');
+		std::stringstream(field) >> pathPoint.xAccel;
+
+		std::getline(fin, field, ',');
+		std::stringstream(field) >> pathPoint.yAccel;
 
 		std::getline(fin, field);
-		std::stringstream(field) >> time;
+		std::stringstream(field) >> pathPoint.yawAccel;
 
-		m_path.put(InterpolatingDouble(time), RigidTransform2D(Translation2D(x, y), Rotation2D::fromDegrees(yaw)));
+		m_path.push_back(pathPoint);
 	}
 }

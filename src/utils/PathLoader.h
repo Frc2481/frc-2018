@@ -9,12 +9,26 @@
 #define SRC_COMPONENTS_PATHLOADER_H_
 
 #include <fstream>
+#include <vector>
 
 #include <utils/RigidTransform2D.h>
 #include <utils/InterpolatingMap.h>
 #include <utils/InterpolatingDouble.h>
 
-typedef InterpolatingMap<InterpolatingDouble, RigidTransform2D> Path2D;
+struct PathPoint2D {
+	double time;
+	double xPos;
+	double xVel;
+	double xAccel;
+	double yPos;
+	double yVel;
+	double yAccel;
+	double yaw;
+	double yawVel;
+	double yawAccel;
+};
+
+typedef std::vector<PathPoint2D> Path2D;
 
 class PathLoader {
 public:

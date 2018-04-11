@@ -28,6 +28,7 @@ private:
 	bool m_isCloseLoopControl;
 	bool m_motionMagic;
 	std::string m_name;
+	bool m_isPreciseMode;
 
 public:
 	SwerveModule(uint32_t driveID, uint32_t steerID, const std::string name);
@@ -60,6 +61,8 @@ public:
 	double GetSteerCurrent() const;
 	double GetDriveCurrent() const;
 	void Periodic();
+	double GetAppliedVoltage();
+	void SetPreciseMode(bool isPrecise);
 };
 
 #endif /* SRC_SWERVEMODULE_H_ */

@@ -35,9 +35,6 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 //	m_pigeon(new PigeonIMU(0)),
 	m_isFieldCentric(false),
 //	m_isForward(true),
-	m_xVel(0),
-	m_yVel(0),
-	m_yawRate(0),
 //	m_heading(0),
 //	m_headingCorrection(0),
 	m_roll(0),
@@ -67,9 +64,6 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_observer = new Observer();
 	m_observer->SetRobotPos(RigidTransform2D(Translation2D(0, 0), Rotation2D(1, 0, true)), 0.0);
 
-
-	m_driveController = new DriveController(m_observer);
-
 	m_oldGyroYaw = Rotation2D(1, 0, true);
 
 	m_isPtoEngaged = false;
@@ -96,6 +90,7 @@ void DriveTrain::InitDefaultCommand() {
 
 
 void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
+	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
 	//prevent driving when pto engaged
 	if (IsPtoEngaged()) {
 		m_flWheel->Set(0, m_flWheel->GetAngle());
@@ -104,10 +99,6 @@ void DriveTrain::Drive(double xVel, double yVel, double yawRate) {
 		m_brWheel->Set(0, m_brWheel->GetAngle());
 		return;
 	}
-
-	m_xVel = xVel;
-	m_yVel = yVel;
-	m_yawRate = yawRate;
 
 	Translation2D translation(xVel, yVel);
 	Rotation2D rotation = Rotation2D::fromDegrees(yawRate); //don't store twist as angle
@@ -187,6 +178,7 @@ float DriveTrain::GetPitch() const{
 //}
 
 void DriveTrain::SetBrake(bool brake) {
+	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
 	m_flWheel->SetBrake(brake);
 	m_frWheel->SetBrake(brake);
 	m_blWheel->SetBrake(brake);
@@ -206,6 +198,7 @@ void DriveTrain::Shift(bool state){
 }
 
 SwerveModule* DriveTrain::GetModule(DriveTrain::SwerveModuleType module) const{
+	//not locking, up to caller to only read & not write
 	if(module == FRONT_RIGHT_MODULE){
 		return m_frWheel;
 	}
@@ -259,7 +252,7 @@ void DriveTrain::ResetRobotPose(RigidTransform2D pose) {
 }
 
 void DriveTrain::Periodic() {
-
+	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
 	m_flWheel->Periodic();
 	m_frWheel->Periodic();
 	m_blWheel->Periodic();
@@ -336,6 +329,8 @@ void DriveTrain::Periodic() {
 //	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
 	   // TODO: evaluate if we need this check
 
+	RigidTransform2D prevPosition = m_observer->GetLastRobotPose();
+
 		m_observer->UpdateRobotPoseObservation(newFlAngle, deltaFlVelocity,
 											newFrAngle, deltaFrVelocity,
 											newBlAngle, deltaBlVelocity,
@@ -348,31 +343,52 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("Field Y", observerPos.getTranslation().getY());
 	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
 
+
+	double xVelocity = (observerPos.getTranslation().getX() - prevPosition.getTranslation().getX()) / (deltaTimestamp / 1000000);
+	double yVelocity = (observerPos.getTranslation().getY() - prevPosition.getTranslation().getY()) / (deltaTimestamp / 1000000);
+	double yawVelocity = (observerPos.getRotation().getDegrees() - prevPosition.getRotation().getDegrees()) / (deltaTimestamp / 1000000);
+
+	SmartDashboard::PutNumber("xVelocity", xVelocity);
+	SmartDashboard::PutNumber("yVelocity", yVelocity);
+	SmartDashboard::PutNumber("yawVelocity", yawVelocity);
+
+	SmartDashboard::PutNumber("robot velocity", sqrt(xVelocity * xVelocity + yVelocity * yVelocity));
+
 	if(DriverStation::GetInstance().IsDisabled()) {
 		SmartDashboard::PutBoolean("FL steer encoder connected", m_flWheel->GetSteerEncoder()->IsConnected());
 		SmartDashboard::PutBoolean("FR steer encoder connected", m_frWheel->GetSteerEncoder()->IsConnected());
 		SmartDashboard::PutBoolean("BL steer encoder connected", m_blWheel->GetSteerEncoder()->IsConnected());
 		SmartDashboard::PutBoolean("BR steer encoder connected", m_brWheel->GetSteerEncoder()->IsConnected());
 	}
-//	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
-//	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
-//	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
-//	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
 //
+	SmartDashboard::PutNumber("FL angle ticks", m_flWheel->GetSteerEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("FR angle ticks", m_frWheel->GetSteerEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BL angle ticks", m_blWheel->GetSteerEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BR angle ticks", m_brWheel->GetSteerEncoder()->GetEncoderTicks());
+
 //	SmartDashboard::PutNumber("FL distance", fabs(m_flWheel->GetDistance().getX()));
 //	SmartDashboard::PutNumber("FR distance", fabs(m_frWheel->GetDistance().getX()));
 //	SmartDashboard::PutNumber("BL distance", fabs(m_blWheel->GetDistance().getX()));
 //	SmartDashboard::PutNumber("BR distance", fabs(m_brWheel->GetDistance().getX()));
-////
-//	SmartDashboard::PutNumber("FL Speed", m_flWheel->GetSpeed());
-//	SmartDashboard::PutNumber("FR Speed", m_frWheel->GetSpeed());
-//	SmartDashboard::PutNumber("BL Speed", m_blWheel->GetSpeed());
-//	SmartDashboard::PutNumber("BR Speed", m_brWheel->GetSpeed());
 //
+	SmartDashboard::PutNumber("FL Speed", fabs(m_flWheel->GetSpeed()));
+	SmartDashboard::PutNumber("FR Speed", fabs(m_frWheel->GetSpeed()));
+	SmartDashboard::PutNumber("BL Speed", fabs(m_blWheel->GetSpeed()));
+	SmartDashboard::PutNumber("BR Speed", fabs(m_brWheel->GetSpeed()));
+
 //	SmartDashboard::PutNumber("FL Current", m_flWheel->GetDriveCurrent());
 //	SmartDashboard::PutNumber("FR Current", m_frWheel->GetDriveCurrent());
 //	SmartDashboard::PutNumber("BL Current", m_blWheel->GetDriveCurrent());
 //	SmartDashboard::PutNumber("BR Current", m_brWheel->GetDriveCurrent());
+
+	SmartDashboard::PutNumber("FL Voltage", m_flWheel->GetAppliedVoltage());
+	SmartDashboard::PutNumber("FR Voltage", m_frWheel->GetAppliedVoltage());
+	SmartDashboard::PutNumber("BL Voltage", m_blWheel->GetAppliedVoltage());
+	SmartDashboard::PutNumber("BR Voltage", m_brWheel->GetAppliedVoltage());
 
 //	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
 //	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());
@@ -392,13 +408,22 @@ void DriveTrain::Periodic() {
 
 	SmartDashboard::PutNumber("gyro angle", GetHeading().getDegrees());
 
+	SmartDashboard::PutNumber("Yaw Velocity", m_imu->GetRawGyroZ());
+
 	SmartDashboard::PutBoolean("Paths present", !CommandBase::m_pathManager->HasMissingPath());
+
+	SmartDashboard::PutNumber("fl wheel voltage", m_flWheel->GetAppliedVoltage());
+	SmartDashboard::PutNumber("fr wheel voltage", m_frWheel->GetAppliedVoltage());
+	SmartDashboard::PutNumber("bl wheel voltage", m_blWheel->GetAppliedVoltage());
+	SmartDashboard::PutNumber("br wheel voltage", m_brWheel->GetAppliedVoltage());
 
 }
 
 // This Method must be called when when all 8 swerve modules are on.
 void DriveTrain::CheckDiagnostics() {
 // TODO:figure out how to see if sensor is present
+	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
+
 	SmartDashboard::PutBoolean("FL Drive Enc Present", std::abs(m_flWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
 	SmartDashboard::PutBoolean("FR Drive Enc Present", std::abs(m_frWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
 	SmartDashboard::PutBoolean("BL Drive Enc Present", std::abs(m_blWheel->GetDriveEncoder()->GetEncoderTicks()) > 100);
@@ -435,15 +460,12 @@ void DriveTrain::CheckDiagnostics() {
 //	SmartDashboard::PutBoolean("All Drive Train Motors Present", allMotorsPresent);
 }
 
-DriveController* DriveTrain::GetDriveController() {
-	return m_driveController;
-}
-
 Observer* DriveTrain::GetObserver() {
 	return m_observer;
 }
 
 void DriveTrain::EngagePTO() {
+	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
 	m_pto->Set(DoubleSolenoid::kReverse);
 	m_flWheel->SetOptimized(false);
 	m_frWheel->SetOptimized(false);
@@ -453,6 +475,7 @@ void DriveTrain::EngagePTO() {
 }
 
 void DriveTrain::DisengagePTO() {
+	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
 	m_pto->Set(DoubleSolenoid::kForward);
 	m_flWheel->SetOptimized(true);
 	m_frWheel->SetOptimized(true);
@@ -463,6 +486,8 @@ void DriveTrain::DisengagePTO() {
 
 void DriveTrain::SetNearWinchSpeed(double speed) {
 	//back & front left physically linked, have to be run opposite direction
+	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
+
 	m_frWheel->Set(speed, m_frWheel->GetAngle());
 	m_brWheel->Set(-speed, m_brWheel->GetAngle());
 }
@@ -478,6 +503,8 @@ bool DriveTrain::IsPtoEngaged() {
 }
 
 void DriveTrain::SetOpenLoopSteer(double speed) {
+	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
+
 	 m_flWheel->SetOpenLoopSteer(speed);
 	 m_frWheel->SetOpenLoopSteer(speed);
 	 m_blWheel->SetOpenLoopSteer(speed);
@@ -488,6 +515,21 @@ AHRS* DriveTrain::GetImu() {
 	return m_imu;
 }
 
+void DriveTrain::Calibrate() {
+	m_flWheel->GetSteerEncoder()->Calibrate();
+	m_frWheel->GetSteerEncoder()->Calibrate();
+	m_blWheel->GetSteerEncoder()->Calibrate();
+	m_brWheel->GetSteerEncoder()->Calibrate();
+
+}
+
+void DriveTrain::SetPreciseMode(bool isPrecise) {
+	m_flWheel->SetPreciseMode(isPrecise);
+	m_frWheel->SetPreciseMode(isPrecise);
+	m_blWheel->SetPreciseMode(isPrecise);
+	m_brWheel->SetPreciseMode(isPrecise);
+
+}
 //PigeonIMU* DriveTrain::GetPigeonImu() {
 //	return m_pigeon;
 //}

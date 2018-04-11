@@ -23,7 +23,7 @@ private:
 	int m_cachedTicks;
 public:
 	void Periodic();
-	CTREMagEncoder(TalonSRX *talon, const std::string &name);
+	CTREMagEncoder(TalonSRX *talon, std::string name);
 	virtual ~CTREMagEncoder();
 	Rotation2D GetRawAngle() const;
 	const Rotation2D& GetAngle(bool cached=true);

@@ -9,7 +9,7 @@
 #include <Components/CTREMagEncoder.h>
 #include <WPILib.h>
 
-CTREMagEncoder::CTREMagEncoder(TalonSRX* talon, const std::string& name)
+CTREMagEncoder::CTREMagEncoder(TalonSRX* talon, std::string name)
 	: m_talon(talon), m_name(name) {
 
 	std::stringstream ss;

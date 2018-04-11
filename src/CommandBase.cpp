@@ -9,9 +9,10 @@ std::unique_ptr<Compressor> CommandBase::m_compressor;
 std::unique_ptr<OI> CommandBase::oi;
 std::unique_ptr<LimeLight> CommandBase::m_limeLight;
 std::unique_ptr<PathManager> CommandBase::m_pathManager;
+std::unique_ptr<DriveTrainPathFollower> CommandBase::m_pathFollower;
 bool CommandBase::m_pause;
 
-CommandBase::CommandBase(const std::string &name) :
+CommandBase::CommandBase(std::string name) :
 		Command(name)
 {
 }
@@ -30,6 +31,8 @@ void CommandBase::init()
 	m_intake.reset(new Intake());
 	m_limeLight.reset(new LimeLight());
 	m_pathManager.reset(new PathManager());
+	m_pathFollower.reset(new DriveTrainPathFollower(m_driveTrain->GetObserver()));
+	m_pathFollower->Start();
 	m_pause = false;
 	m_arm.reset(new Arm());
 	m_compressor.reset(new Compressor());

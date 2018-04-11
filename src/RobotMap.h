@@ -16,7 +16,7 @@
 		#define INTAKE_RIGHT_MOTOR 10
 
 		#define SHIFTER 0
-		#define INTAKE_CLAMP 1
+		#define INTAKE_CLAMP 1,0
 		#define PTO1 2
 		#define PTO2 3
 

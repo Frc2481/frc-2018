@@ -10,6 +10,7 @@
 #include "Subsystems/LimeLight.h"
 #include "Subsystems/Arm.h"
 #include "utils/PathManager.h"
+#include "DriveTrainPathFollower.h"
 
 /**
  * The base for all commands. All atomic commands should subclass CommandBase.
@@ -19,7 +20,7 @@
 class CommandBase: public Command
 {
 public:
-	CommandBase(const std::string &name);
+	CommandBase(std::string name);
 	CommandBase();
 	static void init();
 	// Create a single static instance of all of your subsystems
@@ -30,6 +31,7 @@ public:
 	static std::unique_ptr<OI> oi;
 	static std::unique_ptr<LimeLight> m_limeLight;
 	static std::unique_ptr<PathManager> m_pathManager;
+	static std::unique_ptr<DriveTrainPathFollower> m_pathFollower;
 
 	static bool m_pause;
 };

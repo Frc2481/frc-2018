@@ -17,32 +17,28 @@
 #include "WPILib.h"
 #include "RobotParameters.h"
 #include "../PIDController2481.h"
+#include "../PVAController.h"
+#include "utils/PathLoader.h"
 
 class DriveController {
 public:
 	DriveController(Observer* observerObj);
 	virtual ~DriveController();
 
-	void SetFieldTarget(RigidTransform2D fieldTarget);
-	void SetRobotTarget(RigidTransform2D robotTarget);
-	void EnableController();
-	bool IsOnTarget();
+	void SetFieldTarget(PathPoint2D &fieldTarget);
+	void SetRobotTarget(PathPoint2D &robotTarget);
 	RigidTransform2D GetControllerError();
 	RigidTransform2D GetDriveControlSignal();
+	void SetPositionGains(double kp, double kv, double kap, double kan, double kd);
+	void SetYawGains(double kp, double kv, double kap, double kan, double kd);
+
+	Observer* GetObserver();
 
 private:
 
-	PIDController2481* m_positionXController;
-	PIDController2481* m_positionYController;
-	PIDController2481* m_positionYawController;
-
-	ObserverPIDSourceX* m_positionXControlSource;
-	ObserverPIDSourceY* m_positionYControlSource;
-	ObserverPIDSourceYaw* m_positionYawControlSource;
-
-	DriveControllerOutput* m_positionXControlSignal;
-	DriveControllerOutput* m_positionYControlSignal;
-	DriveControllerOutput* m_positionYawControlSignal;
+	PVAController* m_positionXController;
+	PVAController* m_positionYController;
+	PVAController* m_positionYawController;
 
 	Observer* m_observer;
 

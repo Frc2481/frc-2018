@@ -13,7 +13,7 @@
 class AutoLRR : public CommandGroup{
 public:
 	AutoLRR() : CommandGroup("AutoLRR") {
-		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.4, 19.5), Rotation2D::fromDegrees(0))));
+		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.44, 19.5), Rotation2D::fromDegrees(0))));
 //scale
 		AddSequential(new ArmExtentionMotionScaling(0.3));
 		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));

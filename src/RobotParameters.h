@@ -18,6 +18,11 @@ public:
 	static constexpr double k_encoderRevPerWheelRevLowGear = 6.7403;
 	static constexpr double k_encoderRevPerWheelRevHighGear = 3.1166;
 
+	static constexpr double k_flRadiusPercent = 0.99; //0.988;
+	static constexpr double k_frRadiusPercent = 0.99; //0.983;
+	static constexpr double k_blRadiusPercent = 0.99; //0.986;
+	static constexpr double k_brRadiusPercent = 0.99; //0.995;
+
 	//low: 12:36 * 34:50 * 34:50 * 80:32 * 16:44 = .1401
 	//high: 12:36 * 34:50 * 50:34 * 80:32 * 16:44 = .303
 
@@ -52,22 +57,23 @@ public:
 	static constexpr double k_steerI = 0;
 	static constexpr double k_steerD = 40;
 
-	static constexpr double kpPos = 0.02; //0.01; //0.007;
-	static constexpr double kiPos = 0;
-	static constexpr double kdPos = 0;
-	static constexpr double kfPos = 0; //0.007;
-	static constexpr double kIZonePos = 0;
+	static constexpr double kpDrivePos = 0;
+	static constexpr double kvDrivePos = 0;
+	static constexpr double kapDrivePos = 0;
+	static constexpr double kanDrivePos = 0;
+	static constexpr double kdDrivePos = 0;
 
-	static constexpr double kpYaw = 0.02;
-	static constexpr double kiYaw = 0.0;
-	static constexpr double kdYaw = 0;
-	static constexpr double kfYaw = 0;
-	static constexpr double kIZoneYaw = 5.0;
+	static constexpr double kpDriveYaw = 0;
+	static constexpr double kvDriveYaw = 0;
+	static constexpr double kaDriveYaw = 0;
+	static constexpr double kdDriveYaw = 0;
 
-	static constexpr double PositionControllerPeriod = 0.05;
+	static constexpr double k_driveVIntercept = 0.118;//0.125;
 
-	static constexpr double kTolerancePos = 3.0; //3.0;
-	static constexpr double kToleranceHeading = 3.0; //3.0;
+	static constexpr double DriveControllerPeriod = 0.05; // seconds
+
+	static constexpr double kTolerancePos = 3.0; // inches
+	static constexpr double kToleranceHeading = 3.0; // inches
 
 	static constexpr double k_extenderUpP = 0.3; //ToDo: change values //40% * 1023 / 3700
 	static constexpr double k_extenderDownP = 0.5;
@@ -114,5 +120,19 @@ public:
 	static constexpr double cameraOffsetPitch = -19;
 	static constexpr double cameraOffsetYaw = 0;
 	static constexpr double cubeHeight = 11.0;
+
+	static constexpr double k_lineDetectZone = 10.0;
+
+	static constexpr double k_lineDetectXOffsetFL = -8.0;
+	static constexpr double k_lineDetectYOffsetFL = 16.0;
+
+	static constexpr double k_lineDetectXOffsetFR = 0;
+	static constexpr double k_lineDetectYOffsetFR = 0;
+
+	static constexpr double k_lineDetectXOffsetBL = 0;
+	static constexpr double k_lineDetectYOffsetBL = 0;
+
+	static constexpr double k_lineDetectXOffsetBR = 14.0;
+	static constexpr double k_lineDetectYOffsetBR = 0.0;
 };
 #endif

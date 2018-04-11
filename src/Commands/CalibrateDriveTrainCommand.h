@@ -21,10 +21,7 @@ public:
 	virtual ~CalibrateDriveTrainCommand() {}
 
 	void Initialize() {
-		CommandBase::m_driveTrain->GetModule(DriveTrain::SwerveModuleType::FRONT_LEFT_MODULE)->GetSteerEncoder()->Calibrate();
-		CommandBase::m_driveTrain->GetModule(DriveTrain::SwerveModuleType::FRONT_RIGHT_MODULE)->GetSteerEncoder()->Calibrate();
-		CommandBase::m_driveTrain->GetModule(DriveTrain::SwerveModuleType::BACK_LEFT_MODULE)->GetSteerEncoder()->Calibrate();
-		CommandBase::m_driveTrain->GetModule(DriveTrain::SwerveModuleType::BACK_RIGHT_MODULE)->GetSteerEncoder()->Calibrate();
+		CommandBase::m_driveTrain->Calibrate();
 	}
 };
 

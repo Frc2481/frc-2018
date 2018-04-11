@@ -26,7 +26,7 @@ class GreyhillEncoder {
 	int m_cachedTicks;
 
 public:
-	GreyhillEncoder(TalonSRX* talon, const std::string& name, int ticksPerEncoderRev, double inchesPerWheelRev,
+	GreyhillEncoder(TalonSRX* talon, std::string name, int ticksPerEncoderRev, double inchesPerWheelRev,
 				    double encoderRevPerWheelRevLowGear, double encoderRevPerWheelRevHighGear);
 	virtual ~GreyhillEncoder();
 	Translation2D GetRawDistance() const;
