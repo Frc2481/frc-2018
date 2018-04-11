@@ -4,8 +4,12 @@ from matplotlib import animation
 import math
 from networktables import NetworkTables
 
+# Uncomment to debug crashes in pynetworktables
+#import logging
+#logging.basicConfig(level=logging.DEBUG)
+
 # As a client to connect to a robot
-NetworkTables.initialize(server='127.0.0.1')
+NetworkTables.initialize(server='10.24.81.2')
 
 def drawField(plax):
     #Calculate field length and width in inches
@@ -78,8 +82,7 @@ def genRobotSquare(p, heading):
     boxArr = [topLeft, topRight, bottomRight, bottomLeft, topLeft]
     return boxArr
 
-sd = NetworkTables.getTable('SmartDashboard')
-    
+
 #Robot actual
 xdata = [0.0]
 ydata = [0.0]
@@ -92,20 +95,37 @@ pheadings = [0.0]
 
 #The animation tick, update only what needs to change in the plot
 def updatePoint(n, point, pathpoint, robot, actualPath, targetPath):
-    xval = sd.getNumber('Robot Pose X', 0.0)
-    yval = sd.getNumber('Robot Pose Y', 0.0)
-    hval = sd.getNumber('Robot Pose Theta', 0.0)
-    xdata.append(xval)
-    ydata.append(yval)
-    headings.append(hval)
-    print n*0.4, xval, yval, hval
+    sd = NetworkTables.getTable('SmartDashboard')
+
+    # Clear the plots at the beginning of auto.
+    # The robot sets ShouldResetPlot true at the beginning of auto.
+    # We set it back to false after we clear the lists backing the plots.
+    if sd.getBoolean('ShouldResetPlot', False):
+        del xdata[:]
+        del ydata[:]
+        del headings[:]
+        del pxdata[:]
+        del pydata[:]
+        del pheadings[:]
+        sd.putBoolean('ShouldResetPlot', False)
+
+    xval = sd.getNumber('Field X', 0.0)
+    yval = sd.getNumber('Field Y', 0.0)
+    hval = sd.getNumber('Path Actual Heading', 0.0)
+    if xval > .01 or yval > .01:
+        xdata.append(xval)
+        ydata.append(yval)
+        headings.append(hval)
 
     pxval = sd.getNumber('PathX', 0.0)
     pyval = sd.getNumber('PathY', 0.0)
-    phval = sd.getNumber('Path Yaw', 0.0)
-    pxdata.append(pxval)
-    pydata.append(pyval)
-    pheadings.append(phval)
+    phval = sd.getNumber('PathYaw', 0.0)
+
+    # Try to avoid "teleporting" when observer is reset.
+    if pxval > .01 or pyval > .01:
+        pxdata.append(pxval)
+        pydata.append(pyval)
+        pheadings.append(phval)
 
     point.set_data(np.array([xval, yval]))
     pathpoint.set_data(np.array([pxval, pyval]))
