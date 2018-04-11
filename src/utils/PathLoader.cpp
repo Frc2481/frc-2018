@@ -23,6 +23,11 @@ void PathLoader::LoadPath(const std::string filePath) {
 
 	std::string field;
 
+//	if(fin.good()) {
+//		return;
+//	}
+//	std::getline(fin, field);
+
 	while(fin.good()) {
 		std::getline(fin, field, ',');
 		std::istringstream(field) >> pathPoint.time;

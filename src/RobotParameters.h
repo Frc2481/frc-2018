@@ -18,10 +18,10 @@ public:
 	static constexpr double k_encoderRevPerWheelRevLowGear = 6.7403;
 	static constexpr double k_encoderRevPerWheelRevHighGear = 3.1166;
 
-	static constexpr double k_flRadiusPercent = 0.98;
-	static constexpr double k_frRadiusPercent = 0.99;
-	static constexpr double k_blRadiusPercent = 0.99;
-	static constexpr double k_brRadiusPercent = 0.995;
+	static constexpr double k_flRadiusPercent = 0.99; //0.988;
+	static constexpr double k_frRadiusPercent = 0.99; //0.983;
+	static constexpr double k_blRadiusPercent = 0.99; //0.986;
+	static constexpr double k_brRadiusPercent = 0.99; //0.995;
 
 	//low: 12:36 * 34:50 * 34:50 * 80:32 * 16:44 = .1401
 	//high: 12:36 * 34:50 * 50:34 * 80:32 * 16:44 = .303
@@ -120,5 +120,19 @@ public:
 	static constexpr double cameraOffsetPitch = -19;
 	static constexpr double cameraOffsetYaw = 0;
 	static constexpr double cubeHeight = 11.0;
+
+	static constexpr double k_lineDetectZone = 10.0;
+
+	static constexpr double k_lineDetectXOffsetFL = -8.0;
+	static constexpr double k_lineDetectYOffsetFL = 16.0;
+
+	static constexpr double k_lineDetectXOffsetFR = 0;
+	static constexpr double k_lineDetectYOffsetFR = 0;
+
+	static constexpr double k_lineDetectXOffsetBL = 0;
+	static constexpr double k_lineDetectYOffsetBL = 0;
+
+	static constexpr double k_lineDetectXOffsetBR = 14.0;
+	static constexpr double k_lineDetectYOffsetBR = 0.0;
 };
 #endif

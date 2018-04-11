@@ -360,10 +360,10 @@ void DriveTrain::Periodic() {
 		SmartDashboard::PutBoolean("BL steer encoder connected", m_blWheel->GetSteerEncoder()->IsConnected());
 		SmartDashboard::PutBoolean("BR steer encoder connected", m_brWheel->GetSteerEncoder()->IsConnected());
 	}
-//	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
-//	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
-//	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
-//	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("FL angle", m_flWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("FR angle", m_frWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("BL angle", m_blWheel->GetAngle().getDegrees());
+	SmartDashboard::PutNumber("BR angle", m_brWheel->GetAngle().getDegrees());
 //
 	SmartDashboard::PutNumber("FL angle ticks", m_flWheel->GetSteerEncoder()->GetEncoderTicks());
 	SmartDashboard::PutNumber("FR angle ticks", m_frWheel->GetSteerEncoder()->GetEncoderTicks());

@@ -19,7 +19,7 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale1.csv"));
 		AddSequential(new PrintCommand("FollowPath"));
 
-		AddSequential(new DriveTrainWaitForFieldYCommand(236));
+		AddSequential(new DriveTrainWaitForFieldYCommand(226));
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 
 		AddSequential(new DriveTrainWaitForFieldYCommand(257));
@@ -84,7 +84,7 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale5.csv"));
 		AddSequential(new DriveTrainWaitForFieldYCommand(257));
 
-		AddParallel(new IntakeReleaseCubeCommandGroup(0.75), 1.0);
+		AddParallel(new IntakeReleaseCubeCommandGroup(0.5), 1.0);
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
 		AddSequential(new ArmExtentionMotionScaling(1.0));
 
@@ -102,8 +102,23 @@ public:
 		AddSequential(new PrintCommand("Clamp"));
 //		AddSequential(new DriveTrainStopCommand());
 //		AddSequential(new PrintCommand("StopDrive"));
-//
-//		AddSequential(new ArmToStow(""));
+
+		//Scale 3
+		AddSequential(new ArmExtentionMotionScaling(0.3));
+		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
+
+		AddParallel(new ArmToMidScaleFront(""), 1.5);
+		AddSequential(new PrintCommand("ARM"));
+
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale7.csv"));
+		AddSequential(new DriveTrainWaitForFieldYCommand(257));
+
+		AddParallel(new IntakeReleaseCubeCommandGroup(0.75), 1.0);
+		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
+		AddSequential(new ArmExtentionMotionScaling(1.0));
+
+
+		AddSequential(new ArmToStow(""));
 
 //		AddSequential(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale1.csv"));
 //		AddSequential(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale2.csv"));

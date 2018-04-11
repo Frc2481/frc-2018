@@ -255,6 +255,7 @@ private:
 		if(autonomousCommand.get() != nullptr) {
 			autonomousCommand->Start();
 		}
+		SmartDashboard::PutBoolean("ShouldResetPlot", true);
 	}
 
 	void AutonomousPeriodic() override {
