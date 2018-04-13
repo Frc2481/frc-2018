@@ -329,9 +329,7 @@ function [] = generatePath(waypoints, csvFilename, maxSpeed, maxAccel, maxSpeed2
     % calculate final path acceleration
 	accelX = accel .* cosd(heading);
     accelY = accel .* sind(heading);
-    yawAccel = diff(yawRate) ./ diff(finalPath(:, 1));
-    yawAccel(end) = 0;
-    yawAccel = [0; yawAccel];
+    yawAccel = zeros(size(yawRate));
     
     finalPath(:, 5) = velX;
     finalPath(:, 6) = velY;
