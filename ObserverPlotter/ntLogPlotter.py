@@ -127,11 +127,11 @@ for line in f:
     pathXVel.append(float(data[8]))
     pathYVel.append(float(data[9]))
     actualX = float(data[10])
-    if(actualX < 0.001):
+    if(abs(actualX) < 0.001):
         if len(robotXVel) > 0:
             actualX = robotXVel[-1]
     actualY = float(data[11])
-    if(actualY < 0.001):
+    if(abs(actualY) < 0.001):
         if len(robotYVel) > 0:
             actualY = robotYVel[-1]
     robotXVel.append(actualX)
@@ -160,38 +160,52 @@ robot, = ax.plot([p[0] for p in startingRobot], [p[1] for p in startingRobot], c
 
 fig2 = plt.figure()
 ax2 = fig2.add_subplot(311)
+ax2MinY = min(min(robotYaw), min(pathYaw))
+ax2MaxY = max(max(robotYaw), max(pathYaw))
 ax2.set_title('Actual and Path Yaw')
-ax2.plot(robotYaw, color='red')
-ax2.plot(pathYaw, color='green')
+ax2.plot(robotYaw, label='Actual Yaw')
+ax2.plot(pathYaw, label='Path Yaw')
+timeLine1, = ax2.plot([0, 0], [ax2MinY, ax2MaxY], color='black', alpha=0.25)
+ax2.legend()
 ax3 = fig2.add_subplot(312)
 ax3.set_title('Errors')
 ax3.plot(xError, label='X Error')
 ax3.plot(yError, label='Y Error')
 ax3.plot(yawError, label='Yaw Error')
+ax3MinY = min(min(xError), min(yError), min(yawError))
+ax3MaxY = max(max(xError), max(yError), max(yawError))
+timeLine2, = ax3.plot([0, 0], [ax3MinY, ax3MaxY], color='black', alpha=0.25)
 ax3.legend()
 ax4 = fig2.add_subplot(313)
 ax4.plot(robotXVel, label='Actual X Velocity')
 ax4.plot(robotYVel, label='Actual Y Velocity')
 ax4.plot(pathXVel, label='Path X Velocity')
 ax4.plot(pathYVel, label='Path Y Velocity')
+ax4MinY = min(min(robotXVel), min(robotYVel), min(pathXVel), min(pathYVel))
+ax4MaxY = max(max(robotXVel), max(robotYVel), max(pathXVel), max(pathYVel))
+timeLine3, = ax4.plot([0, 0], [ax4MinY, ax4MaxY], color='black', alpha=0.25)
 ax4.legend()
 
 #Set margins so the edge of the field isn't right on the edge of the plot
-plt.margins(x=0.1, y=0.1)
-xmin, xmax = plt.xlim()
-xmax = max(650, xmax)
-plt.xlim(xmin, xmax)
+ax.margins(x=0.1, y=0.1)
 
 #The animation tick, update only what needs to change in the plot
-def updatePoint(n):
+def updateFig1(n):
     point.set_data(np.array([robotX[n], robotY[n]]))
     robotData = genRobotSquare((robotX[n], robotY[n]), robotYaw[n])
     robot.set_data([p[0] for p in robotData], [p[1] for p in robotData])
     
     return [point, robot]
 
+def updateFig2(n):
+    timeLine1.set_xdata([n, n])
+    timeLine2.set_xdata([n, n])
+    timeLine3.set_xdata([n, n])
+    return [timeLine1, timeLine2, timeLine3]
+
 #Animate
-ani = animation.FuncAnimation(fig, updatePoint, frames=len(robotX), interval=100)
+ani = animation.FuncAnimation(fig, updateFig1, frames=len(robotX), interval=100)
+ani2 = animation.FuncAnimation(fig2, updateFig2, frames=len(robotX), interval=100)
 
 #plt.show will quickly show it on a matplotlib window, but is not guaranteed to be realtime (dependent on host machine specs)
 #ani.save will produce an mp4 that takes longer to generate but will have proper time scaling
