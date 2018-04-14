@@ -33,6 +33,7 @@ void CommandBase::init()
 	m_pathManager.reset(new PathManager());
 	m_pathFollower.reset(new DriveTrainPathFollower(m_driveTrain->GetObserver()));
 	m_pathFollower->Start();
+	m_pathFollower->SetActive(true);
 	m_pause = false;
 	m_arm.reset(new Arm());
 	m_compressor.reset(new Compressor());

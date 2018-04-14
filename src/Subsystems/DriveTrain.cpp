@@ -251,7 +251,9 @@ void DriveTrain::ResetRobotPose(RigidTransform2D pose) {
 	m_observer->ResetPose(pose);
 }
 
-void DriveTrain::Periodic() {
+
+
+void DriveTrain::PeriodicFast() {
 	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
 	m_flWheel->Periodic();
 	m_frWheel->Periodic();
@@ -320,7 +322,7 @@ void DriveTrain::Periodic() {
 	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(-deltaBrDistance.getX(), 0, 0, deltaTimestamp);
 
 	Rotation2D newGyroYaw = GetHeading();
-	SmartDashboard::PutNumber("new gyro yaw", newGyroYaw.getDegrees());
+//	SmartDashboard::PutNumber("new gyro yaw", newGyroYaw.getDegrees());
 	Rotation2D deltaGyroYaw = newGyroYaw.rotateBy(m_oldGyroYaw.inverse());
 	m_oldGyroYaw = newGyroYaw;
 
@@ -337,6 +339,10 @@ void DriveTrain::Periodic() {
 											newBrAngle, deltaBrVelocity, timeStamp, deltaGyroYaw);
 //	}
 
+}
+
+void DriveTrain::Periodic() {
+	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
 	RigidTransform2D observerPos = m_observer->GetLastRobotPose();
 
 	SmartDashboard::PutNumber("Field X", observerPos.getTranslation().getX());
@@ -344,15 +350,15 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("Field Heading", observerPos.getRotation().getDegrees());
 
 
-	double xVelocity = (observerPos.getTranslation().getX() - prevPosition.getTranslation().getX()) / (deltaTimestamp / 1000000);
-	double yVelocity = (observerPos.getTranslation().getY() - prevPosition.getTranslation().getY()) / (deltaTimestamp / 1000000);
-	double yawVelocity = (observerPos.getRotation().getDegrees() - prevPosition.getRotation().getDegrees()) / (deltaTimestamp / 1000000);
+//	double xVelocity = (observerPos.getTranslation().getX() - prevPosition.getTranslation().getX()) / (deltaTimestamp / 1000000);
+//	double yVelocity = (observerPos.getTranslation().getY() - prevPosition.getTranslation().getY()) / (deltaTimestamp / 1000000);
+//	double yawVelocity = (observerPos.getRotation().getDegrees() - prevPosition.getRotation().getDegrees()) / (deltaTimestamp / 1000000);
+//
+//	SmartDashboard::PutNumber("xVelocity", xVelocity);
+//	SmartDashboard::PutNumber("yVelocity", yVelocity);
+//	SmartDashboard::PutNumber("yawVelocity", yawVelocity);
 
-	SmartDashboard::PutNumber("xVelocity", xVelocity);
-	SmartDashboard::PutNumber("yVelocity", yVelocity);
-	SmartDashboard::PutNumber("yawVelocity", yawVelocity);
-
-	SmartDashboard::PutNumber("robot velocity", sqrt(xVelocity * xVelocity + yVelocity * yVelocity));
+//	SmartDashboard::PutNumber("robot velocity", sqrt(xVelocity * xVelocity + yVelocity * yVelocity));
 
 	if(DriverStation::GetInstance().IsDisabled()) {
 		SmartDashboard::PutBoolean("FL steer encoder connected", m_flWheel->GetSteerEncoder()->IsConnected());

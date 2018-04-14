@@ -25,9 +25,10 @@ PVAController::PVAController(double kp, double kv, double kap, double kan, doubl
 	m_outLimMax = 1;
 	m_isContinuous = false;
 	m_posError = 0;
-	m_velError = 0;
+	m_posDerError = 0;
 	m_inputRange = 0;
-	m_lastTime = 0;
+	m_lastTime = RobotController::GetFPGATime();
+	m_lastTime2 = RobotController::GetFPGATime();
 }
 
 PVAController::~PVAController() {
@@ -56,21 +57,18 @@ void PVAController::SetTarget(double targetPos, double targetVel, double targetA
 }
 
 double PVAController::CalculateVelocityControlSignal() {
+	double newTime = RobotController::GetFPGATime();
+	double dt = newTime - m_lastTime2;
+	m_lastTime2 = newTime;
+
 	// calculate position error
+	double posErrorOld = m_posError;
 	m_posError = m_targetPos - m_actualPos;
 
-	// calculate velocity error
-	m_velError = m_targetVel - m_actualVel;
+	// calculate position error derivative
+	m_posDerError = (m_posError - posErrorOld) / dt;
 
 	// wraparound position error
-//	if(m_isContinuous) {
-//		if(m_error > (m_posLimMax - (m_posLimMax - m_posLimMin) / 2)) {
-//			m_error = -(m_posLimMax - m_targetPos) + (m_posLimMin - m_actualPos);
-//		}
-//		else if(m_error < -(m_posLimMax - (m_posLimMax - m_posLimMin) / 2)) {
-//			m_error = -(m_posLimMin - m_targetPos) + (m_posLimMax - m_actualPos);
-//		}
-
 	if (m_isContinuous && m_inputRange != 0) {
 		m_posError = std::fmod(m_posError, m_inputRange);
 		if (std::fabs(m_posError) > m_inputRange / 2) {
@@ -92,7 +90,7 @@ double PVAController::CalculateVelocityControlSignal() {
 		else {
 			velControl = std::min(velControl, 0.0);
 		}
-		velControl += m_kp * m_posError + m_kd * m_velError;
+		velControl += m_kp * m_posError + m_kd * m_posDerError;
 //	}
 //	else {
 //		velControl = m_kan * m_targetAccel + m_kv * m_targetVel + m_kp * m_posError + m_kd * m_velError;
@@ -134,4 +132,6 @@ void PVAController::Reset() {
 	m_targetPos = 0;
 	m_targetVel = 0;
 	m_targetAccel = 0;
+	m_lastTime = RobotController::GetFPGATime();
+	m_lastTime2 = RobotController::GetFPGATime();
 }

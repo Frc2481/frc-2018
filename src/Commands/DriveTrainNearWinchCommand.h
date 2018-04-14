@@ -13,6 +13,7 @@
 class DriveTrainNearWinchCommand : public CommandBase{
 public:
 	DriveTrainNearWinchCommand() : CommandBase("DriveTrainNearWinchCommand") {
+		Requires(m_driveTrain.get());
 	}
 	virtual ~DriveTrainNearWinchCommand(){}
 

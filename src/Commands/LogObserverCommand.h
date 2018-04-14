@@ -24,7 +24,7 @@ public:
 	virtual ~LogObserverCommand(){}
 	void Initialize() {
 		std::stringstream ss;
-		ss << "/home/lvuser/ObserverLog_" << DriverStation::GetInstance().GetMatchNumber() << ".csv";
+		ss << "/home/lvuser/ObserverLog_" << DriverStation::GetInstance().GetMatchNumber() << "_" << RobotController::GetFPGATime() << ".csv";
 		m_stream = std::ofstream(ss.str());
 		m_stream<< "time,x,y,heading, flSteer, frSteer, blSteer, brSteer, flDrive, frDrive, blDrive, brDrive, rawGyro, rawAccelX, rawAccelY, yaw, pivot pos, ext pos, cube x, cube y, cube deg\n";
 	}

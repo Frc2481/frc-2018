@@ -30,9 +30,10 @@ private:
 	double m_outLimMax;
 	bool m_isContinuous;
 	double m_posError;
-	double m_velError;
+	double m_posDerError;
 	double m_inputRange;
 	double m_lastTime;
+	double m_lastTime2;
 
 public:
 	PVAController(double kp, double kv, double kap, double kan, double kd);

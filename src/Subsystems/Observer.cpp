@@ -17,10 +17,15 @@ Observer::Observer() : m_robotPos(5){
 	m_isBlLineDetected = false;
 	m_isBrLineDetected = false;
 
-	m_flLineSensor = new DigitalInput(2);
-	m_frLineSensor = new DigitalInput(4);
-	m_blLineSensor = new DigitalInput(5);
-	m_brLineSensor = new DigitalInput(1);
+	m_flLineSensor = new DigitalInput(1);
+	m_frLineSensor = new DigitalInput(2);
+	m_blLineSensor = new DigitalInput(3);
+	m_brLineSensor = new DigitalInput(4);
+
+	m_flLineSensorOffset = Translation2D(RobotParameters::k_lineDetectXOffsetFL, RobotParameters::k_lineDetectYOffsetFL);
+	m_frLineSensorOffset = Translation2D(RobotParameters::k_lineDetectXOffsetFR, RobotParameters::k_lineDetectYOffsetFR);
+	m_blLineSensorOffset = Translation2D(RobotParameters::k_lineDetectXOffsetBL, RobotParameters::k_lineDetectYOffsetBL);
+	m_brLineSensorOffset = Translation2D(RobotParameters::k_lineDetectXOffsetBR, RobotParameters::k_lineDetectYOffsetBR);
 }
 
 Observer::~Observer() {
@@ -48,64 +53,64 @@ void Observer::UpdateRobotPoseObservation(Rotation2D& flAngle, RigidTransform2D:
 //	SmartDashboard::PutNumber("delta robot x kinematics", deltaRobotPos.GetX());
 //	SmartDashboard::PutNumber("delta robot y kinematics", deltaRobotPos.GetY());
 
-	bool m_isLineDetectedFL;
-	bool m_isLineDetectedFR;
-	bool m_isLineDetectedBL;
-	bool m_isLineDetectedBR;
+	m_isFlLineDetected = m_flLineSensor->Get();
+	m_isFrLineDetected = m_frLineSensor->Get();
+	m_isBlLineDetected = m_blLineSensor->Get();
+	m_isBrLineDetected = m_brLineSensor->Get();
 
-	m_isFlLineDetected = !m_flLineSensor->Get();
-	m_isFrLineDetected = !m_frLineSensor->Get();
-	m_isBlLineDetected = !m_blLineSensor->Get();
-	m_isBrLineDetected = !m_brLineSensor->Get();
-
-	int lineState = NO_LINE;
+	LineCrossed lineState = NO_LINE;
 	if(m_isFlLineDetected || m_isFrLineDetected || m_isBlLineDetected || m_isBrLineDetected) {
 		lineState = LinePosCorrection();
-		double lineX = 0;
-		double lineY = 0;
 
 		switch(lineState) {
-			case NULL_LEFT:
-				lineX = GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectXOffsetFL
-							- GetLastRobotPose().getRotation().getSin() * RobotParameters::k_lineDetectYOffsetFL;
-
-				lineY = GetLastRobotPose().getRotation().getSin() * RobotParameters::k_lineDetectXOffsetFL
-							+ GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectYOffsetFL;
-
-				ResetPoseY(288 - lineY);
+			case NULL_LEFT_CLOSE: {
+				double lineSensorYOffset = m_flLineSensorOffset.rotateBy(robotPos.getRotation()).getY();
+				ResetPoseY(RobotParameters::k_leftNullZoneClose - lineSensorYOffset);
 				break;
-			case NULL_RIGHT:
-				lineX = GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectXOffsetFR
-							- GetLastRobotPose().getRotation().getSin() * RobotParameters::k_lineDetectYOffsetFR;
-
-				lineY = GetLastRobotPose().getRotation().getSin() * RobotParameters::k_lineDetectXOffsetFR
-							+ GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectYOffsetFR;
-
-				ResetPoseY(288 - lineY);
+			}
+			case NULL_RIGHT_CLOSE: {
+				double lineSensorYOffset = m_frLineSensorOffset.rotateBy(robotPos.getRotation()).getY();
+				ResetPoseY(RobotParameters::k_rightNullZoneClose - lineSensorYOffset);
 				break;
-			case PLATFORM_LEFT:
-				lineX = GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectXOffsetBR
-							- GetLastRobotPose().getRotation().getSin() * RobotParameters::k_lineDetectYOffsetBR;
-
-				lineY = GetLastRobotPose().getRotation().getSin() * RobotParameters::k_lineDetectXOffsetBR
-							+ GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectYOffsetBR;
-
-				ResetPoseX(95 - lineX);
+			}
+			case PLATFORM_LEFT_CLOSE: {
+				double lineSensorXOffset = m_brLineSensorOffset.rotateBy(robotPos.getRotation()).getX();
+				ResetPoseX(RobotParameters::k_leftPlatformClose - lineSensorXOffset);
 				break;
-			case PLATFORM_RIGHT:
-				lineX = GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectXOffsetBL
-							- GetLastRobotPose().getRotation().getSin() * RobotParameters::k_lineDetectYOffsetBL;
-
-				lineY = GetLastRobotPose().getRotation().getSin() * RobotParameters::k_lineDetectXOffsetBL
-							+ GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectYOffsetBL;
-				ResetPoseX(229 - lineX);
+			}
+			case PLATFORM_RIGHT_CLOSE: {
+				double lineSensorXOffset = m_blLineSensorOffset.rotateBy(robotPos.getRotation()).getX();
+				ResetPoseX(RobotParameters::k_rightPlatformClose - lineSensorXOffset);
 				break;
+			}
+			case NULL_LEFT_FAR: {
+				double lineSensorYOffset = m_flLineSensorOffset.rotateBy(robotPos.getRotation()).getY();
+				ResetPoseY(RobotParameters::k_leftNullZoneFar - lineSensorYOffset);
+				break;
+			}
+			case NULL_RIGHT_FAR: {
+				double lineSensorYOffset = m_frLineSensorOffset.rotateBy(robotPos.getRotation()).getY();
+				ResetPoseY(RobotParameters::k_rightNullZoneFar - lineSensorYOffset);
+				break;
+			}
+			case PLATFORM_LEFT_FAR: {
+				double lineSensorXOffset = m_brLineSensorOffset.rotateBy(robotPos.getRotation()).getX();
+				ResetPoseX(RobotParameters::k_leftPlatformFar - lineSensorXOffset);
+				break;
+			}
+			case PLATFORM_RIGHT_FAR: {
+				double lineSensorXOffset = m_blLineSensorOffset.rotateBy(robotPos.getRotation()).getX();
+				ResetPoseX(RobotParameters::k_rightPlatformFar - lineSensorXOffset);
+				break;
+			}
 			default:
 				break;
 		}
 	}
 
 	SmartDashboard::PutBoolean("FL Line Sensor", m_isFlLineDetected);
+	SmartDashboard::PutBoolean("FR Line Sensor", m_isFrLineDetected);
+	SmartDashboard::PutBoolean("BL Line Sensor", m_isBlLineDetected);
 	SmartDashboard::PutBoolean("BR Line Sensor", m_isBrLineDetected);
 	SmartDashboard::PutNumber("Line State", lineState);
 }
@@ -133,12 +138,14 @@ void Observer::ResetPose() {
 
 void Observer::ResetPoseX(double x) {
 	RigidTransform2D robotPos = GetLastRobotPose();
+	printf("reset x prev %f new %f\n", robotPos.getTranslation().getX(), x);
 	robotPos.getTranslation().setX(x);
 	SetRobotPos(robotPos, RobotController::GetFPGATime());
 }
 
 void Observer::ResetPoseY(double y) {
 	RigidTransform2D robotPos = GetLastRobotPose();
+	printf("reset y prev %f new %f\n", robotPos.getTranslation().getY(), y);
 	robotPos.getTranslation().setY(y);
 	SetRobotPos(robotPos, RobotController::GetFPGATime());
 }
@@ -147,7 +154,7 @@ RigidTransform2D Observer::GetLastRobotPose() {
 	return m_robotPos.rbegin()->second;
 }
 
-int Observer::LinePosCorrection() {
+LineCrossed Observer::LinePosCorrection() {
 	//FL Sensor
 	double sensorXFL = GetLastRobotPose().getTranslation().getX()
 			+ GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectXOffsetFL
@@ -184,30 +191,58 @@ int Observer::LinePosCorrection() {
 			+ GetLastRobotPose().getRotation().getSin() * RobotParameters::k_lineDetectXOffsetBR
 			+ GetLastRobotPose().getRotation().getCos() * RobotParameters::k_lineDetectYOffsetBR;
 
-	printf("SensorXBR = %f\n", sensorXBR);
-	printf("SensorYBR = %f\n", sensorYBR);
 
-	if(sensorYFL > (288 - RobotParameters::k_lineDetectZone) &&
-			sensorYFL < (288 + RobotParameters::k_lineDetectZone) &&
+	if(sensorYFL > (RobotParameters::k_leftNullZoneClose - RobotParameters::k_lineDetectZone) &&
+			sensorYFL < (RobotParameters::k_leftNullZoneClose + RobotParameters::k_lineDetectZone) &&
 			sensorXFL < 162 &&
 			m_isFlLineDetected) {
-		return NULL_LEFT;
+		return NULL_LEFT_CLOSE;
 	}
-	else if(sensorYFR > (288 - RobotParameters::k_lineDetectZone) &&
-			sensorYFR < (288 + RobotParameters::k_lineDetectZone) &&
+	else if(sensorYFR > (RobotParameters::k_rightNullZoneClose - RobotParameters::k_lineDetectZone) &&
+			sensorYFR < (RobotParameters::k_rightNullZoneClose + RobotParameters::k_lineDetectZone) &&
 			sensorXFR > 162 &&
 			m_isFrLineDetected) {
-		return NULL_RIGHT;
+		return NULL_RIGHT_CLOSE;
 	}
-	else if(sensorXBR > (95 - RobotParameters::k_lineDetectZone) &&
-			sensorXBR < (95 + RobotParameters::k_lineDetectZone) &&
-			m_isBlLineDetected) {
-		return PLATFORM_LEFT;
-	}
-	else if(sensorXBL > (229 - RobotParameters::k_lineDetectZone) &&
-			sensorXBL < (229 + RobotParameters::k_lineDetectZone) &&
+	else if(sensorXBR > (RobotParameters::k_leftPlatformClose - RobotParameters::k_lineDetectZone) &&
+			sensorXBR < (RobotParameters::k_leftPlatformClose + RobotParameters::k_lineDetectZone) &&
+			sensorYBR > 200 &&
+			sensorYBR < 265 &&
 			m_isBrLineDetected) {
-		return PLATFORM_RIGHT;
+		return PLATFORM_LEFT_CLOSE;
+	}
+	else if(sensorXBL > (RobotParameters::k_rightPlatformClose - RobotParameters::k_lineDetectZone) &&
+			sensorXBL < (RobotParameters::k_rightPlatformClose + RobotParameters::k_lineDetectZone) &&
+			sensorYBL > 200 &&
+			sensorYBL < 265 &&
+			m_isBlLineDetected) {
+		return PLATFORM_RIGHT_CLOSE;
+	}
+	else if(sensorYFL > (RobotParameters::k_leftNullZoneFar - RobotParameters::k_lineDetectZone) &&
+			sensorYFL < (RobotParameters::k_leftNullZoneFar + RobotParameters::k_lineDetectZone) &&
+			sensorXFL < 162 &&
+			m_isFlLineDetected) {
+		return NULL_LEFT_FAR;
+	}
+	else if(sensorYFR > (RobotParameters::k_rightNullZoneFar - RobotParameters::k_lineDetectZone) &&
+			sensorYFR < (RobotParameters::k_rightNullZoneFar + RobotParameters::k_lineDetectZone) &&
+			sensorXFR > 162 &&
+			m_isFrLineDetected) {
+		return NULL_RIGHT_FAR;
+	}
+	else if(sensorXBR > (RobotParameters::k_leftPlatformFar - RobotParameters::k_lineDetectZone) &&
+			sensorXBR < (RobotParameters::k_leftPlatformFar + RobotParameters::k_lineDetectZone) &&
+			sensorYBR > 200 &&
+			sensorYBR < 265 &&
+			m_isBrLineDetected) {
+		return PLATFORM_LEFT_FAR;
+	}
+	else if(sensorXBL > (RobotParameters::k_rightPlatformFar - RobotParameters::k_lineDetectZone) &&
+			sensorXBL < (RobotParameters::k_rightPlatformFar + RobotParameters::k_lineDetectZone) &&
+			sensorYBL > 200 &&
+			sensorYBL < 265 &&
+			m_isBlLineDetected) {
+		return PLATFORM_RIGHT_FAR;
 	}
 	else {
 		return NO_LINE;

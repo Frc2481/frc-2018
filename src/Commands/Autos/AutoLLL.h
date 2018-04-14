@@ -19,7 +19,7 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale1.csv"));
 		AddSequential(new PrintCommand("FollowPath"));
 
-		AddSequential(new DriveTrainWaitForFieldYCommand(226));
+		AddSequential(new DriveTrainWaitForFieldYCommand(216));
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 
 		AddSequential(new DriveTrainWaitForFieldYCommand(257));

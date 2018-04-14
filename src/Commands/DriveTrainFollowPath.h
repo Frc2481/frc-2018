@@ -38,7 +38,7 @@ public:
 		m_skip = m_path.empty();
 
 		m_pathFollower->FollowPath(&m_path);
-		m_pathFollower->SetActive(true);
+//		m_pathFollower->SetActive(true);
 
 		printf("running path %s\n", m_filePath.c_str());
 	}
@@ -56,7 +56,7 @@ public:
 	}
 
 	void End() {
-		m_pathFollower->SetActive(false);
+//		m_pathFollower->SetActive(false);
 		m_driveTrain->Drive(0, 0, 0);
 
 		//logging error at end of path

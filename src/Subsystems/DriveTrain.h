@@ -106,6 +106,7 @@ public:
 	void ResetRobotPose(RigidTransform2D pose);
 
 	virtual void Periodic();
+    void PeriodicFast();
 
 	void CheckDiagnostics();
 

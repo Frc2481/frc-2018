@@ -18,10 +18,10 @@ public:
 	static constexpr double k_encoderRevPerWheelRevLowGear = 6.7403;
 	static constexpr double k_encoderRevPerWheelRevHighGear = 3.1166;
 
-	static constexpr double k_flRadiusPercent = 0.99; //0.988;
-	static constexpr double k_frRadiusPercent = 0.99; //0.983;
-	static constexpr double k_blRadiusPercent = 0.99; //0.986;
-	static constexpr double k_brRadiusPercent = 0.99; //0.995;
+	static constexpr double k_flRadiusPercent = 0.99;
+	static constexpr double k_frRadiusPercent = 0.99;
+	static constexpr double k_blRadiusPercent = 0.99;
+	static constexpr double k_brRadiusPercent = 0.99;
 
 	//low: 12:36 * 34:50 * 34:50 * 80:32 * 16:44 = .1401
 	//high: 12:36 * 34:50 * 50:34 * 80:32 * 16:44 = .303
@@ -123,16 +123,26 @@ public:
 
 	static constexpr double k_lineDetectZone = 10.0;
 
-	static constexpr double k_lineDetectXOffsetFL = -8.0;
-	static constexpr double k_lineDetectYOffsetFL = 16.0;
+	static constexpr double k_lineDetectXOffsetFL = -12.8125;
+	static constexpr double k_lineDetectYOffsetFL = 15.625;
 
-	static constexpr double k_lineDetectXOffsetFR = 0;
-	static constexpr double k_lineDetectYOffsetFR = 0;
+	static constexpr double k_lineDetectXOffsetFR = 12.8125;
+	static constexpr double k_lineDetectYOffsetFR = 15.625;
 
-	static constexpr double k_lineDetectXOffsetBL = 0;
-	static constexpr double k_lineDetectYOffsetBL = 0;
+	static constexpr double k_lineDetectXOffsetBL = -13.0;
+	static constexpr double k_lineDetectYOffsetBL = 0.0;
 
-	static constexpr double k_lineDetectXOffsetBR = 14.0;
+	static constexpr double k_lineDetectXOffsetBR = 13.0;
 	static constexpr double k_lineDetectYOffsetBR = 0.0;
+
+	static constexpr double k_leftPlatformClose = 95;
+	static constexpr double k_rightPlatformClose = 229;
+	static constexpr double k_leftNullZoneClose = 288;
+	static constexpr double k_rightNullZoneClose = 288;
+
+	static constexpr double k_leftPlatformFar = 95;
+	static constexpr double k_rightPlatformFar = 229;
+	static constexpr double k_leftNullZoneFar = 360;
+	static constexpr double k_rightNullZoneFar = 360;
 };
 #endif

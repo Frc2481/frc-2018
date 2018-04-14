@@ -17,6 +17,8 @@ private:
 	Path2D *m_path;
 	Path2D::iterator m_currPoint;
 	DriveController m_driveController;
+	RigidTransform2D m_prevPosition;
+	uint64_t m_prevTime;
 	bool m_isFinished;
 
 public:

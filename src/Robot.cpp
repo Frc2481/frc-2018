@@ -50,6 +50,8 @@
 
 #include "Commands/DriveTrainDriveLogCommand.h"
 
+#include "Commands/Autos/Auto3LSwitch.h"
+
 //enum Autos {
 //	POS_LEFT = 1,
 //	POS_CENTER = 2,
@@ -202,6 +204,8 @@ private:
 		SmartDashboard::PutData("DriveTrainFollowPath", new DriveTrainFollowPath("/home/lvuser/robotPath.csv"));
 
 		NetworkTable::SetUpdateRate(0.02);
+
+		SmartDashboard::PutData("3 switch L", new Auto3LSwitch());
 	}
 
 	/**

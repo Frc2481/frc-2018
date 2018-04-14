@@ -18,10 +18,14 @@
 
 enum LineCrossed{
 	NO_LINE = 0,
-	NULL_LEFT = 1,
-	NULL_RIGHT = 2,
-	PLATFORM_LEFT = 3,
-	PLATFORM_RIGHT = 4
+	NULL_LEFT_CLOSE = 1,
+	NULL_RIGHT_CLOSE = 2,
+	PLATFORM_LEFT_CLOSE = 3,
+	PLATFORM_RIGHT_CLOSE = 4,
+	NULL_LEFT_FAR = 5,
+	NULL_RIGHT_FAR = 6,
+	PLATFORM_LEFT_FAR = 7,
+	PLATFORM_RIGHT_FAR = 8
 };
 
 class Observer {
@@ -40,7 +44,7 @@ public:
 	RigidTransform2D GetRobotPos(double timestamp);
 	void SetRobotPos(RigidTransform2D robotPos, double timestamp);
 	RigidTransform2D GetLastRobotPose();
-	int LinePosCorrection();
+	LineCrossed LinePosCorrection();
 
 private:
 	InterpolatingMap<InterpolatingDouble, RigidTransform2D> m_robotPos;
@@ -56,6 +60,11 @@ private:
 	DigitalInput* m_frLineSensor;
 	DigitalInput* m_blLineSensor;
 	DigitalInput* m_brLineSensor;
+
+	Translation2D m_flLineSensorOffset;
+	Translation2D m_frLineSensorOffset;
+	Translation2D m_blLineSensorOffset;
+	Translation2D m_brLineSensorOffset;
 };
 
 #endif /* SRC_SUBSYSTEMS_OBSERVER_H_ */

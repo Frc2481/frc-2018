@@ -13,6 +13,7 @@
 class DriveTrainFarWinchCommand : public CommandBase{
 public:
 	DriveTrainFarWinchCommand() : CommandBase("DriveTrainFarWinchCommand") {
+		Requires(m_driveTrain.get());
 	}
 	virtual ~DriveTrainFarWinchCommand(){}
 
