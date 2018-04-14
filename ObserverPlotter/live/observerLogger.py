@@ -138,7 +138,7 @@ class DataLogger:
         while True:
             name, data = self.queue.get()
             with open(name, 'w') as fp:
-                fp.write("robot_x,robot_y,robot_yaw,path_x,path_y,path_yaw,path_x_vel,path_y_vel,path_x_accel,"
+                fp.write("timestamp,robot_x,robot_y,robot_yaw,path_x,path_y,path_yaw,path_x_vel,path_y_vel,path_x_accel,"
                          "path_y_accel,robot_x_vel,robot_y_vel,x_error,y_error,yaw_error\n")
                 for line in data:
                     fp.write(",".join([str(f) for f in list(line)]) + "\n")

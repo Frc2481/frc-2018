@@ -9,11 +9,7 @@ if(numArgs == 1):
     print "Provide a filename."
     sys.exit(1)
 elif(numArgs > 1):
-    filename = sys.argv[1] #"ObserverLog_23.csv"
-    if(numArgs > 2):
-        outputMode = sys.argv[2][0]
-    else:
-        outputMode = "p"
+    filename = sys.argv[1]
 else:
     #This should never happen since the first arg is the script name
     print "HUH?!"
@@ -90,6 +86,8 @@ def genRobotSquare(p, heading):
     boxArr = [topLeft, topRight, bottomRight, bottomLeft, topLeft]
     return boxArr
     
+timestamps = []
+timeDeltas = [20.0]
 robotX = []
 robotY = []
 robotYaw = []
@@ -116,29 +114,32 @@ for line in f:
         continue
     data = line[:-1].split(",")
         
-    robotX.append(float(data[0]))
-    robotY.append(float(data[1]))
-    robotYaw.append(float(data[2]))
-    pathX.append(float(data[3]))
-    pathY.append(float(data[4]))
-    pathYaw.append(float(data[5]))
-    pathXAccel.append(-float(data[6]))
-    pathYAccel.append(float(data[7]))
-    pathXVel.append(float(data[8]))
-    pathYVel.append(float(data[9]))
-    actualX = float(data[10])
+    timestamps.append(int(float(data[0])))
+    if(linenum > 2):
+        timeDeltas.append((timestamps[-1]-timestamps[-2])/1000.0)
+    robotX.append(float(data[1]))
+    robotY.append(float(data[2]))
+    robotYaw.append(float(data[3]))
+    pathX.append(float(data[4]))
+    pathY.append(float(data[5]))
+    pathYaw.append(float(data[6]))
+    pathXAccel.append(-float(data[7]))
+    pathYAccel.append(float(data[8]))
+    pathXVel.append(float(data[9]))
+    pathYVel.append(float(data[10]))
+    actualX = float(data[11])
     if(abs(actualX) < 0.001):
         if len(robotXVel) > 0:
             actualX = robotXVel[-1]
-    actualY = float(data[11])
+    actualY = float(data[12])
     if(abs(actualY) < 0.001):
         if len(robotYVel) > 0:
             actualY = robotYVel[-1]
     robotXVel.append(actualX)
     robotYVel.append(actualY)
-    xError.append(float(data[12]))
-    yError.append(float(data[13]))
-    yawError.append(float(data[14]))
+    xError.append(float(data[13]))
+    yError.append(float(data[14]))
+    yawError.append(float(data[15]))
     
     linenum += 1
     
@@ -159,32 +160,44 @@ startingRobot = genRobotSquare((robotX[0], robotY[0]), 0.0)
 robot, = ax.plot([p[0] for p in startingRobot], [p[1] for p in startingRobot], color="black")
 
 fig2 = plt.figure()
-ax2 = fig2.add_subplot(311)
+ax2 = fig2.add_subplot(221)
+ax2.axhline(0, color='black')
 ax2MinY = min(min(robotYaw), min(pathYaw))
 ax2MaxY = max(max(robotYaw), max(pathYaw))
 ax2.set_title('Actual and Path Yaw')
 ax2.plot(robotYaw, label='Actual Yaw')
 ax2.plot(pathYaw, label='Path Yaw')
-timeLine1, = ax2.plot([0, 0], [ax2MinY, ax2MaxY], color='black', alpha=0.25)
+timeLine2, = ax2.plot([0, 0], [ax2MinY, ax2MaxY], color='black', alpha=0.25)
 ax2.legend()
-ax3 = fig2.add_subplot(312)
+ax3 = fig2.add_subplot(222)
+ax3.axhline(0, color='black')
 ax3.set_title('Errors')
 ax3.plot(xError, label='X Error')
 ax3.plot(yError, label='Y Error')
 ax3.plot(yawError, label='Yaw Error')
 ax3MinY = min(min(xError), min(yError), min(yawError))
 ax3MaxY = max(max(xError), max(yError), max(yawError))
-timeLine2, = ax3.plot([0, 0], [ax3MinY, ax3MaxY], color='black', alpha=0.25)
+timeLine3, = ax3.plot([0, 0], [ax3MinY, ax3MaxY], color='black', alpha=0.25)
 ax3.legend()
-ax4 = fig2.add_subplot(313)
+ax4 = fig2.add_subplot(223)
+ax4.axhline(0, color='black')
 ax4.plot(robotXVel, label='Actual X Velocity')
 ax4.plot(robotYVel, label='Actual Y Velocity')
 ax4.plot(pathXVel, label='Path X Velocity')
 ax4.plot(pathYVel, label='Path Y Velocity')
 ax4MinY = min(min(robotXVel), min(robotYVel), min(pathXVel), min(pathYVel))
 ax4MaxY = max(max(robotXVel), max(robotYVel), max(pathXVel), max(pathYVel))
-timeLine3, = ax4.plot([0, 0], [ax4MinY, ax4MaxY], color='black', alpha=0.25)
+timeLine4, = ax4.plot([0, 0], [ax4MinY, ax4MaxY], color='black', alpha=0.25)
 ax4.legend()
+ax5 = fig2.add_subplot(224)
+ax5.axhline(0, color='black')
+ax5.plot(timeDeltas, label='Time Deltas')
+avgTimeDelta = sum(timeDeltas)/float(len(timeDeltas))
+ax5.plot([0, len(timeDeltas)], [avgTimeDelta, avgTimeDelta], color='black', alpha=0.25)
+ax5MinY = min(timeDeltas)
+ax5MaxY = max(timeDeltas)
+timeLine5, = ax5.plot([0, 0], [ax5MinY, ax5MaxY], color='black', alpha=0.25)
+ax5.legend()
 
 #Set margins so the edge of the field isn't right on the edge of the plot
 ax.margins(x=0.1, y=0.1)
@@ -198,18 +211,14 @@ def updateFig1(n):
     return [point, robot]
 
 def updateFig2(n):
-    timeLine1.set_xdata([n, n])
     timeLine2.set_xdata([n, n])
     timeLine3.set_xdata([n, n])
-    return [timeLine1, timeLine2, timeLine3]
+    timeLine4.set_xdata([n, n])
+    timeLine5.set_xdata([n, n])
+    return [timeLine2, timeLine3, timeLine4, timeLine5]
 
 #Animate
 ani = animation.FuncAnimation(fig, updateFig1, frames=len(robotX), interval=100)
 ani2 = animation.FuncAnimation(fig2, updateFig2, frames=len(robotX), interval=100)
 
-#plt.show will quickly show it on a matplotlib window, but is not guaranteed to be realtime (dependent on host machine specs)
-#ani.save will produce an mp4 that takes longer to generate but will have proper time scaling
-if(outputMode == "p"):
-    plt.show()
-else:
-    ani.save(filename[:-3]+'mp4', writer="ffmpeg")
+plt.show()
