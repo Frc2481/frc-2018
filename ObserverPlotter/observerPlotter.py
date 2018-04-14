@@ -19,9 +19,6 @@ else:
     print "HUH?!"
     sys.exit(1)
 
-#Because the ObserverLogs on github had negative (and off-field) values, I took a couple paths and added time as the first column to test the field drawing
-#filename = "PathLeftStartToLeftCube4.csv"
-
 robotWidth = 22.375
 robotLength = 27.0
 
@@ -217,17 +214,23 @@ brSteers = []
 
 #Read the csv
 f = open(filename, 'r')
-linenum = 0
+linenum = 1
 for line in f:
-    if linenum == 0:
+    if linenum == 1:
         #First line is header information.  I'd prefer this line have alliance color and switch/scale positions for coloring
         linenum += 1
         continue
     data = line[:-1].split(",")
     if len(data) < 17:
         continue
-    if (len(str(data[0])) == 0) or (len(str(data[1])) == 0) or (len(str(data[2])) == 0) or (len(str(data[3])) == 0):
+        
+    hasEmptyCol = False
+    for i in range(17):
+        if len(str(data[i])) == 0:
+            hasEmptyCol = True
+    if hasEmptyCol:
         continue
+        
     ts.append(int(data[0]))
     xdata.append(float(data[1]))
     ydata.append(float(data[2]))
