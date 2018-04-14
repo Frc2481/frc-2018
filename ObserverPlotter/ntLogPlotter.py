@@ -87,7 +87,7 @@ def genRobotSquare(p, heading):
     return boxArr
     
 timestamps = []
-timeDeltas = [20.0]
+timeDeltas = [40.0]
 robotX = []
 robotY = []
 robotYaw = []
