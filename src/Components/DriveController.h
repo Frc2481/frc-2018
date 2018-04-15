@@ -31,6 +31,7 @@ public:
 	RigidTransform2D GetDriveControlSignal();
 	void SetPositionGains(double kp, double kv, double kap, double kan, double kd);
 	void SetYawGains(double kp, double kv, double kap, double kan, double kd);
+	void SetPosI(double ki);
 
 	Observer* GetObserver();
 
@@ -41,6 +42,8 @@ private:
 	PVAController* m_positionYawController;
 
 	Observer* m_observer;
+
+	double m_ki;
 
 	void ResetController();
 };

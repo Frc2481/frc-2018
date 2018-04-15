@@ -24,6 +24,7 @@ private:
 	double m_kap;
 	double m_kan;
 	double m_kd;
+	double m_ki;
 	double m_posLimMin;
 	double m_posLimMax;
 	double m_outLimMin;
@@ -34,6 +35,7 @@ private:
 	double m_inputRange;
 	double m_lastTime;
 	double m_lastTime2;
+	double m_accumError;
 
 public:
 	PVAController(double kp, double kv, double kap, double kan, double kd);
@@ -47,6 +49,7 @@ public:
 	void SetContinuous(bool isContinuous);
 	double GetError();
 	void Reset();
+	void SetIGain(double ki);
 };
 
 #endif /* SRC_PVACONTROLLER_H_ */

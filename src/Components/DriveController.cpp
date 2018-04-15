@@ -91,3 +91,8 @@ void DriveController::SetPositionGains(double kp, double kv, double kap, double 
 void DriveController::SetYawGains(double kp, double kv, double kap, double kan, double kd) {
 	m_positionYawController->SetGains(kp, kv, kap, kan, kd);
 }
+
+void DriveController::SetPosI(double ki) {
+	m_positionXController->SetIGain(ki);
+	m_positionYController->SetIGain(ki);
+}

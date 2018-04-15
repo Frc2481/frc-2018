@@ -254,7 +254,12 @@ void DriveTrain::ResetRobotPose(RigidTransform2D pose) {
 
 
 void DriveTrain::PeriodicFast() {
+	double timeStamp = RobotController::GetFPGATime();
+	double deltaTimestamp = timeStamp - m_oldTimestamp;
+	m_oldTimestamp = timeStamp;
+
 	std::lock_guard<std::mutex> lk(m_swerveModuleMutex);
+
 	m_flWheel->Periodic();
 	m_frWheel->Periodic();
 	m_blWheel->Periodic();
@@ -273,10 +278,7 @@ void DriveTrain::PeriodicFast() {
 		m_oldGyroYaw = GetHeading();
 	}
 
-
-	double timeStamp = RobotController::GetFPGATime();
-	double deltaTimestamp = timeStamp - m_oldTimestamp;
-	m_oldTimestamp = timeStamp;
+	printf("DT2: %f\n", deltaTimestamp);
 
 	Rotation2D newFlAngle = m_flWheel->GetAngle();
 
@@ -396,10 +398,10 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("BL Voltage", m_blWheel->GetAppliedVoltage());
 	SmartDashboard::PutNumber("BR Voltage", m_brWheel->GetAppliedVoltage());
 
-//	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
-//	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());
-//	SmartDashboard::PutNumber("BL encTicks", m_blWheel->GetDriveEncoder()->GetEncoderTicks());
-//	SmartDashboard::PutNumber("BR encTicks", m_brWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("FL encTicks", m_flWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("FR encTicks", m_frWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BL encTicks", m_blWheel->GetDriveEncoder()->GetEncoderTicks());
+	SmartDashboard::PutNumber("BR encTicks", m_brWheel->GetDriveEncoder()->GetEncoderTicks());
 
 //	SmartDashboard::PutNumber("FL encoder delta", fabs(deltaFlVelocity.GetDx()));
 //	SmartDashboard::PutNumber("FR encoder delta", fabs(deltaFrVelocity.GetDx()));

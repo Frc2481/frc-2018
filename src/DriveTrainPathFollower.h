@@ -20,6 +20,8 @@ private:
 	RigidTransform2D m_prevPosition;
 	uint64_t m_prevTime;
 	bool m_isFinished;
+	bool m_isFFFinished;
+	double m_posI;
 
 public:
 	DriveTrainPathFollower(Observer *observer);

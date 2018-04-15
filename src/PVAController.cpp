@@ -29,6 +29,7 @@ PVAController::PVAController(double kp, double kv, double kap, double kan, doubl
 	m_inputRange = 0;
 	m_lastTime = RobotController::GetFPGATime();
 	m_lastTime2 = RobotController::GetFPGATime();
+	m_accumError = 0;
 }
 
 PVAController::~PVAController() {
@@ -65,8 +66,13 @@ double PVAController::CalculateVelocityControlSignal() {
 	double posErrorOld = m_posError;
 	m_posError = m_targetPos - m_actualPos;
 
+	m_accumError += m_posError * dt;
+
 	// calculate position error derivative
-	m_posDerError = (m_posError - posErrorOld) / dt;
+	m_posDerError = 0;
+	if(dt != 0) {
+		m_posDerError = (m_posError - posErrorOld) / dt;
+	}
 
 	// wraparound position error
 	if (m_isContinuous && m_inputRange != 0) {
@@ -90,7 +96,8 @@ double PVAController::CalculateVelocityControlSignal() {
 		else {
 			velControl = std::min(velControl, 0.0);
 		}
-		velControl += m_kp * m_posError + m_kd * m_posDerError;
+		velControl += m_kp * m_posError + m_kd * m_posDerError + m_ki * m_accumError;
+
 //	}
 //	else {
 //		velControl = m_kan * m_targetAccel + m_kv * m_targetVel + m_kp * m_posError + m_kd * m_velError;
@@ -134,4 +141,10 @@ void PVAController::Reset() {
 	m_targetAccel = 0;
 	m_lastTime = RobotController::GetFPGATime();
 	m_lastTime2 = RobotController::GetFPGATime();
+	m_accumError = 0;
+}
+
+void PVAController::SetIGain(double ki) {
+	m_ki = ki;
+	m_accumError = 0;
 }
