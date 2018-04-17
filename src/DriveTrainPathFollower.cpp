@@ -47,7 +47,7 @@ void DriveTrainPathFollower::OnLoop() {
 	uint64_t deltaTimestamp = time - m_prevTime;
 	m_prevTime = time;
 
-	printf("DT: %ju\n", deltaTimestamp);
+//	printf("DT: %ju\n", deltaTimestamp);
 
 	CommandBase::m_driveTrain->PeriodicFast();
 

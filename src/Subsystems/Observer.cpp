@@ -26,6 +26,11 @@ Observer::Observer() : m_robotPos(5){
 	m_frLineSensorOffset = Translation2D(RobotParameters::k_lineDetectXOffsetFR, RobotParameters::k_lineDetectYOffsetFR);
 	m_blLineSensorOffset = Translation2D(RobotParameters::k_lineDetectXOffsetBL, RobotParameters::k_lineDetectYOffsetBL);
 	m_brLineSensorOffset = Translation2D(RobotParameters::k_lineDetectXOffsetBR, RobotParameters::k_lineDetectYOffsetBR);
+
+	m_xCorrection = 0;
+	m_xCorrectionCount = 0;
+	m_yCorrection = 0;
+	m_yCorrectionCount = 0;
 }
 
 Observer::~Observer() {
@@ -108,6 +113,18 @@ void Observer::UpdateRobotPoseObservation(Rotation2D& flAngle, RigidTransform2D:
 		}
 	}
 
+//	if(m_xCorrectionCount > 0) {
+//		m_xCorrectionCount--;
+//		RigidTransform2D &robotPos = m_robotPos.rbegin()->second;
+//		robotPos.getTranslation().setX(robotPos.getTranslation().getX() - m_xCorrection / 50.0);
+//	}
+
+//	if(m_yCorrectionCount > 0) {
+//		m_yCorrectionCount--;
+//		RigidTransform2D &robotPos = m_robotPos.rbegin()->second;
+//		robotPos.getTranslation().setY(robotPos.getTranslation().getY() - m_yCorrection / 24.0);
+//	}
+
 	SmartDashboard::PutBoolean("FL Line Sensor", m_isFlLineDetected);
 	SmartDashboard::PutBoolean("FR Line Sensor", m_isFrLineDetected);
 	SmartDashboard::PutBoolean("BL Line Sensor", m_isBlLineDetected);
@@ -137,6 +154,10 @@ void Observer::ResetPose() {
 }
 
 void Observer::ResetPoseX(double x) {
+//	RigidTransform2D &robotPos = m_robotPos.rbegin()->second;
+//	m_xCorrection = robotPos.getTranslation().getX() - x;
+//	m_xCorrectionCount = 50;
+
 	RigidTransform2D robotPos = GetLastRobotPose();
 	printf("reset x prev %f new %f\n", robotPos.getTranslation().getX(), x);
 	robotPos.getTranslation().setX(x);
@@ -144,6 +165,10 @@ void Observer::ResetPoseX(double x) {
 }
 
 void Observer::ResetPoseY(double y) {
+//	RigidTransform2D &robotPos = m_robotPos.rbegin()->second;
+//	m_yCorrection = robotPos.getTranslation().getY() - y;
+//	m_yCorrectionCount = 24;
+
 	RigidTransform2D robotPos = GetLastRobotPose();
 	printf("reset y prev %f new %f\n", robotPos.getTranslation().getY(), y);
 	robotPos.getTranslation().setY(y);

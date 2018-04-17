@@ -23,12 +23,12 @@ public:
 	virtual ~DriveTrainWaitForHeadingCommand(){}
 
 	void Initialize() {
-		RigidTransform2D pose = m_driveTrain->GetObserver()->GetRobotPos(RobotController::GetFPGATime());
+		RigidTransform2D pose = m_driveTrain->GetObserver()->GetLastRobotPose();
 		m_clockwise = pose.getRotation().rotateBy(m_heading.inverse()).getRadians() < 0;
 	}
 
 	bool IsFinished() {
-		RigidTransform2D pose = m_driveTrain->GetObserver()->GetRobotPos(RobotController::GetFPGATime());
+		RigidTransform2D pose = m_driveTrain->GetObserver()->GetLastRobotPose();
 		if(m_clockwise) {
 			return pose.getRotation().rotateBy(m_heading.inverse()).getRadians() > 0;
 		}

@@ -18,7 +18,7 @@ public:
 	virtual ~DriveTrainFarWinchCommand(){}
 
 	void Initialize() {
-		m_driveTrain->SetFarWinchSpeed(1);
+		m_driveTrain->SetFarWinchSpeed(-1);
 	}
 	void End() {
 		m_driveTrain->SetFarWinchSpeed(0);

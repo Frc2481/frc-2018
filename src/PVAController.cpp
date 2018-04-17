@@ -68,12 +68,6 @@ double PVAController::CalculateVelocityControlSignal() {
 
 	m_accumError += m_posError * dt;
 
-	// calculate position error derivative
-	m_posDerError = 0;
-	if(dt != 0) {
-		m_posDerError = (m_posError - posErrorOld) / dt;
-	}
-
 	// wraparound position error
 	if (m_isContinuous && m_inputRange != 0) {
 		m_posError = std::fmod(m_posError, m_inputRange);
@@ -86,22 +80,38 @@ double PVAController::CalculateVelocityControlSignal() {
 		}
 	}
 
+	// calculate position error derivative
+	m_posDerError = 0;
+	if(dt != 0) {
+		m_posDerError = (m_posError - posErrorOld) / dt;
+	}
+
 	// calculate velocity control signal
 	double velControl = 0;
-//	if(m_targetAccel > 1) {
-		velControl = m_kap * m_targetAccel + m_kv * m_targetVel;
-		if(m_targetVel > 0) {
-			velControl = std::max(velControl, 0.0);
-		}
-		else {
-			velControl = std::min(velControl, 0.0);
-		}
-		velControl += m_kp * m_posError + m_kd * m_posDerError + m_ki * m_accumError;
 
+	// use different ka when signs of accel and vel are opposite.
+	if((m_targetAccel > 0) == (m_targetVel > 0)) {
+		velControl = m_kap * m_targetAccel + m_kv * m_targetVel;
+	}
+	else {
+		velControl = m_kan * m_targetAccel + m_kv * m_targetVel;
+	}
+
+	//dont allow robot to go backward from feed forward
+	if(m_targetVel > 0) {
+		velControl = std::max(velControl, 0.0);
+	}
+	else {
+		velControl = std::min(velControl, 0.0);
+	}
+
+//	if(fabs(m_targetVel) < 10) {
+//		velControl += m_kd * m_posDerError + m_ki * m_accumError;
 //	}
 //	else {
-//		velControl = m_kan * m_targetAccel + m_kv * m_targetVel + m_kp * m_posError + m_kd * m_velError;
+		velControl += m_kp * m_posError + m_kd * m_posDerError + m_ki * m_accumError;
 //	}
+
 
 	// limit velocity control signal
 	if(velControl > m_outLimMax) {

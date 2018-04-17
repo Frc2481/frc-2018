@@ -1,5 +1,5 @@
 /*
- * AutoLLL.h
+ * Auto3LLScale.h
  *
  *  Created on: Mar 3, 2018
  *      Author: FIRSTMentor
@@ -10,20 +10,22 @@
 
 #include <Commands/CommandGroup.h>
 #include "Commands/DriveTrainWaitForFinishedPathCommand.h"
+#include "Commands/DriveTrainWaitForHeadingCommand.h"
 
-class AutoLLL : public CommandGroup {
+class Auto3LLScale : public CommandGroup {
 public:
-	AutoLLL() {
+	Auto3LLScale() {
 		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.44, 19.5), Rotation2D::fromDegrees(0))));
+		AddParallel(new ArmToStartPos(""));
 
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale1.csv"));
 		AddSequential(new PrintCommand("FollowPath"));
 
-		AddSequential(new DriveTrainWaitForFieldYCommand(216));
+		AddSequential(new DriveTrainWaitForFieldYCommand(190));
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 
 		AddSequential(new DriveTrainWaitForFieldYCommand(257));
-		AddParallel(new IntakeReleaseCubeCommandGroup(1.0), 1.0);
+		AddParallel(new IntakeReleaseCubeCommandGroup(0.8), 1.0);
 		AddSequential(new WaitCommand(0.5));
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
 
@@ -42,8 +44,6 @@ public:
 		AddSequential(new IntakeRollerOffCommand());
 		AddSequential(new IntakeClampCloseCommand());
 		AddSequential(new PrintCommand("Clamp"));
-//		AddSequential(new DriveTrainStopCommand());
-//		AddSequential(new PrintCommand("StopDrive"));
 
 		//Scale 2
 		AddSequential(new ArmExtentionMotionScaling(0.3));
@@ -71,8 +71,6 @@ public:
 		AddSequential(new IntakeRollerOffCommand());
 		AddSequential(new IntakeClampCloseCommand());
 		AddSequential(new PrintCommand("Clamp"));
-//		AddSequential(new DriveTrainStopCommand());
-//		AddSequential(new PrintCommand("StopDrive"));
 
 		//Scale 2
 		AddSequential(new ArmExtentionMotionScaling(0.3));
@@ -100,8 +98,6 @@ public:
 		AddSequential(new IntakeRollerOffCommand());
 		AddSequential(new IntakeClampCloseCommand());
 		AddSequential(new PrintCommand("Clamp"));
-//		AddSequential(new DriveTrainStopCommand());
-//		AddSequential(new PrintCommand("StopDrive"));
 
 		//Scale 3
 		AddSequential(new ArmExtentionMotionScaling(0.3));
@@ -112,6 +108,7 @@ public:
 
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale7.csv"));
 		AddSequential(new DriveTrainWaitForFieldYCommand(257));
+		AddSequential(new DriveTrainWaitForHeadingCommand(Rotation2D::fromDegrees(-15)));
 
 		AddParallel(new IntakeReleaseCubeCommandGroup(0.75), 1.0);
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
@@ -119,17 +116,6 @@ public:
 
 
 		AddSequential(new ArmToStow(""));
-
-//		AddSequential(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale1.csv"));
-//		AddSequential(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale2.csv"));
-//		AddSequential(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale3.csv"));
-//		AddSequential(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale4.csv"));
-//		AddSequential(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale5.csv"));
-//		AddSequential(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale6.csv"));
-//		AddSequential(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale7.csv"));
-
-
-
 	}
 };
 

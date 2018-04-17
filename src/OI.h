@@ -76,6 +76,7 @@ public:
 	Button* m_outerWinch;
 	Button* m_innerWinch;
 	Button* m_extensionOpenLoop;
+	Button* m_engagePto;
 
 	Button* m_stowButtonOp;
 

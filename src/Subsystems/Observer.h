@@ -65,6 +65,11 @@ private:
 	Translation2D m_frLineSensorOffset;
 	Translation2D m_blLineSensorOffset;
 	Translation2D m_brLineSensorOffset;
+
+	double m_xCorrection;
+	int m_xCorrectionCount;
+	double m_yCorrection;
+	int m_yCorrectionCount;
 };
 
 #endif /* SRC_SUBSYSTEMS_OBSERVER_H_ */

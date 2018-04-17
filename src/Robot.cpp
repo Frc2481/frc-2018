@@ -39,7 +39,6 @@
 #include "Commands/AutoCubeAndScaleCommandGroup.h"
 #include "Commands/AutoStartSwitchCommandGroup.h"
 
-#include "Commands/Autos/AutoLLL.h"
 #include "Commands/Autos/AutoLLR.h"
 #include "Commands/Autos/AutoLRR.h"
 #include "Commands/AutoTest3CubeFromSwitchCommandGroup.h"
@@ -50,34 +49,11 @@
 
 #include "Commands/DriveTrainDriveLogCommand.h"
 
-#include "Commands/Autos/Auto3LSwitch.h"
+#include "Commands/Autos/Auto3LRScale.h"
+#include "Commands/Autos/Auto3LRSwitch.h"
+#include "Commands/Autos/Auto3LLScale.h"
+#include "Commands/Autos/Auto3LLSwitch.h"
 
-//enum Autos {
-//	POS_LEFT = 1,
-//	POS_CENTER = 2,
-//	POS_RIGHT = 4,
-//
-//	SCALE_LEFT = 8,
-//	SCALE_RIGHT = 16,
-//
-//	SWITCH_LEFT = 32,
-//	SWITCH_RIGHT = 64,
-//
-//	NOTHING1 = 128,
-//	SCALE1 = 256,
-//	SWITCH1 = 512,
-//
-//	NOTHING2 = 1024,
-//	SCALE2 = 2048,
-//	SWITCH2 = 4096,
-//
-//	NOTHING3 = 8192,
-//	SCALE3 = 16384,
-//	SWITCH3 = 32768,
-//
-//	EXCHANGE1 = 65536,
-//	EXCHANGE2 = 131072
-//};
 
 enum Autos {
 	POS_LEFT = 1,
@@ -91,7 +67,10 @@ enum Autos {
 	SWITCH_RIGHT = 64,
 
 	CAN_CROSS = 128,
-	CANT_CROSS = 256
+	CANT_CROSS = 256,
+
+	SWITCH_AUTO = 512,
+	SCALE_AUTO = 1024
 };
 
 class Robot: public TimedRobot {
@@ -105,13 +84,9 @@ private:
 
 	Command* m_logger;
 
-//	SendableChooser<Autos>* m_posChooser;
-//	SendableChooser<Autos>* m_firstCubeChooser;
-//	SendableChooser<Autos>* m_secondCubeChooser;
-//	SendableChooser<Autos>* m_thirdCubeChooser;
-
 	SendableChooser<Autos>* m_posChooser;
 	SendableChooser<Autos>* m_crossCenterChooser;
+	SendableChooser<Autos>* m_objectiveChooser;
 
 	FieldConfiguration m_fieldConfig;
 
@@ -141,6 +116,10 @@ private:
 		m_crossCenterChooser->AddDefault("Can cross center", CAN_CROSS);
 		m_crossCenterChooser->AddObject("Can't cross center", CANT_CROSS);
 
+		m_objectiveChooser = new SendableChooser<Autos>();
+		m_objectiveChooser->AddDefault("Scale auto", SCALE_AUTO);
+		m_objectiveChooser->AddObject("Switch auto", SWITCH_AUTO);
+
 //		SmartDashboard::PutData("Start Pos", m_posChooser);
 //		SmartDashboard::PutData("First Cube", m_firstCubeChooser);
 //		SmartDashboard::PutData("Second Cube", m_secondCubeChooser);
@@ -152,11 +131,7 @@ private:
 		CommandBase::m_driveTrain->GetObserver()->ResetPose(RigidTransform2D(Translation2D(46.4, 19.5),
 																		  Rotation2D::fromDegrees(0)));
 
-		SmartDashboard::PutData("Auto3Cube", new AutoTest3CubeFromSwitchCommandGroup());
-
 		SmartDashboard::PutData("Auto LLR", new AutoLLR());
-
-		SmartDashboard::PutData("Auto LLL", new AutoLLL());
 
 		SmartDashboard::PutData("Auto LRR", new AutoLRR());
 
@@ -205,7 +180,7 @@ private:
 
 		NetworkTable::SetUpdateRate(0.02);
 
-		SmartDashboard::PutData("3 switch L", new Auto3LSwitch());
+		SmartDashboard::PutData("3 switch L", new Auto3LLSwitch());
 	}
 
 	/**
@@ -250,6 +225,7 @@ private:
 		Autos autoMode = static_cast<Autos>(
 								m_posChooser->GetSelected() |
 								m_crossCenterChooser->GetSelected() |
+								m_objectiveChooser->GetSelected() |
  							  ((m_fieldConfig.GetOurSwitchPlate() == FieldConfiguration::LEFT) ? SWITCH_LEFT : SWITCH_RIGHT) |
 						      ((m_fieldConfig.GetScalePlate() == FieldConfiguration::LEFT) ? SCALE_LEFT : SCALE_RIGHT));
 
@@ -292,35 +268,73 @@ private:
 	void AutoTasksFunction(){
 		m_autoTasks = new std::map<int, std::shared_ptr<Command>>();
 
-		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS] = std::make_shared<AutoLLL>();
-		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS] = std::make_shared<AutoLRL>();
-		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS] = std::make_shared<AutoLLR>();
-		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS] = std::make_shared<AutoLRR>();
+//		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS] = std::make_shared<Auto3LLScale>();
+//		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS] = std::make_shared<AutoLRL>();
+//		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS] = std::make_shared<AutoLLR>();
+//		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS] = std::make_shared<AutoLRR>();
+//
+//		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS] = std::make_shared<Auto3LLScale>();
+//		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS] = std::make_shared<AutoLL0>();
+//		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);
+//		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);
+//
+//		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
+//		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
+//		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
+//		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
+//
+//		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);
+//		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);
+//		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);
+//		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);
 
-		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS] = std::make_shared<AutoLLL>();
-		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS] = std::make_shared<AutoLL0>(); //test
-		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);   //cube to switch
-		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);  //drive forward
+		//new autos taking into acount choice b/t switch & scale
+		//start left
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS | SCALE_AUTO] = std::make_shared<Auto3LLScale>();
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS | SCALE_AUTO] = std::make_shared<Auto3LLScale>();
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS | SCALE_AUTO] = std::make_shared<Auto3LRScale>();
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS | SCALE_AUTO] = std::make_shared<Auto3LRScale>();
 
-		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
-		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
-		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
-		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS | SWITCH_AUTO] = std::make_shared<Auto3LLSwitch>();
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS | SWITCH_AUTO] = std::make_shared<Auto3LRSwitch>();
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS | SWITCH_AUTO] = std::make_shared<Auto3LLSwitch>();
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS | SWITCH_AUTO] = std::make_shared<Auto3LRSwitch>();
 
-		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);
-		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS] = std::shared_ptr<Command>(nullptr); //test
-		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);   //cube to switch
-		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS] = std::shared_ptr<Command>(nullptr);  //drive forward
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS | SCALE_AUTO] = std::make_shared<Auto3LLScale>();
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS | SCALE_AUTO] = std::make_shared<Auto3LLScale>();
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS | SCALE_AUTO] = std::make_shared<Auto3LLSwitch>(); //do switch instead
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS | SCALE_AUTO] = std::shared_ptr<Command>(nullptr);  //drive forward
+
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS | SWITCH_AUTO] = std::make_shared<Auto3LLSwitch>();
+		(*m_autoTasks)[POS_LEFT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS | SWITCH_AUTO] = std::make_shared<Auto3LRSwitch>();
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS | SWITCH_AUTO] = std::make_shared<Auto3LLSwitch>();
+		(*m_autoTasks)[POS_LEFT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS | SWITCH_AUTO] = std::shared_ptr<Command>(nullptr);
+
+		//start right
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS | SCALE_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS | SCALE_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS | SCALE_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS | SCALE_AUTO] = std::shared_ptr<Command>(nullptr);
+
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CAN_CROSS | SWITCH_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CAN_CROSS | SWITCH_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CAN_CROSS | SWITCH_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CAN_CROSS | SWITCH_AUTO] = std::shared_ptr<Command>(nullptr);
+
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS | SCALE_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS | SCALE_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS | SCALE_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS | SCALE_AUTO] = std::shared_ptr<Command>(nullptr);
+
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_LEFT | CANT_CROSS | SWITCH_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_LEFT | SWITCH_RIGHT | CANT_CROSS | SWITCH_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_LEFT | CANT_CROSS | SWITCH_AUTO] = std::shared_ptr<Command>(nullptr);
+		(*m_autoTasks)[POS_RIGHT | SCALE_RIGHT | SWITCH_RIGHT | CANT_CROSS | SWITCH_AUTO] = std::shared_ptr<Command>(nullptr);
 };
 
 private:
 	std::shared_ptr<frc::Command> autonomousCommand;
 	frc::SendableChooser<frc::Command*> autoPos;
-//	frc::SendableChooser<frc::Command*> firstCube;
-//	frc::SendableChooser<frc::Command*> secondCube;
-//	frc::SendableChooser<frc::Command*> thirdCube;
-
-//	frc::SendableChooser<frc::Command*> numCubes;
 	frc::SendableChooser<frc::Command*> centerCross;
 };
 

@@ -114,5 +114,7 @@ typedef ArmBaseCommandGroup<0, 0> ArmToStow;
 typedef ArmBaseCommandGroup<0, 90> ArmTo90Front;
 typedef ArmBaseCommandGroup<0, -90> ArmTo90Back;
 
+typedef ArmBaseCommandGroup<0, 32> ArmToStartPos;
+
 
 #endif /* SRC_COMMANDS_ARMBASECOMMAND_H_ */

@@ -1,18 +1,19 @@
 /*
- * Auto3LSwitch.h
+ * Auto3LLSwitch.h
  *
  *  Created on: Apr 13, 2018
  *      Author: Team2481
  */
 
-#ifndef SRC_COMMANDS_AUTOS_AUTO3LSWITCH_H_
-#define SRC_COMMANDS_AUTOS_AUTO3LSWITCH_H_
+#ifndef SRC_COMMANDS_AUTOS_AUTOL3LSWITCH_H_
+#define SRC_COMMANDS_AUTOS_AUTOL3LSWITCH_H_
 
-#include "CommandBase.h"
+#include <Commands/CommandGroup.h>
+#include "Commands/DriveTrainWaitForFinishedPathCommand.h"
 
-class Auto3LSwitch : public CommandGroup {
+class Auto3LLSwitch : public CommandGroup {
 public:
-	Auto3LSwitch() : CommandGroup("Auto3LSwitch") {
+	Auto3LLSwitch() : CommandGroup("Auto3LLSwitch") {
 		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.44, 19.5), Rotation2D::fromDegrees(0))));
 
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch1.csv"));
@@ -91,4 +92,4 @@ public:
 	}
 };
 
-#endif /* SRC_COMMANDS_AUTOS_AUTO3LSWITCH_H_ */
+#endif /* SRC_COMMANDS_AUTOS_AUTOL3LSWITCH_H_ */
