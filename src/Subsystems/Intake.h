@@ -24,6 +24,7 @@ public:
 	virtual ~Intake();
 
 	bool HasCube();
+	bool HasCubeSecure();
 
 	bool IsLeftRollerOn();
 	bool IsRightRollerOn();

@@ -12,6 +12,7 @@
 #include "Commands/DriveTrainWaitForFinishedPathCommand.h"
 #include "Commands/DriveTrainWaitForHeadingCommand.h"
 #include "Subsystems/Drivetrain.h"
+#include "Commands/IntakeHasCubeSecurelyCommandGroup.h"
 
 class Auto3LLScale : public CommandGroup {
 public:
@@ -40,10 +41,9 @@ public:
 		AddSequential(new IntakeRollerLoadCommand(1));
 		AddParallel(new ArmToIntakeBack(""), 1);
 		AddSequential(new WaitCommand(1));
-		AddSequential(new IntakeHasCubeCommand());
+		AddSequential(new IntakeHasCubeCommand(), 3.0);
 		AddSequential(new PrintCommand("Has Cube"));
-		AddSequential(new IntakeRollerOffCommand());
-		AddSequential(new IntakeClampCloseCommand());
+		AddParallel(new IntakeHasCubeSecurelyCommandGroup(), 2.0);
 		AddSequential(new PrintCommand("Clamp"));
 
 		//Scale 2
@@ -68,10 +68,9 @@ public:
 		AddSequential(new IntakeRollerLoadCommand(1));
 		AddParallel(new ArmToIntakeBack(""), 1);
 		AddSequential(new WaitCommand(1));
-		AddSequential(new IntakeHasCubeCommand());
+		AddSequential(new IntakeHasCubeCommand(), 3.0);
 		AddSequential(new PrintCommand("Has Cube"));
-		AddSequential(new IntakeRollerOffCommand());
-		AddSequential(new IntakeClampCloseCommand());
+		AddParallel(new IntakeHasCubeSecurelyCommandGroup(), 2.0);
 		AddSequential(new PrintCommand("Clamp"));
 
 		//Scale 2
@@ -96,10 +95,9 @@ public:
 		AddSequential(new IntakeRollerLoadCommand(1));
 		AddParallel(new ArmToIntakeBack(""), 1);
 		AddSequential(new WaitCommand(1));
-		AddSequential(new IntakeHasCubeCommand());
+		AddSequential(new IntakeHasCubeCommand(), 3.0);
 		AddSequential(new PrintCommand("Has Cube"));
-		AddSequential(new IntakeRollerOffCommand());
-		AddSequential(new IntakeClampCloseCommand());
+		AddParallel(new IntakeHasCubeSecurelyCommandGroup(), 2.0);
 		AddSequential(new PrintCommand("Clamp"));
 
 		//Scale 3

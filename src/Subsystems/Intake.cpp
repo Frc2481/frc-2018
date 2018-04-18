@@ -40,6 +40,11 @@ bool Intake::HasCube() {
 			m_rollerMotorRight->GetSensorCollection().IsFwdLimitSwitchClosed();
 }
 
+bool Intake::HasCubeSecure() {
+	return m_rollerMotorLeft->GetSensorCollection().IsFwdLimitSwitchClosed() &&
+			m_rollerMotorRight->GetSensorCollection().IsFwdLimitSwitchClosed();
+}
+
 bool Intake::IsLeftRollerOn() {
 	return fabs(m_rollerMotorLeft->GetMotorOutputPercent()) > .01;
 }
