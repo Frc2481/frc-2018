@@ -278,7 +278,7 @@ void DriveTrain::PeriodicFast() {
 		m_oldGyroYaw = GetHeading();
 	}
 
-	printf("DT2: %f\n", deltaTimestamp);
+//	printf("DT2: %f\n", deltaTimestamp);
 
 	Rotation2D newFlAngle = m_flWheel->GetAngle();
 

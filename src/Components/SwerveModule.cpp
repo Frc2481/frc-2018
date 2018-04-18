@@ -54,7 +54,7 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID,
 //	m_driveMotor->SetMotionMagicAcceleration(m_accel);
 //	m_driveMotor->SetMotionMagicCruiseVelocity(m_velocity);
 
-	m_driveMotor->SetNeutralMode(Brake);
+//	m_driveMotor->SetNeutralMode(Brake);
 
 	m_steerMotor->SelectProfileSlot(0, 0.0); //Profile 1 PIDf are P = 0.2 f = 1.1
 	m_steerMotor->ConfigNominalOutputForward(0,0);

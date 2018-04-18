@@ -216,6 +216,8 @@ private:
 	void AutonomousInit() override {
 //		std::string autoSelected = frc::SmartDashboard::GetString("Auto Selector", "Default");
 
+		CommandBase::m_driveTrain->SetBrake(false);
+
 		if (m_logger != nullptr) {
 			m_logger->Start();
 		}

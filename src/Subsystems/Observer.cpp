@@ -116,13 +116,13 @@ void Observer::UpdateRobotPoseObservation(Rotation2D& flAngle, RigidTransform2D:
 //	if(m_xCorrectionCount > 0) {
 //		m_xCorrectionCount--;
 //		RigidTransform2D &robotPos = m_robotPos.rbegin()->second;
-//		robotPos.getTranslation().setX(robotPos.getTranslation().getX() - m_xCorrection / 50.0);
+//		robotPos.getTranslation().setX(robotPos.getTranslation().getX() - m_xCorrection / 1.0);
 //	}
-
+//
 //	if(m_yCorrectionCount > 0) {
 //		m_yCorrectionCount--;
 //		RigidTransform2D &robotPos = m_robotPos.rbegin()->second;
-//		robotPos.getTranslation().setY(robotPos.getTranslation().getY() - m_yCorrection / 24.0);
+//		robotPos.getTranslation().setY(robotPos.getTranslation().getY() - m_yCorrection / 1.0);
 //	}
 
 	SmartDashboard::PutBoolean("FL Line Sensor", m_isFlLineDetected);
@@ -156,7 +156,7 @@ void Observer::ResetPose() {
 void Observer::ResetPoseX(double x) {
 //	RigidTransform2D &robotPos = m_robotPos.rbegin()->second;
 //	m_xCorrection = robotPos.getTranslation().getX() - x;
-//	m_xCorrectionCount = 50;
+//	m_xCorrectionCount = 1;
 
 	RigidTransform2D robotPos = GetLastRobotPose();
 	printf("reset x prev %f new %f\n", robotPos.getTranslation().getX(), x);
@@ -167,7 +167,7 @@ void Observer::ResetPoseX(double x) {
 void Observer::ResetPoseY(double y) {
 //	RigidTransform2D &robotPos = m_robotPos.rbegin()->second;
 //	m_yCorrection = robotPos.getTranslation().getY() - y;
-//	m_yCorrectionCount = 24;
+//	m_yCorrectionCount = 1;
 
 	RigidTransform2D robotPos = GetLastRobotPose();
 	printf("reset y prev %f new %f\n", robotPos.getTranslation().getY(), y);
