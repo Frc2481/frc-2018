@@ -11,6 +11,7 @@
 #include <Commands/CommandGroup.h>
 #include "Commands/DriveTrainWaitForFinishedPathCommand.h"
 #include "Commands/DriveTrainWaitForHeadingCommand.h"
+#include "Subsystems/Drivetrain.h"
 
 class Auto3LLScale : public CommandGroup {
 public:
@@ -52,6 +53,7 @@ public:
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 		AddSequential(new PrintCommand("ARM"));
 
+		AddSequential(new DriveTrainWaitForFinishedPathCommand());
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale3.csv"));
 		AddSequential(new DriveTrainWaitForFieldYCommand(257));
 
@@ -79,6 +81,7 @@ public:
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 		AddSequential(new PrintCommand("ARM"));
 
+		AddSequential(new DriveTrainWaitForFinishedPathCommand());
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale5.csv"));
 		AddSequential(new DriveTrainWaitForFieldYCommand(257));
 
@@ -106,15 +109,18 @@ public:
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 		AddSequential(new PrintCommand("ARM"));
 
+		AddSequential(new DriveTrainWaitForFinishedPathCommand());
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale7.csv"));
 		AddSequential(new DriveTrainWaitForFieldYCommand(257));
+		AddSequential(new PrintCommand("past y point scale path 7\n"));
 		AddSequential(new DriveTrainWaitForHeadingCommand(Rotation2D::fromDegrees(-15)));
+		AddSequential(new PrintCommand("at heading scale path 7\n"));
 
 		AddParallel(new IntakeReleaseCubeCommandGroup(0.75), 1.0);
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
 		AddSequential(new ArmExtentionMotionScaling(1.0));
 
-
+		AddSequential(new DriveTrainWaitForFinishedPathCommand());
 		AddSequential(new ArmToStow(""));
 	}
 };
