@@ -64,6 +64,7 @@ class DataLogger:
 
     def __init__(self):
         self.queue = Queue()
+        self.queue_pref = Queue()
         self.mode = 'disabled'
         self.data = []
         self.lock = threading.Lock()
@@ -77,8 +78,6 @@ class DataLogger:
     def valueChanged(self, key, value, isNew):
 
         if key == '/FMSInfo/FMSControlData':
-            print value
-
             mode = translate_control_word(value)
 
             with self.lock:
@@ -102,6 +101,13 @@ class DataLogger:
                 # to a queue along with the filename so it can be written
                 # from somewhere else
                 self.queue.put((name, data))
+
+                prefs = {}
+                ptb = NetworkTables.getTable("/Preferences")
+                for key in ptb.getKeys():
+                    if not key.startswith('.'):
+                        prefs[key] = ptb.getNumber(key, 0)
+                self.queue_pref.put((name[:-4] + ".json", prefs))
 
         elif key == self.log_key:
             # print value
@@ -142,6 +148,10 @@ class DataLogger:
                          "path_y_accel,robot_x_vel,robot_y_vel,x_error,y_error,yaw_error\n")
                 for line in data:
                     fp.write(",".join([str(f) for f in list(line)]) + "\n")
+
+            name, data = self.queue_pref.get()
+            with open(name, 'w') as fp:
+                fp.write(json.dumps(data))
 
 
 

@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import animation
 import math
 import sys
+import json
 
 numArgs = len(sys.argv)
 if(numArgs == 1):
@@ -103,6 +104,15 @@ robotYVel = []
 xError = []
 yError = []
 yawError = []
+
+try:
+    with open(filename[:-4] + ".json", 'r') as f:
+        prefs = json.loads(f.read())
+        for pref in sorted(prefs.keys()):
+            print pref, "=", prefs[pref]
+except Exception as e:
+    print("Preferences file not found.")
+
 
 #Read the csv
 f = open(filename, 'r')
