@@ -26,9 +26,10 @@ public:
 		AddSequential(new DriveTrainWaitForFieldYCommand(190));
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 
-		AddSequential(new DriveTrainWaitForFieldYCommand(257));
-		AddParallel(new IntakeReleaseCubeCommandGroup(0.8), 1.0);
-		AddSequential(new WaitCommand(0.5));
+		AddSequential(new DriveTrainWaitForFieldYCommand(265));
+		AddSequential(new IntakeClampOpenCommand());
+		AddSequential(new IntakeRollerUnloadCommand(0.7));
+		AddSequential(new WaitCommand(0.75));
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
 
 		AddSequential(new ArmExtentionMotionScaling(1.0));
@@ -43,8 +44,9 @@ public:
 		AddSequential(new WaitCommand(1));
 		AddSequential(new IntakeHasCubeCommand(), 3.0);
 		AddSequential(new PrintCommand("Has Cube"));
-		AddParallel(new IntakeHasCubeSecurelyCommandGroup(), 2.0);
+		AddParallel(new IntakeClampCloseCommand());
 		AddSequential(new PrintCommand("Clamp"));
+		AddSequential(new IntakeRollerOffCommand());
 
 		//Scale 2
 		AddSequential(new ArmExtentionMotionScaling(0.3));
@@ -53,11 +55,13 @@ public:
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 		AddSequential(new PrintCommand("ARM"));
 
-		AddSequential(new DriveTrainWaitForFinishedPathCommand());
+//		AddSequential(new DriveTrainWaitForFinishedPathCommand());
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale3.csv"));
-		AddSequential(new DriveTrainWaitForFieldYCommand(257));
+		AddSequential(new DriveTrainWaitForFieldYCommand(265));
 
-		AddParallel(new IntakeReleaseCubeCommandGroup(1.0), 1.0);
+		AddSequential(new IntakeClampOpenCommand());
+		AddSequential(new IntakeRollerUnloadCommand(0.5));
+		AddSequential(new WaitCommand(0.75));
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
 		AddSequential(new ArmExtentionMotionScaling(1.0));
 
@@ -67,38 +71,12 @@ public:
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerLoadCommand(1));
 		AddParallel(new ArmToIntakeBack(""), 1);
-		AddSequential(new WaitCommand(1));
+		AddSequential(new WaitCommand(2));
 		AddSequential(new IntakeHasCubeCommand(), 3.0);
 		AddSequential(new PrintCommand("Has Cube"));
-		AddParallel(new IntakeHasCubeSecurelyCommandGroup(), 2.0);
+		AddParallel(new IntakeClampCloseCommand());
 		AddSequential(new PrintCommand("Clamp"));
-
-		//Scale 2
-		AddSequential(new ArmExtentionMotionScaling(0.3));
-		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
-
-		AddParallel(new ArmToMidScaleFront(""), 1.5);
-		AddSequential(new PrintCommand("ARM"));
-
-		AddSequential(new DriveTrainWaitForFinishedPathCommand());
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale5.csv"));
-		AddSequential(new DriveTrainWaitForFieldYCommand(257));
-
-		AddParallel(new IntakeReleaseCubeCommandGroup(0.5), 1.0);
-		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
-		AddSequential(new ArmExtentionMotionScaling(1.0));
-
-		// Cube 3
-		AddSequential(new DriveTrainWaitForFinishedPathCommand());
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale6.csv"));
-		AddSequential(new IntakeClampOpenCommand());
-		AddSequential(new IntakeRollerLoadCommand(1));
-		AddParallel(new ArmToIntakeBack(""), 1);
-		AddSequential(new WaitCommand(1));
-		AddSequential(new IntakeHasCubeCommand(), 3.0);
-		AddSequential(new PrintCommand("Has Cube"));
-		AddParallel(new IntakeHasCubeSecurelyCommandGroup(), 2.0);
-		AddSequential(new PrintCommand("Clamp"));
+		AddSequential(new IntakeRollerOffCommand());
 
 		//Scale 3
 		AddSequential(new ArmExtentionMotionScaling(0.3));
@@ -107,18 +85,49 @@ public:
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 		AddSequential(new PrintCommand("ARM"));
 
-		AddSequential(new DriveTrainWaitForFinishedPathCommand());
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale7.csv"));
-		AddSequential(new DriveTrainWaitForFieldYCommand(257));
-		AddSequential(new PrintCommand("past y point scale path 7\n"));
-		AddSequential(new DriveTrainWaitForHeadingCommand(Rotation2D::fromDegrees(-15)));
-		AddSequential(new PrintCommand("at heading scale path 7\n"));
+//		AddSequential(new DriveTrainWaitForFinishedPathCommand());
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale5.csv"));
+		AddSequential(new DriveTrainWaitForFieldYCommand(265));
 
-		AddParallel(new IntakeReleaseCubeCommandGroup(0.75), 1.0);
+		AddSequential(new IntakeClampOpenCommand());
+		AddSequential(new IntakeRollerUnloadCommand(0.5));
+		AddSequential(new WaitCommand(0.75));
 		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
 		AddSequential(new ArmExtentionMotionScaling(1.0));
 
+		// Cube 4
 		AddSequential(new DriveTrainWaitForFinishedPathCommand());
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale6.csv"));
+		AddSequential(new IntakeClampOpenCommand());
+		AddSequential(new IntakeRollerLoadCommand(1));
+		AddParallel(new ArmToIntakeBack(""), 1);
+		AddSequential(new WaitCommand(2));
+		AddSequential(new IntakeHasCubeCommand(), 3.0);
+		AddSequential(new PrintCommand("Has Cube"));
+		AddParallel(new IntakeClampCloseCommand());
+		AddSequential(new PrintCommand("Clamp"));
+		AddSequential(new IntakeRollerOffCommand());
+
+		//Scale 4
+		AddSequential(new ArmExtentionMotionScaling(0.3));
+		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
+
+		AddParallel(new ArmToLowScale2Front(""), 1.5);
+		AddSequential(new PrintCommand("ARM"));
+
+//		AddSequential(new DriveTrainWaitForFinishedPathCommand());
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale7.csv"));
+		AddSequential(new DriveTrainWaitForFieldYCommand(265));
+		AddSequential(new PrintCommand("past y point scale path 7\n"));
+//		AddSequential(new DriveTrainWaitForHeadingCommand(Rotation2D::fromDegrees(-15)));
+//		AddSequential(new PrintCommand("at heading scale path 7\n"));
+
+		AddSequential(new IntakeClampOpenCommand());
+		AddSequential(new IntakeRollerUnloadCommand(0.7));
+		AddSequential(new WaitCommand(1.5));
+		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
+		AddSequential(new ArmExtentionMotionScaling(1.0));
+
 		AddSequential(new ArmToStow(""));
 	}
 };

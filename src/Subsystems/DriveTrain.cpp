@@ -254,6 +254,7 @@ void DriveTrain::ResetRobotPose(RigidTransform2D pose) {
 
 
 void DriveTrain::PeriodicFast() {
+	int outlierDetectionThreshold = 8;
 	double timeStamp = RobotController::GetFPGATime();
 	double deltaTimestamp = timeStamp - m_oldTimestamp;
 	m_oldTimestamp = timeStamp;
@@ -287,6 +288,9 @@ void DriveTrain::PeriodicFast() {
 
 	Translation2D newFlDistance = m_flWheel->GetDistance();
 	Translation2D deltaFlDistance = newFlDistance.translateBy(m_oldFlDistance.inverse());
+	if(fabs(deltaFlDistance.getX()) < outlierDetectionThreshold) {
+		m_flPrevDelta = deltaFlDistance;
+	}
 	m_oldFlDistance = newFlDistance;
 
 	Rotation2D newFrAngle = m_frWheel->GetAngle();
@@ -296,6 +300,9 @@ void DriveTrain::PeriodicFast() {
 
 	Translation2D newFrDistance = m_frWheel->GetDistance();
 	Translation2D deltaFrDistance = newFrDistance.translateBy(m_oldFrDistance.inverse());
+	if(fabs(deltaFrDistance.getX()) < outlierDetectionThreshold) {
+		m_frPrevDelta = deltaFrDistance;
+	}
 	m_oldFrDistance = newFrDistance;
 
 
@@ -306,6 +313,9 @@ void DriveTrain::PeriodicFast() {
 
 	Translation2D newBlDistance = m_blWheel->GetDistance();
 	Translation2D deltaBlDistance = newBlDistance.translateBy(m_oldBlDistance.inverse());
+	if(fabs(deltaBlDistance.getX()) < outlierDetectionThreshold) {
+		m_blPrevDelta = deltaBlDistance;
+	}
 	m_oldBlDistance = newBlDistance;
 
 
@@ -316,12 +326,15 @@ void DriveTrain::PeriodicFast() {
 
 	Translation2D newBrDistance = m_brWheel->GetDistance();
 	Translation2D deltaBrDistance = newBrDistance.translateBy(m_oldBrDistance.inverse());
+	if(fabs(deltaBrDistance.getX()) < outlierDetectionThreshold) {
+		m_brPrevDelta = deltaBrDistance;
+	}
 	m_oldBrDistance = newBrDistance;
 
-	RigidTransform2D::Delta deltaFlVelocity = RigidTransform2D::Delta::fromDelta(-deltaFlDistance.getX(), 0, 0, deltaTimestamp);
-	RigidTransform2D::Delta deltaFrVelocity = RigidTransform2D::Delta::fromDelta(-deltaFrDistance.getX(), 0, 0, deltaTimestamp);
-	RigidTransform2D::Delta deltaBlVelocity = RigidTransform2D::Delta::fromDelta(-deltaBlDistance.getX(), 0, 0, deltaTimestamp);
-	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(-deltaBrDistance.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaFlVelocity = RigidTransform2D::Delta::fromDelta(-m_flPrevDelta.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaFrVelocity = RigidTransform2D::Delta::fromDelta(-m_frPrevDelta.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaBlVelocity = RigidTransform2D::Delta::fromDelta(-m_blPrevDelta.getX(), 0, 0, deltaTimestamp);
+	RigidTransform2D::Delta deltaBrVelocity = RigidTransform2D::Delta::fromDelta(-m_brPrevDelta.getX(), 0, 0, deltaTimestamp);
 
 	Rotation2D newGyroYaw = GetHeading();
 //	SmartDashboard::PutNumber("new gyro yaw", newGyroYaw.getDegrees());

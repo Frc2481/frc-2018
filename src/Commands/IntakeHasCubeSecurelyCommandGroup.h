@@ -15,9 +15,9 @@
 class IntakeHasCubeSecurelyCommandGroup : public CommandGroup {
 public:
 	IntakeHasCubeSecurelyCommandGroup() : CommandGroup("IntakeHasCubeSecurelyCommandGroup") {
-		AddSequential(new IntakeHasCubeSecureCommand());
 		AddParallel(new IntakeClampCloseCommand());
-		AddParallel(new IntakeStopCubeCommandGroup());
+		AddSequential(new WaitCommand(0.5));
+		AddSequential(new IntakeRollerOffCommand());
 	}
 };
 

@@ -53,7 +53,7 @@
 #include "Commands/Autos/Auto3LRSwitch.h"
 #include "Commands/Autos/Auto3LLScale.h"
 #include "Commands/Autos/Auto3LLSwitch.h"
-
+#include "Commands/autos/AutoTestArm.h"
 
 enum Autos {
 	POS_LEFT = 1,
@@ -127,6 +127,7 @@ private:
 
 		SmartDashboard::PutData("Start Pos", m_posChooser);
 		SmartDashboard::PutData("Ability to cross center", m_crossCenterChooser);
+		SmartDashboard::PutData("Switch or Scale", m_objectiveChooser);
 
 		CommandBase::m_driveTrain->GetObserver()->ResetPose(RigidTransform2D(Translation2D(46.4, 19.5),
 																		  Rotation2D::fromDegrees(0)));
@@ -134,6 +135,11 @@ private:
 		SmartDashboard::PutData("Auto LLR", new AutoLLR());
 
 		SmartDashboard::PutData("Auto LRR", new AutoLRR());
+
+		SmartDashboard::PutData("Auto test arm", new AutoTestArm());
+
+		SmartDashboard::PutData("Auto3LLSwitch", new Auto3LLSwitch());
+		SmartDashboard::PutData("Auto3LRSwitch", new Auto3LRSwitch());
 
 		SmartDashboard::PutData("Zero Pose Left Start", new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.44, 19.5), Rotation2D::fromDegrees(0))));
 //		SmartDashboard::PutData("Zero Pose Right Start", new ObserverResetPosCommand(RigidTransform2D(Translation2D(324 - 46.4, 19.5), Rotation2D::fromDegrees(0))));
@@ -338,6 +344,7 @@ private:
 	std::shared_ptr<frc::Command> autonomousCommand;
 	frc::SendableChooser<frc::Command*> autoPos;
 	frc::SendableChooser<frc::Command*> centerCross;
+	frc::SendableChooser<frc::Command*> objective;
 };
 
 //LRR hit last 2 cubes

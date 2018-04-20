@@ -56,10 +56,10 @@ private:
 	bool m_isBlLineDetected;
 	bool m_isBrLineDetected;
 
-	DigitalInput* m_flLineSensor;
-	DigitalInput* m_frLineSensor;
-	DigitalInput* m_blLineSensor;
-	DigitalInput* m_brLineSensor;
+	Counter* m_flLineSensor;
+	Counter* m_frLineSensor;
+	Counter* m_blLineSensor;
+	Counter* m_brLineSensor;
 
 	Translation2D m_flLineSensorOffset;
 	Translation2D m_frLineSensorOffset;

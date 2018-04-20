@@ -17,10 +17,10 @@ Observer::Observer() : m_robotPos(5){
 	m_isBlLineDetected = false;
 	m_isBrLineDetected = false;
 
-	m_flLineSensor = new DigitalInput(1);
-	m_frLineSensor = new DigitalInput(2);
-	m_blLineSensor = new DigitalInput(3);
-	m_brLineSensor = new DigitalInput(4);
+	m_flLineSensor = new Counter(1);
+	m_frLineSensor = new Counter(2);
+	m_blLineSensor = new Counter(3);
+	m_brLineSensor = new Counter(4);
 
 	m_flLineSensorOffset = Translation2D(RobotParameters::k_lineDetectXOffsetFL, RobotParameters::k_lineDetectYOffsetFL);
 	m_frLineSensorOffset = Translation2D(RobotParameters::k_lineDetectXOffsetFR, RobotParameters::k_lineDetectYOffsetFR);
@@ -58,14 +58,18 @@ void Observer::UpdateRobotPoseObservation(Rotation2D& flAngle, RigidTransform2D:
 //	SmartDashboard::PutNumber("delta robot x kinematics", deltaRobotPos.GetX());
 //	SmartDashboard::PutNumber("delta robot y kinematics", deltaRobotPos.GetY());
 
-	m_isFlLineDetected = m_flLineSensor->Get();
-	m_isFrLineDetected = m_frLineSensor->Get();
-	m_isBlLineDetected = m_blLineSensor->Get();
-	m_isBrLineDetected = m_brLineSensor->Get();
+	m_isFlLineDetected = m_flLineSensor->Get() > 0;
+	m_isFrLineDetected = m_frLineSensor->Get() > 0;
+	m_isBlLineDetected = m_blLineSensor->Get() > 0;
+	m_isBrLineDetected = m_brLineSensor->Get() > 0;
 
 	LineCrossed lineState = NO_LINE;
 	if(m_isFlLineDetected || m_isFrLineDetected || m_isBlLineDetected || m_isBrLineDetected) {
 		lineState = LinePosCorrection();
+		 m_flLineSensor->Reset();
+		 m_frLineSensor->Reset();
+		 m_blLineSensor->Reset();
+		 m_brLineSensor->Reset();
 
 		switch(lineState) {
 			case NULL_LEFT_CLOSE: {

@@ -112,7 +112,6 @@ void DriveTrainPathFollower::OnLoop() {
 
 	//		SmartDashboard::PutNumber("Path Actual Heading", m_driveController.GetObserver()->GetLastRobotPose().getRotation().getDegrees());
 
-			printf("got here in drive train path follower\n");
 			RigidTransform2D driveSignal = m_driveController.GetDriveControlSignal();
 			CommandBase::m_driveTrain->Drive(driveSignal.getTranslation().getX(),
 								driveSignal.getTranslation().getY(),

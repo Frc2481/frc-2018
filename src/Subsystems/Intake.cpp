@@ -84,5 +84,7 @@ void Intake::Periodic() {
 //	SmartDashboard::PutNumber("IntakeRollerCurrentLeft", m_rollerMotorLeft->GetOutputCurrent());
 //	SmartDashboard::PutNumber("IntakeRollerCurrentRight", m_rollerMotorRight->GetOutputCurrent());
 	SmartDashboard::PutNumber("Has Cube", HasCube());
+	SmartDashboard::PutNumber("Left sensor triggered", m_rollerMotorLeft->GetSensorCollection().IsFwdLimitSwitchClosed());
+	SmartDashboard::PutNumber("Right sensor triggered", m_rollerMotorRight->GetSensorCollection().IsFwdLimitSwitchClosed());
 //	SmartDashboard::PutNumber("average roller current", (m_rollerMotorLeft->GetOutputCurrent() + m_rollerMotorRight->GetOutputCurrent()) / 2.0);
 }

@@ -58,6 +58,11 @@ private:
 	Translation2D m_oldBlDistance;
 	Translation2D m_oldBrDistance;
 
+	Translation2D m_flPrevDelta;
+	Translation2D m_frPrevDelta;
+	Translation2D m_blPrevDelta;
+	Translation2D m_brPrevDelta;
+
 	Translation2D m_motionSetpoint;
 
 	Observer* m_observer;

@@ -19,14 +19,14 @@ public:
 	void Execute() {}
 
 	bool IsFinished(){
-//		if(m_intake->HasCube()) {
-//			m_debounceCounter++;
-//		}
-//		else {
-//			m_debounceCounter = 0;
-//		}
-//		return m_debounceCounter > 2;
-		return m_intake->HasCube(); // || IsTimedOut();
+		if(m_intake->HasCube()) {
+			m_debounceCounter++;
+		}
+		else {
+			m_debounceCounter = 0;
+		}
+		return m_debounceCounter > 3;
+//		return m_intake->HasCube(); // || IsTimedOut();
 	}
 };
 

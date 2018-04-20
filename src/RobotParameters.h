@@ -121,7 +121,7 @@ public:
 	static constexpr double cameraOffsetYaw = 0;
 	static constexpr double cubeHeight = 11.0;
 
-	static constexpr double k_lineDetectZone = 10.0;
+	static constexpr double k_lineDetectZone = 20.0;
 
 	static constexpr double k_lineDetectXOffsetFL = -12.8125;
 	static constexpr double k_lineDetectYOffsetFL = 15.625;
