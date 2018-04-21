@@ -67,6 +67,8 @@ Arm::Arm() : Subsystem("Arm"){
 	m_extenderMaster->EnableCurrentLimit(false);
 	m_extenderMaster->ConfigPeakCurrentLimit(0, 0);
 
+	m_extenderMaster->ConfigOpenloopRamp(0.05, 0);
+
 	m_extenderSlave->ConfigPeakCurrentDuration(0, 0);
 	m_extenderSlave->ConfigContinuousCurrentLimit(30, 0);
 	m_extenderSlave->EnableCurrentLimit(false);
@@ -122,6 +124,8 @@ Arm::Arm() : Subsystem("Arm"){
 	m_pivotMaster->SetStatusFramePeriod(Status_10_MotionMagic, 10, 0);
 
 	m_pivotMaster->ConfigAllowableClosedloopError(0, 0, 0);
+
+	m_pivotMaster->ConfigOpenloopRamp(0.05, 0);
 
 //	m_pivotSlave->Set(ControlMode::Follower, 17);
 	m_pivotSlave->Follow(*m_pivotMaster);
@@ -276,6 +280,7 @@ void Arm::Periodic() {
 		m_desiredExtensionSetpoint = 0;
 		SetExtensionPosition(m_desiredExtensionSetpoint);
 		m_isPivotZeroed = false;
+		SetPivotOpenLoop(0);
 	} else {
 		SetExtensionPosition(GetAllowedExtensionPos());
 	}

@@ -41,7 +41,7 @@ RigidTransform2D DriveController::GetDriveControlSignal() {
 
 	double xOutput = m_positionXController->CalculateVelocityControlSignal();
 	double yOutput = m_positionYController->CalculateVelocityControlSignal();
-	double yawOutput = std::max(-0.3, std::min(m_positionYawController->CalculateVelocityControlSignal(), 0.3));
+	double yawOutput = std::max(-0.5, std::min(m_positionYawController->CalculateVelocityControlSignal(), 0.5));
 
 	Translation2D controlSignalTranslation(xOutput, yOutput);
 	Rotation2D controlSignalRotation = Rotation2D::fromDegrees(yawOutput);

@@ -13,6 +13,7 @@
 #include "DoubleSolenoid.h"
 #include "utils/Rotation2D.h"
 #include "utils/Translation2D.h"
+#include "utils/RollingAccumulator.h"
 #include "Subsystems/Observer.h"
 #include "Kinematics.h"
 #include "Components/DriveController.h"
@@ -74,6 +75,9 @@ private:
 	std::atomic<bool> m_isPtoEngaged;
 
 	bool m_first;
+
+	RollingAccumulator<double, 5>* accelX;
+	RollingAccumulator<double, 5>* accelY;
 
 public:
 	enum SwerveModuleType {

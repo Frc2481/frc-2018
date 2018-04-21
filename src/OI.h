@@ -13,7 +13,7 @@ public:
 	OI();
 	Joystick2481* m_driverStick;
 	Joystick2481* m_operatorStick;
-	Joystick2481* m_climbStick;
+//	Joystick2481* m_climbStick;
 	Joystick2481* GetDriverStick();
 	Joystick2481* GetOperatorStick();
 

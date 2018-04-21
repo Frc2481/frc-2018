@@ -56,6 +56,8 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID,
 
 //	m_driveMotor->SetNeutralMode(Brake);
 
+	m_driveMotor->ConfigOpenloopRamp(0.05, 0);
+
 	m_steerMotor->SelectProfileSlot(0, 0.0); //Profile 1 PIDf are P = 0.2 f = 1.1
 	m_steerMotor->ConfigNominalOutputForward(0,0);
 	m_steerMotor->ConfigNominalOutputReverse(0,0);
@@ -71,6 +73,8 @@ SwerveModule::SwerveModule(uint32_t driveID, uint32_t steerID,
 	m_steerMotor->ConfigAllowableClosedloopError(0, 5, 0);
 	m_steerMotor->SetStatusFramePeriod(Status_2_Feedback0, 10, 0);
 //	m_steerMotor->SetStatusFrameRateMs(TalonSRX::StatusFrameRateGeneral, 10);
+
+	m_steerMotor->ConfigClosedloopRamp(0.05, 0);
 }
 
 SwerveModule::~SwerveModule() {

@@ -40,7 +40,7 @@ public:
 
 	void UpdateRobotPoseObservation(Rotation2D& flAngle, RigidTransform2D::Delta& flVelocity, Rotation2D& frAngle,
 			RigidTransform2D::Delta& frVelocity, Rotation2D& blAngle, RigidTransform2D::Delta& blVelocity,
-			Rotation2D& brAngle, RigidTransform2D::Delta& brVelocity, double timeStamp, Rotation2D& deltaGyroYaw);
+			Rotation2D& brAngle, RigidTransform2D::Delta& brVelocity, double timeStamp, Rotation2D& deltaGyroYaw, Translation2D& robotAccel);
 	RigidTransform2D GetRobotPos(double timestamp);
 	void SetRobotPos(RigidTransform2D robotPos, double timestamp);
 	RigidTransform2D GetLastRobotPose();

@@ -56,6 +56,7 @@ public:
 	static constexpr double k_steerP = 3;
 	static constexpr double k_steerI = 0;
 	static constexpr double k_steerD = 40;
+	static constexpr double k_cornerStiffness = 0.3;
 
 	static constexpr double kpDrivePos = 0;
 	static constexpr double kvDrivePos = 0;

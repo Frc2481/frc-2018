@@ -70,6 +70,9 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 
 	m_first = true;
 
+	accelX = new RollingAccumulator<double, 5>();
+	accelY = new RollingAccumulator<double, 5>();
+
 	DisengagePTO();
 
 	Shift(false);
@@ -346,12 +349,16 @@ void DriveTrain::PeriodicFast() {
 //	   fabs(deltaBlDistance.getX() < obsDistanceThresh) && fabs(deltaBrDistance.getX() < obsDistanceThresh)) {
 	   // TODO: evaluate if we need this check
 
+	accelX->add(m_imu->GetRawAccelX());
+	accelY->add(m_imu->GetRawAccelY());
+	Translation2D robotAccel = Translation2D(accelX->avg(), accelY->avg());
+
 	RigidTransform2D prevPosition = m_observer->GetLastRobotPose();
 
 		m_observer->UpdateRobotPoseObservation(newFlAngle, deltaFlVelocity,
 											newFrAngle, deltaFrVelocity,
 											newBlAngle, deltaBlVelocity,
-											newBrAngle, deltaBrVelocity, timeStamp, deltaGyroYaw);
+											newBrAngle, deltaBrVelocity, timeStamp, deltaGyroYaw, robotAccel);
 //	}
 
 }

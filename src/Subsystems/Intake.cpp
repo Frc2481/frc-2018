@@ -22,6 +22,8 @@ Intake::Intake() : Subsystem("Intake") {
 	m_rollerMotorLeft->SetInverted(true);
 	m_rollerMotorRight->SetInverted(true);
 
+	m_rollerMotorLeft->ConfigOpenloopRamp(0.1, 0);
+	m_rollerMotorRight->ConfigOpenloopRamp(0.1, 0);
 
 //	m_rollerMotorLeft->ConfigPeakCurrentLimit(20, 0);
 //	m_rollerMotorLeft->ConfigPeakCurrentDuration(0, 0);

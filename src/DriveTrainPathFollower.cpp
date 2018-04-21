@@ -54,7 +54,7 @@ void DriveTrainPathFollower::OnLoop() {
 	if(!m_isFinished) {
 
 
-		double logData[1+3+3+2+2+2+3];
+		double logData[1+3+3+2+2+2+3+3];
 
 		if(m_path != nullptr && ++m_currPoint != m_path->end() && !m_isFFFinished) {
 			m_driveController.SetFieldTarget(*m_currPoint);
@@ -98,8 +98,6 @@ void DriveTrainPathFollower::OnLoop() {
 
 			m_prevPosition = robotPose;
 
-			SmartDashboard::PutNumberArray("path_log_data", llvm::ArrayRef<double>(logData, 16));
-
 	//		SmartDashboard::PutNumber("PathX", m_currPoint->xPos);
 	//		SmartDashboard::PutNumber("PathY", m_currPoint->yPos);
 	//		SmartDashboard::PutNumber("PathYaw", m_currPoint->yaw);
@@ -113,6 +111,14 @@ void DriveTrainPathFollower::OnLoop() {
 	//		SmartDashboard::PutNumber("Path Actual Heading", m_driveController.GetObserver()->GetLastRobotPose().getRotation().getDegrees());
 
 			RigidTransform2D driveSignal = m_driveController.GetDriveControlSignal();
+
+			logData[16] = driveSignal.getTranslation().getX();
+			logData[17] = driveSignal.getTranslation().getY();
+			logData[18] = driveSignal.getRotation().getDegrees();
+
+			SmartDashboard::PutNumberArray("path_log_data", llvm::ArrayRef<double>(logData, 19));
+
+
 			CommandBase::m_driveTrain->Drive(driveSignal.getTranslation().getX(),
 								driveSignal.getTranslation().getY(),
 								driveSignal.getRotation().getDegrees());

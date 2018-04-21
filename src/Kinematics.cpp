@@ -9,6 +9,7 @@
 #include <RobotParameters.h>
 #include <algorithm>
 #include <cmath>
+#include <WPILib.h>
 
 
 Kinematics::Kinematics() {
@@ -60,8 +61,18 @@ void Kinematics::SwerveInverseKinematics(Translation2D &velocity, double yawRate
 	}
 }
 
+Translation2D Kinematics::CalculateWheelSlip(Rotation2D& wheelAngle, RigidTransform2D::Delta& wheelVelocity, Translation2D& robotAccel)
+{
+	double vy_wheel = wheelVelocity.GetX();
+	Translation2D accelWheelFrame = robotAccel.rotateBy(wheelAngle);
+	double alpha_slip = Preferences::GetInstance()->GetDouble("CORNERING_COEFF") * robotAccel.getX() * copysign(1.0, vy_wheel);
+	double vx_wheel = vy_wheel * -alpha_slip;
+	Translation2D newWheelVel = Translation2D(vx_wheel, vy_wheel);
+	return newWheelVel.rotateBy(wheelAngle.inverse());
+}
+
 RigidTransform2D::Delta Kinematics::SwerveForwardKinematics(Rotation2D& flAngle, RigidTransform2D::Delta& flVelocity, Rotation2D& frAngle,
-		RigidTransform2D::Delta& frVelocity, Rotation2D& blAngle, RigidTransform2D::Delta& blVelocity, Rotation2D& brAngle, RigidTransform2D::Delta& brVelocity, Rotation2D& yawRate) {
+		RigidTransform2D::Delta& frVelocity, Rotation2D& blAngle, RigidTransform2D::Delta& blVelocity, Rotation2D& brAngle, RigidTransform2D::Delta& brVelocity, Rotation2D& yawRate, Translation2D& robotAccel) {
 	// +x = robot right
 	// +y = robot forward
 	// +yaw = CCW, zero is robot forward
@@ -71,18 +82,29 @@ RigidTransform2D::Delta Kinematics::SwerveForwardKinematics(Rotation2D& flAngle,
 	double length = RobotParameters::k_robotLength;
 	double width = RobotParameters::k_robotWidth;
 
+	int useFL = fabs(flVelocity.GetX()) > 0.01;
+	int useFR = fabs(frVelocity.GetX()) > 0.01;
+	int useBL = fabs(blVelocity.GetX()) > 0.01;
+	int useBR = fabs(brVelocity.GetX()) > 0.01;
+
+
+	Translation2D newFLVel = CalculateWheelSlip(flAngle, flVelocity, robotAccel);
+	Translation2D newFRVel = CalculateWheelSlip(frAngle, frVelocity, robotAccel);
+	Translation2D newBLVel = CalculateWheelSlip(blAngle, blVelocity, robotAccel);
+	Translation2D newBRVel = CalculateWheelSlip(brAngle, brVelocity, robotAccel);
+
 	// get x and y components of wheel velocities
-	double VyFR = frVelocity.GetX() * frAngle.getCos() * RobotParameters::k_frRadiusPercent;
-	double VxFR = frVelocity.GetX() * frAngle.getSin() * RobotParameters::k_frRadiusPercent;
+	double VyFR = newFRVel.getY() * RobotParameters::k_frRadiusPercent; //frVelocity.GetX() * frAngle.getCos() * RobotParameters::k_frRadiusPercent;
+	double VxFR = newFRVel.getX() * RobotParameters::k_frRadiusPercent; //frVelocity.GetX() * frAngle.getSin() * RobotParameters::k_frRadiusPercent;
 
-	double VyBR = brVelocity.GetX() * brAngle.getCos() * RobotParameters::k_brRadiusPercent;
-	double VxBR = brVelocity.GetX() * brAngle.getSin() * RobotParameters::k_brRadiusPercent;
+	double VyBR = newBRVel.getY() * RobotParameters::k_brRadiusPercent; //brVelocity.GetX() * brAngle.getCos() * RobotParameters::k_brRadiusPercent;
+	double VxBR = newBRVel.getX() * RobotParameters::k_brRadiusPercent; //brVelocity.GetX() * brAngle.getSin() * RobotParameters::k_brRadiusPercent;
 
-	double VyBL = blVelocity.GetX() * blAngle.getCos() * RobotParameters::k_blRadiusPercent;
-	double VxBL = blVelocity.GetX() * blAngle.getSin() * RobotParameters::k_blRadiusPercent;
+	double VyBL = newBLVel.getY() * RobotParameters::k_blRadiusPercent; //blVelocity.GetX() * blAngle.getCos() * RobotParameters::k_blRadiusPercent;
+	double VxBL = newBLVel.getX() * RobotParameters::k_blRadiusPercent; //blVelocity.GetX() * blAngle.getSin() * RobotParameters::k_blRadiusPercent;
 
-	double VyFL = flVelocity.GetX() * flAngle.getCos() * RobotParameters::k_flRadiusPercent;
-	double VxFL = flVelocity.GetX() * flAngle.getSin() * RobotParameters::k_flRadiusPercent;
+	double VyFL = newFLVel.getY() * RobotParameters::k_flRadiusPercent; //flVelocity.GetX() * flAngle.getCos() * RobotParameters::k_flRadiusPercent;
+	double VxFL = newFLVel.getX() * RobotParameters::k_flRadiusPercent; //flVelocity.GetX() * flAngle.getSin() * RobotParameters::k_flRadiusPercent;
 
 //	// calculate average velocities
 //	double VxBack = (VxBR + VxBL) / 2.0;
@@ -112,8 +134,15 @@ RigidTransform2D::Delta Kinematics::SwerveForwardKinematics(Rotation2D& flAngle,
 	double Vxcbr = VxBR - yawRate.getRadians() * -length / 2.0;
 	double Vycbr = VyBR + yawRate.getRadians() * width / 2.0;
 
-	double Vxc = (Vxcfl + Vxcfr + Vxcbl + Vxcbr) / 4;
-	double Vyc = (Vycfl + Vycfr + Vycbl + Vycbr) / 4;
+	int useSum = useFL + useFR + useBL + useBR;
+
+	double Vxc = 0;
+	double Vyc = 0;
+
+	if(useSum > 0) {
+		Vxc = ((Vxcfl * useFL) + (Vxcfr * useFR) + (Vxcbl * useBL) + (Vxcbr * useBR)) / (useSum);
+		Vyc = ((Vycfl * useFL) + (Vycfr * useFR) + (Vycbl * useBL) + (Vycbr * useBR)) / (useSum);
+	}
 
 	return RigidTransform2D::Delta::fromDelta(Vxc, Vyc, yawRate.getRadians(), flVelocity.GetDt());
 }
