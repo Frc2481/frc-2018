@@ -54,7 +54,7 @@ waypoints = [leftScale;
              leftScaleWP3;
              leftCube2Approach;
              leftCube2];
-generatePath(waypoints, csvFilename, maxSpeed, maxAccel, maxSpeed2, maxAccel2, -80, sampleRate)
+generatePath(waypoints, csvFilename, maxSpeed, maxAccel, maxSpeed2, maxAccel2, -100, sampleRate)
 
 csvFilename = 'Path_LL_scale5.csv';
 waypoints = [leftCube2;
