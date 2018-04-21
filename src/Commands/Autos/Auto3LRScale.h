@@ -18,12 +18,13 @@ class Auto3LRScale : public CommandGroup {
 public:
 	Auto3LRScale() : CommandGroup("Auto3LRScale") {
 		AddSequential(new ObserverResetPosCommand(RigidTransform2D(Translation2D(46.44, 19.5), Rotation2D::fromDegrees(0))));
+		AddSequential(new ArmExtentionMotionScaling(.6));
 		AddParallel(new ArmToStartPos(""));
 
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LR_scale1.csv"));
 		AddSequential(new PrintCommand("FollowPath"));
 
-		AddSequential(new DriveTrainWaitForFieldYCommand(190));
+		AddSequential(new DriveTrainWaitForFieldXCommand(245));
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 
 		AddSequential(new DriveTrainWaitForFieldYCommand(265));
@@ -40,8 +41,8 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LR_scale2.csv"));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerLoadCommand(1));
+		AddSequential(new WaitCommand(.1));
 		AddParallel(new ArmToIntakeBack(""), 1);
-		AddSequential(new WaitCommand(1));
 		AddSequential(new DriveTrainWaitForFinishedPathCommand());
 		AddSequential(new DriveTrainSinusoidalJitter(), 2.0);
 		AddSequential(new PrintCommand("Has Cube"));
@@ -53,10 +54,12 @@ public:
 		AddSequential(new ArmExtentionMotionScaling(0.3));
 		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
 
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LR_scale3.csv"));
+		AddSequential(new WaitCommand(0.25));
+
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 		AddSequential(new PrintCommand("ARM"));
 
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LR_scale3.csv"));
 		AddSequential(new DriveTrainWaitForFieldYCommand(265));
 		AddSequential(new WaitCommand(0.25));
 
@@ -71,8 +74,8 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LR_scale4.csv"));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerLoadCommand(1));
+		AddSequential(new WaitCommand(0.25));
 		AddParallel(new ArmToIntakeBack(""), 1);
-		AddSequential(new WaitCommand(2));
 		AddSequential(new DriveTrainWaitForFinishedPathCommand());
 		AddSequential(new DriveTrainSinusoidalJitter(), 2.0);
 		AddSequential(new PrintCommand("Has Cube"));
@@ -84,10 +87,12 @@ public:
 		AddSequential(new ArmExtentionMotionScaling(0.3));
 		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
 
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LR_scale5.csv"));
+
+		AddSequential(new WaitCommand(0.25));
 		AddParallel(new ArmToMidScaleFront(""), 1.5);
 		AddSequential(new PrintCommand("ARM"));
 
-		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LR_scale5.csv"));
 		AddSequential(new DriveTrainWaitForFieldYCommand(265));
 		AddSequential(new WaitCommand(0.25));
 
@@ -102,6 +107,7 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LR_scale6.csv"));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerLoadCommand(1));
+		AddSequential(new WaitCommand(0.25));
 		AddParallel(new ArmToIntakeBack(""), 1);
 		AddSequential(new WaitCommand(2));
 		AddSequential(new DriveTrainWaitForFinishedPathCommand());
@@ -114,6 +120,8 @@ public:
 		//Scale 4
 		AddSequential(new ArmExtentionMotionScaling(1.0));
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LR_scale7.csv"));
+
+		AddSequential(new WaitCommand(0.25));
 		AddSequential(new ArmToStow(""));
 	}
 };

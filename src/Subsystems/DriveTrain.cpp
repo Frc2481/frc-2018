@@ -445,6 +445,8 @@ void DriveTrain::Periodic() {
 	SmartDashboard::PutNumber("bl wheel voltage", m_blWheel->GetAppliedVoltage());
 	SmartDashboard::PutNumber("br wheel voltage", m_brWheel->GetAppliedVoltage());
 
+	SmartDashboard::PutNumber("imu temperature", m_imu->GetTempC());
+
 }
 
 // This Method must be called when when all 8 swerve modules are on.

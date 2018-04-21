@@ -35,7 +35,7 @@ OI::OI() {
 	// Process operator interface input here.
 	m_driverStick = new Joystick2481(0);
 	m_operatorStick = new Joystick2481(1);
-//	m_climbStick = new Joystick2481(2);
+	m_climbStick = new Joystick2481(2);
 
 //driver
 //	m_aDriverButton = new JoystickButton(m_driverStick, XB_A_BUTTON);
@@ -175,17 +175,17 @@ OI::OI() {
 	//intake release on left trigger?
 
 //climb controller
-//	m_innerWinch = new JoystickButton(m_climbStick, XB_A_BUTTON);
-//	m_innerWinch->WhileHeld(new DriveTrainNearWinchCommand());
-//
-//	m_outerWinch = new JoystickButton(m_climbStick, XB_B_BUTTON);
-//	m_outerWinch->WhileHeld(new DriveTrainFarWinchCommand());
-//
-//	m_extensionOpenLoop = new JoystickButton(m_climbStick, XB_RIGHT_BUMPER);
-//	m_extensionOpenLoop->WhileHeld(new ArmExtendCommand());
-//
-//	m_engagePto = new JoystickButton(m_climbStick, XB_Y_BUTTON);
-//	m_engagePto->WhenPressed(new DriveTrainEngagePtoCommand());
+	m_innerWinch = new JoystickButton(m_climbStick, XB_A_BUTTON);
+	m_innerWinch->WhileHeld(new DriveTrainNearWinchCommand());
+
+	m_outerWinch = new JoystickButton(m_climbStick, XB_B_BUTTON);
+	m_outerWinch->WhileHeld(new DriveTrainFarWinchCommand());
+
+	m_extensionOpenLoop = new JoystickButton(m_climbStick, XB_RIGHT_BUMPER);
+	m_extensionOpenLoop->WhileHeld(new ArmExtendCommand());
+
+	m_engagePto = new JoystickButton(m_climbStick, XB_Y_BUTTON);
+	m_engagePto->WhenPressed(new DriveTrainEngagePtoCommand());
 }
 
 Joystick2481* OI::GetDriverStick() {

@@ -108,10 +108,10 @@ Arm::Arm() : Subsystem("Arm"){
 	m_pivotMaster->ConfigSetParameter(ParamEnum::eClearPosOnLimitF, 0, 0, 0, 0);
 	m_pivotMaster->ConfigSetParameter(ParamEnum::eClearPosOnLimitR, 0, 0, 0, 0);
 
-	m_pivotMaster->ConfigContinuousCurrentLimit(25, 0);
+	m_pivotMaster->ConfigContinuousCurrentLimit(50, 0);
 	m_pivotMaster->ConfigPeakCurrentLimit(0, 0);
 	m_pivotMaster->ConfigPeakCurrentDuration(0, 0);
-	m_pivotMaster->EnableCurrentLimit(false); //ToDo: enable current limit
+	m_pivotMaster->EnableCurrentLimit(true); //ToDo: enable current limit
 
 	m_pivotMaster->SetNeutralMode(Brake);
 

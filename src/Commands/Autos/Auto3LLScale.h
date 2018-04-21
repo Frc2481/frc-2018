@@ -41,8 +41,8 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale2.csv"));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerLoadCommand(1));
+		AddSequential(new WaitCommand(.25));
 		AddParallel(new ArmToIntakeBack(""), 1);
-		AddSequential(new WaitCommand(1));
 		AddSequential(new DriveTrainWaitForFinishedPathCommand());
 		AddSequential(new DriveTrainSinusoidalJitter(), 2.0);
 		AddSequential(new PrintCommand("Has Cube"));
@@ -72,8 +72,8 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale4.csv"));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerLoadCommand(1));
+		AddSequential(new WaitCommand(0.25));
 		AddParallel(new ArmToIntakeBack(""), 1);
-		AddSequential(new WaitCommand(2));
 		AddSequential(new DriveTrainWaitForFinishedPathCommand());
 		AddSequential(new DriveTrainSinusoidalJitter(), 2.0);
 		AddSequential(new PrintCommand("Has Cube"));
@@ -103,6 +103,7 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_scale6.csv"));
 		AddSequential(new IntakeClampOpenCommand());
 		AddSequential(new IntakeRollerLoadCommand(1));
+		AddSequential(new WaitCommand(0.25));
 		AddParallel(new ArmToIntakeBack(""), 1);
 		AddSequential(new WaitCommand(2));
 		AddSequential(new DriveTrainWaitForFinishedPathCommand());
