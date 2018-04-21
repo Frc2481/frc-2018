@@ -3,7 +3,6 @@ import numpy as np
 from matplotlib import animation
 import math
 import sys
-import json
 
 numArgs = len(sys.argv)
 if(numArgs == 1):
@@ -97,22 +96,18 @@ pathY = []
 pathYaw = []
 pathXVel = []
 pathYVel = []
+pathYawVel = [0]
 pathXAccel = []
 pathYAccel = []
 robotXVel = []
 robotYVel = []
+robotYawVel = [0]
 xError = []
 yError = []
 yawError = []
-
-try:
-    with open(filename[:-4] + ".json", 'r') as f:
-        prefs = json.loads(f.read())
-        for pref in sorted(prefs.keys()):
-            print pref, "=", prefs[pref]
-except Exception as e:
-    print("Preferences file not found.")
-
+controlX = []
+controlY = []
+controlYaw = []
 
 #Read the csv
 f = open(filename, 'r')
@@ -130,9 +125,21 @@ for line in f:
     robotX.append(float(data[1]))
     robotY.append(float(data[2]))
     robotYaw.append(float(data[3]))
-    pathX.append(float(data[4]))
-    pathY.append(float(data[5]))
-    pathYaw.append(float(data[6]))
+    px = float(data[4])
+    py = float(data[5])
+    pyaw = float(data[6])
+    if(abs(px) < 0.001):
+        if len(pathX) > 0:
+            px = pathX[-1]
+    if(abs(py) < 0.001):
+        if len(pathY) > 0:
+            py = pathY[-1]
+    if(abs(pyaw) < 0.001):
+        if len(pathYaw) > 0:
+            pyaw = pathYaw[-1]
+    pathX.append(px)
+    pathY.append(py)
+    pathYaw.append(pyaw)
     pathXAccel.append(-float(data[7]))
     pathYAccel.append(float(data[8]))
     pathXVel.append(float(data[9]))
@@ -150,7 +157,14 @@ for line in f:
     xError.append(float(data[13]))
     yError.append(float(data[14]))
     yawError.append(float(data[15]))
-    
+    controlX.append(float(data[16]))
+    controlY.append(float(data[17]))
+    controlYaw.append(float(data[18]))
+
+    #Infer yaw velocities
+    if(linenum > 2):
+        robotYawVel.append(robotYaw[-1] - robotYaw[-2])
+        pathYawVel.append(pathYaw[-1] - pathYaw[-2])
     linenum += 1
     
 if len(robotX) == 0:
@@ -190,22 +204,31 @@ ax3MaxY = max(max(xError), max(yError), max(yawError))
 timeLine3, = ax3.plot([0, 0], [ax3MinY, ax3MaxY], color='black', alpha=0.25)
 ax3.legend()
 ax4 = fig2.add_subplot(223)
+#ax42 = ax4.twinx()
 ax4.axhline(0, color='black')
 ax4.plot(robotXVel, label='Actual X Velocity')
 ax4.plot(robotYVel, label='Actual Y Velocity')
 ax4.plot(pathXVel, label='Path X Velocity')
 ax4.plot(pathYVel, label='Path Y Velocity')
-ax4MinY = min(min(robotXVel), min(robotYVel), min(pathXVel), min(pathYVel))
-ax4MaxY = max(max(robotXVel), max(robotYVel), max(pathXVel), max(pathYVel))
+ax4MinY = min(min(robotXVel), min(robotYVel), min(robotYawVel), min(pathXVel), min(pathYVel), min(pathYawVel))
+ax4MaxY = max(max(robotXVel), max(robotYVel), max(robotYawVel), max(pathXVel), max(pathYVel), max(pathYawVel))
 timeLine4, = ax4.plot([0, 0], [ax4MinY, ax4MaxY], color='black', alpha=0.25)
 ax4.legend()
+#ax42.plot(robotYawVel, label='Actual Yaw Velocity', color='pink')
+#ax42.plot(pathYawVel, label='Path Yaw Velocity', color='cyan')
+#ax42.legend()
 ax5 = fig2.add_subplot(224)
 ax5.axhline(0, color='black')
-ax5.plot(timeDeltas, label='Time Deltas')
-avgTimeDelta = sum(timeDeltas)/float(len(timeDeltas))
-ax5.plot([0, len(timeDeltas)], [avgTimeDelta, avgTimeDelta], color='black', alpha=0.25)
-ax5MinY = min(timeDeltas)
-ax5MaxY = max(timeDeltas)
+ax5.plot(controlX, label='Control X')
+ax5.plot(controlY, label='Control Y')
+ax5.plot(controlYaw, label='Control Yaw')
+ax5MinY = min(min(controlX), min(controlY), min(controlYaw))
+ax5MaxY = max(max(controlX), max(controlY), max(controlYaw))
+#ax5.plot(timeDeltas, label='Time Deltas')
+#avgTimeDelta = sum(timeDeltas)/float(len(timeDeltas))
+#ax5.plot([0, len(timeDeltas)], [avgTimeDelta, avgTimeDelta], color='black', alpha=0.25)
+#ax5MinY = min(timeDeltas)
+#ax5MaxY = max(timeDeltas)
 timeLine5, = ax5.plot([0, 0], [ax5MinY, ax5MaxY], color='black', alpha=0.25)
 ax5.legend()
 
