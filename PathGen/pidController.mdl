@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.33"
+    ComputedModelVersion    "1.36"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,7 +29,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, 0.0, 1936.0, 1056.0]
+      Location		      [-8.0, -8.0, 1456.0, 876.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -53,9 +53,9 @@ Model {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[1886.0, 882.0]
+	Extents			[1406.0, 702.0]
 	ZoomFactor		[1.0]
-	Offset			[122.11840688912866, 78.347077914423892]
+	Offset			[294.30218039353679, 145.80161664211101]
       }
     }
   }
@@ -65,9 +65,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "graven"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Mar 12 20:17:06 2018"
-  RTWModifiedTimeStamp	  442786569
-  ModelVersionFormat	  "1.%<AutoIncrement:33>"
+  LastModifiedDate	  "Tue Apr 17 09:31:04 2018"
+  RTWModifiedTimeStamp	  445858252
+  ModelVersionFormat	  "1.%<AutoIncrement:36>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -185,7 +185,7 @@ Model {
 	  StartTime		  "0.0"
 	  StopTime		  "30"
 	  AbsTol		  "auto"
-	  FixedStep		  "auto"
+	  FixedStep		  "0.04"
 	  InitialStep		  "auto"
 	  MaxNumMinSteps	  "-1"
 	  MaxOrder		  5
@@ -718,7 +718,7 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 420, 220, 1500, 860 ] 
+      ConfigPrmDlgPosition     [ 286, 142, 1398, 858 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -827,6 +827,21 @@ Model {
       NonVirtualBus	      off
     }
     Block {
+      BlockType		      Saturate
+      UpperLimitSource	      "Dialog"
+      UpperLimit	      "0.5"
+      LowerLimitSource	      "Dialog"
+      LowerLimit	      "-0.5"
+      LinearizeAsGain	      on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as input"
+      LockScale		      off
+      RndMeth		      "Floor"
+    }
+    Block {
       BlockType		      Scope
       ModelBased	      off
       TickLabels	      "OneTimeTick"
@@ -872,7 +887,7 @@ Model {
   }
   System {
     Name		    "pidController"
-    Location		    [-8, 0, 1928, 1056]
+    Location		    [-8, -8, 1448, 868]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -886,13 +901,13 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "33"
+    SIDHighWatermark	    "39"
     Block {
       BlockType		      Sum
       Name		      "Add"
       SID		      "16"
       Ports		      [4, 1]
-      Position		      [460, 267, 495, 368]
+      Position		      [460, 266, 495, 369]
       ZOrder		      16
       Inputs		      "++++"
       InputSameDT	      off
@@ -910,7 +925,7 @@ Model {
       Name		      "Coulomb &\nViscous Friction"
       SID		      "26"
       Ports		      [1, 1]
-      Position		      [1195, 490, 1225, 520]
+      Position		      [1215, 490, 1245, 520]
       ZOrder		      26
       LibraryVersion	      "1.354"
       SourceBlock	      "simulink/Discontinuities/Coulomb &\nViscous Friction"
@@ -1005,7 +1020,7 @@ Model {
       FilterMethod	      "Forward Euler"
       Form		      "Parallel"
       P			      "1"
-      I			      "1"
+      I			      "0"
       D			      "0"
       N			      "100"
       InitialConditionSource  "internal"
@@ -1103,6 +1118,49 @@ Model {
       UseFilter		      on
     }
     Block {
+      BlockType		      Reference
+      Name		      "Ramp"
+      SID		      "37"
+      Ports		      [0, 1]
+      Position		      [335, 585, 365, 615]
+      ZOrder		      37
+      LibraryVersion	      "1.354"
+      SourceBlock	      "simulink/Sources/Ramp"
+      SourceType	      "Ramp"
+      ContentPreviewEnabled   off
+      slope		      "-0.2"
+      start		      "17"
+      X0		      "0"
+      VectorParams1D	      on
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Ramp1"
+      SID		      "39"
+      Ports		      [0, 1]
+      Position		      [335, 655, 365, 685]
+      ZOrder		      39
+      LibraryVersion	      "1.354"
+      SourceBlock	      "simulink/Sources/Ramp"
+      SourceType	      "Ramp"
+      ContentPreviewEnabled   off
+      slope		      "0.2"
+      start		      "17+12"
+      X0		      "0"
+      VectorParams1D	      on
+    }
+    Block {
+      BlockType		      Saturate
+      Name		      "Saturation"
+      SID		      "36"
+      Ports		      [1, 1]
+      Position		      [1140, 410, 1170, 440]
+      ZOrder		      36
+      InputPortMap	      "u0"
+      UpperLimit	      "10"
+      LowerLimit	      "-10"
+    }
+    Block {
       BlockType		      Scope
       Name		      "Scope"
       SID		      "3"
@@ -1110,10 +1168,9 @@ Model {
       Position		      [1590, 292, 1650, 543]
       ZOrder		      3
       Floating		      off
-      Location		      [10, 60, 1930, 1051]
-      Open		      on
+      Location		      [1441, 48, 3041, 899]
+      Open		      off
       NumInputPorts	      "2"
-      ZoomMode		      "yonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
@@ -1130,7 +1187,7 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      on
-      LegendLocations	      "0.92316      0.9223    0.056875    0.033978\n0.91489     0.44601    0.044133    0.033978"
+      LegendLocations	      "0.92316      0.9223     0.06825    0.039567\n0.91489     0.44601    0.051818    0.039567"
       YMin		      "-1~-1"
       YMax		      "100~8"
       LimitDataPoints	      off
@@ -1175,6 +1232,16 @@ Model {
       SampleTime	      "0"
     }
     Block {
+      BlockType		      Step
+      Name		      "Step4"
+      SID		      "34"
+      Position		      [335, 525, 365, 555]
+      ZOrder		      34
+      Time		      "0"
+      After		      "3"
+      SampleTime	      "0"
+    }
+    Block {
       BlockType		      Sum
       Name		      "Sum"
       SID		      "23"
@@ -1216,6 +1283,40 @@ Model {
       OutDataTypeStr	      "Inherit: Inherit via internal rule"
       SaturateOnIntegerOverflow	off
     }
+    Block {
+      BlockType		      Sum
+      Name		      "Sum3"
+      SID		      "35"
+      Ports		      [2, 1]
+      Position		      [920, 280, 940, 300]
+      ZOrder		      35
+      ShowName		      off
+      IconShape		      "round"
+      Inputs		      "++|"
+      InputSameDT	      off
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+      Port {
+	PortNumber		1
+	Name			"x"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
+      BlockType		      Sum
+      Name		      "Sum4"
+      SID		      "38"
+      Ports		      [2, 1]
+      Position		      [425, 590, 445, 610]
+      ZOrder		      38
+      ShowName		      off
+      IconShape		      "round"
+      Inputs		      "|++"
+      InputSameDT	      off
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+    }
     Line {
       ZOrder		      3
       SrcBlock		      "Mux"
@@ -1227,18 +1328,19 @@ Model {
       ZOrder		      65
       SrcBlock		      "Step"
       SrcPort		      1
+      Points		      [75, 0]
       DstBlock		      "Add"
       DstPort		      1
     }
     Line {
       Name		      "x"
-      ZOrder		      46
-      SrcBlock		      "Integrator"
+      ZOrder		      134
+      SrcBlock		      "Sum3"
       SrcPort		      1
-      Points		      [40, 0]
+      Points		      [74, 0; 0, 30]
       Branch {
-	ZOrder			106
-	Points			[0, 105]
+	ZOrder			135
+	Points			[-104, 0; 0, 105]
 	DstBlock		"Sum1"
 	DstPort			1
       }
@@ -1261,7 +1363,7 @@ Model {
       ZOrder		      67
       SrcBlock		      "Step2"
       SrcPort		      1
-      Points		      [67, 0; 0, -75]
+      Points		      [59, 0; 0, -75]
       DstBlock		      "Add"
       DstPort		      3
     }
@@ -1269,16 +1371,17 @@ Model {
       ZOrder		      68
       SrcBlock		      "Step3"
       SrcPort		      1
-      Points		      [31, 0; 0, -115]
+      Points		      [73, 0; 0, -115]
       DstBlock		      "Add"
       DstPort		      4
     }
     Line {
       Name		      "x_double_dot"
       ZOrder		      69
-      Labels		      [1, 1]
+      Labels		      [2, 1]
       SrcBlock		      "Add"
       SrcPort		      1
+      Points		      [0, 0]
       DstBlock		      "Integrator1"
       DstPort		      1
     }
@@ -1314,8 +1417,18 @@ Model {
       ZOrder		      77
       SrcBlock		      "Sum"
       SrcPort		      1
-      DstBlock		      "Integrator2"
-      DstPort		      1
+      Points		      [21, 0]
+      Branch {
+	ZOrder			160
+	Points			[0, 325]
+	DstBlock		"Mux1"
+	DstPort			2
+      }
+      Branch {
+	ZOrder			159
+	DstBlock		"Integrator2"
+	DstPort			1
+      }
     }
     Line {
       ZOrder		      81
@@ -1346,27 +1459,8 @@ Model {
       ZOrder		      122
       SrcBlock		      "Sum2"
       SrcPort		      1
-      Points		      [24, 0]
-      Branch {
-	ZOrder			124
-	DstBlock		"Sum"
-	DstPort			1
-      }
-      Branch {
-	ZOrder			123
-	Points			[0, 80]
-	Branch {
-	  ZOrder		  104
-	  Points		  [0, 245]
-	  DstBlock		  "Mux1"
-	  DstPort		  2
-	}
-	Branch {
-	  ZOrder		  103
-	  DstBlock		  "Coulomb &\nViscous Friction"
-	  DstPort		  1
-	}
-      }
+      DstBlock		      "Saturation"
+      DstPort		      1
     }
     Line {
       ZOrder		      100
@@ -1380,7 +1474,7 @@ Model {
       ZOrder		      121
       SrcBlock		      "Coulomb &\nViscous Friction"
       SrcPort		      1
-      Points		      [35, 0]
+      Points		      [15, 0]
       DstBlock		      "Sum"
       DstPort		      2
     }
@@ -1398,6 +1492,56 @@ Model {
       Points		      [50, 0]
       DstBlock		      "Sum2"
       DstPort		      1
+    }
+    Line {
+      Name		      "x"
+      ZOrder		      136
+      Labels		      [0, 0]
+      SrcBlock		      "Integrator"
+      SrcPort		      1
+      Points		      [18, 0; 0, -30]
+      DstBlock		      "Sum3"
+      DstPort		      2
+    }
+    Line {
+      ZOrder		      165
+      SrcBlock		      "Step4"
+      SrcPort		      1
+      Points		      [191, 0; 0, -275]
+      DstBlock		      "Sum3"
+      DstPort		      1
+    }
+    Line {
+      ZOrder		      139
+      SrcBlock		      "Saturation"
+      SrcPort		      1
+      Points		      [10, 0]
+      Branch {
+	ZOrder			146
+	Points			[0, 80]
+	DstBlock		"Coulomb &\nViscous Friction"
+	DstPort			1
+      }
+      Branch {
+	ZOrder			145
+	DstBlock		"Sum"
+	DstPort			1
+      }
+    }
+    Line {
+      ZOrder		      163
+      SrcBlock		      "Ramp"
+      SrcPort		      1
+      DstBlock		      "Sum4"
+      DstPort		      1
+    }
+    Line {
+      ZOrder		      164
+      SrcBlock		      "Ramp1"
+      SrcPort		      1
+      Points		      [65, 0]
+      DstBlock		      "Sum4"
+      DstPort		      2
     }
   }
 }
