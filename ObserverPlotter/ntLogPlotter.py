@@ -180,6 +180,7 @@ ax.plot(pathX, pathY, color='green', alpha=0.25)
 
 #Draw the path and robot
 point, = ax.plot(robotX[0], robotY[0], marker='o', markersize=5, color="red")
+pathpoint, = ax.plot(pathX[0], pathY[0], marker='o', markersize=5, color="green")
 startingRobot = genRobotSquare((robotX[0], robotY[0]), 0.0)
 robot, = ax.plot([p[0] for p in startingRobot], [p[1] for p in startingRobot], color="black")
 
@@ -206,6 +207,7 @@ ax3.legend()
 ax4 = fig2.add_subplot(223)
 #ax42 = ax4.twinx()
 ax4.axhline(0, color='black')
+ax4.set_title('Actual and Path Velocities')
 ax4.plot(robotXVel, label='Actual X Velocity')
 ax4.plot(robotYVel, label='Actual Y Velocity')
 ax4.plot(pathXVel, label='Path X Velocity')
@@ -219,6 +221,7 @@ ax4.legend()
 #ax42.legend()
 ax5 = fig2.add_subplot(224)
 ax5.axhline(0, color='black')
+ax5.set_title('Control Signals')
 ax5.plot(controlX, label='Control X')
 ax5.plot(controlY, label='Control Y')
 ax5.plot(controlYaw, label='Control Yaw')
@@ -238,6 +241,7 @@ ax.margins(x=0.1, y=0.1)
 #The animation tick, update only what needs to change in the plot
 def updateFig1(n):
     point.set_data(np.array([robotX[n], robotY[n]]))
+    pathpoint.set_data(np.array([pathX[n], pathY[n]]))
     robotData = genRobotSquare((robotX[n], robotY[n]), robotYaw[n])
     robot.set_data([p[0] for p in robotData], [p[1] for p in robotData])
     
