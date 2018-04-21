@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import animation
 import math
 import sys
+import json
 
 numArgs = len(sys.argv)
 if(numArgs == 1):
@@ -109,6 +110,14 @@ controlX = []
 controlY = []
 controlYaw = []
 
+try:
+    with open(filename[:-4] + ".json", 'r') as f:
+        prefs = json.loads(f.read())
+        for pref in sorted(prefs.keys()):
+            print pref, "=", prefs[pref]
+except Exception as e:
+    print("Preferences file not found.")
+
 #Read the csv
 f = open(filename, 'r')
 linenum = 1
@@ -184,22 +193,24 @@ pathpoint, = ax.plot(pathX[0], pathY[0], marker='o', markersize=5, color="green"
 startingRobot = genRobotSquare((robotX[0], robotY[0]), 0.0)
 robot, = ax.plot([p[0] for p in startingRobot], [p[1] for p in startingRobot], color="black")
 
+timestamps = (np.array(timestamps) - timestamps[0]) / 1000000.0
+
 fig2 = plt.figure()
 ax2 = fig2.add_subplot(221)
 ax2.axhline(0, color='black')
 ax2MinY = min(min(robotYaw), min(pathYaw))
 ax2MaxY = max(max(robotYaw), max(pathYaw))
 ax2.set_title('Actual and Path Yaw')
-ax2.plot(robotYaw, label='Actual Yaw')
-ax2.plot(pathYaw, label='Path Yaw')
+ax2.plot(timestamps, robotYaw, label='Actual Yaw')
+ax2.plot(timestamps, pathYaw, label='Path Yaw')
 timeLine2, = ax2.plot([0, 0], [ax2MinY, ax2MaxY], color='black', alpha=0.25)
 ax2.legend()
 ax3 = fig2.add_subplot(222)
 ax3.axhline(0, color='black')
 ax3.set_title('Errors')
-ax3.plot(xError, label='X Error')
-ax3.plot(yError, label='Y Error')
-ax3.plot(yawError, label='Yaw Error')
+ax3.plot(timestamps, xError, label='X Error')
+ax3.plot(timestamps, yError, label='Y Error')
+ax3.plot(timestamps, yawError, label='Yaw Error')
 ax3MinY = min(min(xError), min(yError), min(yawError))
 ax3MaxY = max(max(xError), max(yError), max(yawError))
 timeLine3, = ax3.plot([0, 0], [ax3MinY, ax3MaxY], color='black', alpha=0.25)
@@ -208,12 +219,12 @@ ax4 = fig2.add_subplot(223)
 #ax42 = ax4.twinx()
 ax4.axhline(0, color='black')
 ax4.set_title('Actual and Path Velocities')
-ax4.plot(robotXVel, label='Actual X Velocity')
-ax4.plot(robotYVel, label='Actual Y Velocity')
-ax4.plot(pathXVel, label='Path X Velocity')
-ax4.plot(pathYVel, label='Path Y Velocity')
-ax4MinY = min(min(robotXVel), min(robotYVel), min(robotYawVel), min(pathXVel), min(pathYVel), min(pathYawVel))
-ax4MaxY = max(max(robotXVel), max(robotYVel), max(robotYawVel), max(pathXVel), max(pathYVel), max(pathYawVel))
+ax4.plot(timestamps, robotXVel, label='Actual X Velocity')
+ax4.plot(timestamps, robotYVel, label='Actual Y Velocity')
+ax4.plot(timestamps, pathXVel, label='Path X Velocity')
+ax4.plot(timestamps, pathYVel, label='Path Y Velocity')
+ax4MinY = min(min(robotXVel), min(robotYVel), min(pathXVel), min(pathYVel))
+ax4MaxY = max(max(robotXVel), max(robotYVel), max(pathXVel), max(pathYVel))
 timeLine4, = ax4.plot([0, 0], [ax4MinY, ax4MaxY], color='black', alpha=0.25)
 ax4.legend()
 #ax42.plot(robotYawVel, label='Actual Yaw Velocity', color='pink')
@@ -234,9 +245,10 @@ ax5MaxY = max(max(controlX), max(controlY), max(controlYaw))
 #ax5MaxY = max(timeDeltas)
 timeLine5, = ax5.plot([0, 0], [ax5MinY, ax5MaxY], color='black', alpha=0.25)
 ax5.legend()
+plt.tight_layout(h_pad=0, w_pad=-0.5, pad=0)
 
 #Set margins so the edge of the field isn't right on the edge of the plot
-ax.margins(x=0.1, y=0.1)
+# ax.margins(x=0.1, y=0.1)
 
 #The animation tick, update only what needs to change in the plot
 def updateFig1(n):
@@ -248,14 +260,14 @@ def updateFig1(n):
     return [point, robot]
 
 def updateFig2(n):
-    timeLine2.set_xdata([n, n])
-    timeLine3.set_xdata([n, n])
-    timeLine4.set_xdata([n, n])
-    timeLine5.set_xdata([n, n])
+    timeLine2.set_xdata([timestamps[n], timestamps[n]])
+    timeLine3.set_xdata([timestamps[n], timestamps[n]])
+    timeLine4.set_xdata([timestamps[n], timestamps[n]])
+    timeLine5.set_xdata([timestamps[n], timestamps[n]])
     return [timeLine2, timeLine3, timeLine4, timeLine5]
 
 #Animate
-ani = animation.FuncAnimation(fig, updateFig1, frames=len(robotX), interval=100)
-ani2 = animation.FuncAnimation(fig2, updateFig2, frames=len(robotX), interval=100)
+# ani = animation.FuncAnimation(fig, updateFig1, frames=len(robotX)) #, interval=100)
+# ani2 = animation.FuncAnimation(fig2, updateFig2, frames=len(robotX)) #, interval=100)
 
 plt.show()
