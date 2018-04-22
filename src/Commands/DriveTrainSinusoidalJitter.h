@@ -14,11 +14,13 @@ class DriveTrainSinusoidalJitter : public CommandBase {
 private:
 	double m_prevY;
 	bool m_endFlag;
+	bool m_reverse;
 
 public:
-	DriveTrainSinusoidalJitter() : CommandBase("DriveTrainSinusoidalJitter"){
+	DriveTrainSinusoidalJitter(bool reverse = false) : CommandBase("DriveTrainSinusoidalJitter"){
 		m_prevY = 0.0;
 		m_endFlag = false;
+		m_reverse = reverse;
 	}
 	virtual ~DriveTrainSinusoidalJitter() {}
 
@@ -28,9 +30,10 @@ public:
 	}
 
 	void Execute() {
+		int rCoeff = m_reverse ? -1 : 1;
 		double period = 2 * M_PI;
-		double dy = period * cos(TimeSinceInitialized() * period);
-		double y = sin(TimeSinceInitialized() * period);
+		double dy = rCoeff * period * cos(TimeSinceInitialized() * period);
+		double y = rCoeff * sin(TimeSinceInitialized() * period);
 		y *= (y > 0 ? 0.5 : 1.0);
 		m_driveTrain->Drive(0.0, y, 0.0);
 
