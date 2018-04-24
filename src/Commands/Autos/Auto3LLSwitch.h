@@ -35,68 +35,71 @@ public:
 		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch2.csv"));
 		AddParallel(new IntakeClampOpenCommand());
 		AddParallel(new IntakeRollerLoadCommand(1));
-		AddSequential(new DriveTrainWaitForFieldYCommand(240));
+		AddSequential(new WaitCommand(0.25));
 		AddParallel(new ArmToIntakeBack(""), 1);
 		AddSequential(new DriveTrainWaitForFinishedPathCommand());
-		AddSequential(new DriveTrainSinusoidalJitter(true), 2.0);
+		AddSequential(new DriveTrainSinusoidalJitter(false), 2.0);
 		AddSequential(new PrintCommand("Has Cube"));
 		AddSequential(new IntakeClampCloseCommand());
 		AddSequential(new PrintCommand("Clamp"));
 		AddSequential(new IntakeRollerOffCommand());
 
-//		//Switch 2
-//		AddSequential(new ArmExtentionMotionScaling(0.3));
-//		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
-//
-//		AddParallel(new ArmToSwitchBack(""), 1.5);
-//		AddSequential(new PrintCommand("ARM"));
-//
-//		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch3.csv"));
-//
-//		AddParallel(new IntakeReleaseCubeCommandGroup(1.0), 1.0);
-//		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
-//
-//		// Cube 3
-//		AddSequential(new DriveTrainWaitForFinishedPathCommand());
-//		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch4.csv"));
-//		AddParallel(new IntakeClampOpenCommand());
-//		AddParallel(new IntakeRollerLoadCommand(1));
-//		AddSequential(new DriveTrainWaitForFieldXCommand(100));
-//		AddParallel(new ArmToIntakeBack(""), 1);
-//		AddSequential(new WaitCommand(0.25));
-//		AddSequential(new DriveTrainSinusoidalJitter(true), 2.0);
-//		AddSequential(new PrintCommand("Has Cube"));
-//		AddSequential(new IntakeClampCloseCommand());
-//		AddSequential(new PrintCommand("Clamp"));
-//		AddSequential(new IntakeRollerOffCommand());
-//
-//		//Switch 3
-//		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
-//
-//		AddParallel(new ArmToSwitchBack(""), 1.5);
-//		AddSequential(new PrintCommand("ARM"));
-//
-//		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch5.csv"));
-//
-//		AddParallel(new IntakeReleaseCubeCommandGroup(1.0), 1.0);
-//		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
-//
-//		// Cube 3
-//		AddSequential(new DriveTrainWaitForFinishedPathCommand());
-//		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch6.csv"));
-//		AddParallel(new IntakeClampOpenCommand());
-//		AddParallel(new IntakeRollerLoadCommand(1));
-//		AddSequential(new DriveTrainWaitForFieldXCommand(128));
-//		AddParallel(new ArmToIntakeBack(""), 1);
-//		AddSequential(new WaitCommand(0.25));
-//		AddSequential(new DriveTrainSinusoidalJitter(true), 2.0);
-//		AddSequential(new PrintCommand("Has Cube"));
-//		AddSequential(new IntakeClampCloseCommand());
-//		AddSequential(new PrintCommand("Clamp"));
-//		AddSequential(new IntakeRollerOffCommand());
-//
-//		//Switch 4
-//		AddSequential(new ArmToStow(""));
+		//Switch 2
+		AddSequential(new ArmExtentionMotionScaling(0.3));
+		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
+
+		AddParallel(new ArmToSwitchBack(""), 1.5);
+		AddSequential(new PrintCommand("ARM"));
+
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch3.csv"));
+		AddSequential(new WaitCommand(1.0));
+
+		AddSequential(new DriveTrainWaitForFinishedPathCommand());
+		AddSequential(new IntakeReleaseCubeCommandGroup(1.0), 1.0);
+		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
+
+		// Cube 3
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch4.csv"));
+		AddParallel(new IntakeClampOpenCommand());
+		AddParallel(new IntakeRollerLoadCommand(1));
+		AddSequential(new WaitCommand(0.25));
+		AddParallel(new ArmToIntakeBack(""), 1);
+		AddSequential(new DriveTrainWaitForFinishedPathCommand());
+		AddSequential(new DriveTrainSinusoidalJitter(false), 2.0);
+		AddSequential(new PrintCommand("Has Cube"));
+		AddSequential(new IntakeClampCloseCommand());
+		AddSequential(new PrintCommand("Clamp"));
+		AddSequential(new IntakeRollerOffCommand());
+
+		//Switch 3
+		AddSequential(new ArmExtentionMotionScaling(0.3));
+		AddSequential(new PrintCommand("ArmExtensionMotionScaling"));
+
+		AddParallel(new ArmToSwitchBack(""), 1.5);
+		AddSequential(new PrintCommand("ARM"));
+
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch5.csv"));
+		AddSequential(new WaitCommand(1.0));
+
+		AddSequential(new DriveTrainWaitForFinishedPathCommand());
+		AddSequential(new IntakeReleaseCubeCommandGroup(1.0), 1.0);
+		AddSequential(new PrintCommand("IntakeReleaseCubeCommandGroup"));
+
+		// Cube 3
+		AddParallel(new DriveTrainFollowPath("/home/lvuser/Path_LL_switch6.csv"));
+		AddParallel(new IntakeClampOpenCommand());
+		AddParallel(new IntakeRollerLoadCommand(1));
+		AddSequential(new WaitCommand(0.25));
+		AddParallel(new ArmToIntakeBack(""), 1);
+		AddSequential(new DriveTrainWaitForFinishedPathCommand());
+		AddSequential(new DriveTrainSinusoidalJitter(false), 2.0);
+		AddSequential(new PrintCommand("Has Cube"));
+		AddSequential(new IntakeClampCloseCommand());
+		AddSequential(new PrintCommand("Clamp"));
+		AddSequential(new IntakeRollerOffCommand());
+
+		//Switch 4
+		AddSequential(new ArmToStow(""));
 	}
 };
 

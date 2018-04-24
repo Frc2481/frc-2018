@@ -84,6 +84,20 @@ public:
 	Button* m_exchangeBackButton;
 
 	Button* m_variableReleaseSpeed;
+
+
+//	climber
+	Button* m_startClimbButton;
+	Button* m_backClimbButton;
+
+	Button* m_enableClimbController;
+	Button* m_scaleGrabber;
+	Button* m_releaseRamp;
+	Button* m_springHooks;
+	Button* m_climb;
+
+	Button* m_reverseScaleGrabber;
+	Button* m_reverseSpringHooks;
 };
 
 #endif  // OI_H

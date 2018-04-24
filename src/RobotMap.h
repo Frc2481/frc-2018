@@ -20,6 +20,9 @@
 		#define PTO1 2
 		#define PTO2 3
 
+		#define SCALE_GRABBER 0
+		#define RELEASE_SPRING 1
+
 		#define EXTENDER_MASTER 15
 		#define EXTENDER_SLAVE 16
 		#define PIVOT_MASTER 17

@@ -31,6 +31,8 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 	m_blWheel(new SwerveModule(BACK_LEFT_DRIVE, BACK_LEFT_STEER, "BACK_LEFT")),
 	m_shifter(new Solenoid(SHIFTER)),
 	m_pto(new DoubleSolenoid(PTO1, PTO2)),
+	m_scaleGrabberServo(new Servo(SCALE_GRABBER)),
+	m_releaseSpringServo(new Servo(RELEASE_SPRING)),
 	m_imu(new AHRS(SPI::kMXP)),
 //	m_pigeon(new PigeonIMU(0)),
 	m_isFieldCentric(false),
@@ -72,6 +74,8 @@ DriveTrain::DriveTrain() : Subsystem("DriveTrain"),
 
 	accelX = new RollingAccumulator<double, 5>();
 	accelY = new RollingAccumulator<double, 5>();
+
+	m_climbStep = -1;
 
 	DisengagePTO();
 
@@ -560,6 +564,36 @@ void DriveTrain::SetPreciseMode(bool isPrecise) {
 	m_brWheel->SetPreciseMode(isPrecise);
 
 }
+
+
+	//change depending on direction 0 to 1
+//	timed command w/ timeout or while held
+
+	//another button for pto while held
+	//spin pto slightly, forks fall
+	//another servo for hooks
+
+	//pwm channels 0 & 1 for servos
+
+
+void DriveTrain::SetScaleGrabber(double speed) {
+	m_scaleGrabberServo->Set(speed);
+	printf("scale grabber servo\n");
+}
+
+void DriveTrain::SetSpringHooks(double speed) {
+	m_releaseSpringServo->Set(speed);
+	printf("release spring servo\n");
+}
+
+void DriveTrain::SetClimberStep(int step) {
+	m_climbStep = step;
+}
+
+int DriveTrain::GetClimberStep() {
+	return m_climbStep;
+}
+
 //PigeonIMU* DriveTrain::GetPigeonImu() {
 //	return m_pigeon;
 //}

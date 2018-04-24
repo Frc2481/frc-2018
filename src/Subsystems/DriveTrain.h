@@ -34,6 +34,9 @@ private:
 
 	DoubleSolenoid *m_pto;
 
+	Servo *m_scaleGrabberServo;
+	Servo *m_releaseSpringServo;
+
 	AHRS* m_imu;
 //	class PigeonIMU* m_pigeon;
 	std::atomic<bool> m_isFieldCentric;
@@ -78,6 +81,8 @@ private:
 
 	RollingAccumulator<double, 5>* accelX;
 	RollingAccumulator<double, 5>* accelY;
+
+	int m_climbStep;
 
 public:
 	enum SwerveModuleType {
@@ -136,6 +141,13 @@ public:
 	void Calibrate();
 
 	void SetPreciseMode(bool isPrecise);
+
+	void SetScaleGrabber(double speed);
+	void SetSpringHooks(double speed);
+
+	void SetClimberStep(int step);
+	int GetClimberStep();
+
 };
 
 #endif /* SRC_SUBSYSTEMS_DRIVETRAIN_H_ */

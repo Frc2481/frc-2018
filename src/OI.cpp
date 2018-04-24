@@ -31,6 +31,15 @@
 #include "Commands/DriveTrainZeroGyroCommand.h"
 #include "Commands/DriveTrainEngagePtoCommand.h"
 
+#include "Commands/ClimberReleaseScaleGrabber.h"
+#include "Commands/ClimberReleaseSpringHooks.h"
+
+#include "Commands/ClimberReverseScaleGrabber.h"
+#include "Commands/ClimberReverseSpringHooks.h"
+#include "Commands/ClimberClimb.h"
+#include "Commands/ClimberStart.h"
+#include "Commands/ClimberReleaseRamp.h"
+
 OI::OI() {
 	// Process operator interface input here.
 	m_driverStick = new Joystick2481(0);
@@ -175,17 +184,39 @@ OI::OI() {
 	//intake release on left trigger?
 
 //climb controller
-	m_innerWinch = new JoystickButton(m_climbStick, XB_A_BUTTON);
-	m_innerWinch->WhileHeld(new DriveTrainNearWinchCommand());
+//	m_innerWinch = new JoystickButton(m_climbStick, XB_A_BUTTON);
+//	m_innerWinch->WhileHeld(new DriveTrainNearWinchCommand());
 
-	m_outerWinch = new JoystickButton(m_climbStick, XB_B_BUTTON);
-	m_outerWinch->WhileHeld(new DriveTrainFarWinchCommand());
+	m_startClimbButton = new JoystickButton(m_climbStick, XB_START_BUTTON);
+	m_backClimbButton = new JoystickButton(m_climbStick, XB_BACK_BUTTON);
 
-	m_extensionOpenLoop = new JoystickButton(m_climbStick, XB_RIGHT_BUMPER);
-	m_extensionOpenLoop->WhileHeld(new ArmExtendCommand());
+	m_enableClimbController = new ComboButton(m_startClimbButton, m_backClimbButton, true);
+	m_enableClimbController->WhenPressed(new ClimberStart());
 
-	m_engagePto = new JoystickButton(m_climbStick, XB_Y_BUTTON);
-	m_engagePto->WhenPressed(new DriveTrainEngagePtoCommand());
+	m_scaleGrabber = new JoystickButton(m_climbStick, XB_A_BUTTON);
+	m_scaleGrabber->WhileHeld(new ClimberReleaseScaleGrabber());
+
+	m_releaseRamp = new JoystickButton(m_climbStick, XB_X_BUTTON);
+	m_releaseRamp->WhileHeld(new ClimberReleaseRamp());
+
+	m_springHooks = new JoystickButton(m_climbStick, XB_Y_BUTTON);
+	m_springHooks->WhileHeld(new ClimberReleaseSpringHooks());
+
+	m_climb = new JoystickButton(m_climbStick, XB_B_BUTTON);
+	m_climb->WhileHeld(new ClimberClimb());
+
+
+//	m_engagePto = new JoystickButton(m_climbStick, XB_Y_BUTTON);
+//	m_engagePto->WhenPressed(new DriveTrainEngagePtoCommand());
+//
+//	m_outerWinch = new JoystickButton(m_climbStick, XB_A_BUTTON);
+//	m_outerWinch->WhileHeld(new DriveTrainFarWinchCommand());
+//
+//	m_reverseScaleGrabber = new JoystickButton(m_climbStick, XB_LEFT_BUMPER);
+//	m_reverseScaleGrabber->WhileHeld(new ClimberReverseScaleGrabber());
+//
+	m_reverseSpringHooks = new JoystickButton(m_climbStick, XB_RIGHT_BUMPER);
+	m_reverseSpringHooks->WhileHeld(new ClimberReverseSpringHooks());
 }
 
 Joystick2481* OI::GetDriverStick() {
