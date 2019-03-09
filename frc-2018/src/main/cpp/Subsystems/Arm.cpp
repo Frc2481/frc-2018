@@ -218,7 +218,7 @@ void Arm::Periodic() {
 
 //	if (DriverStation::GetInstance().IsDisabled()) {
 
-		if (m_isExtensionZeroed == false && m_extenderMaster->GetSensorCollection().IsFwdLimitSwitchClosed()) {
+		if (m_isExtensionZeroed == false && m_extenderMaster->GetSensorCollection().IsRevLimitSwitchClosed()) {
 			ZeroExtension();
 		}
 
